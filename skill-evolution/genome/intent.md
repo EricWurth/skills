@@ -18,8 +18,8 @@ decision.
 
 ## Inputs [INVARIANT]
 
-- technique-library.md: a persistent, self-refreshing catalog this skill
-  reads and appends to every run.
+- references/technique-library.md: a persistent, self-refreshing catalog
+  this skill reads and appends to every run.
 - Target skills: auto-discovered by scanning installed skills for a
   `genome/intent.md` file. No user-specified target is required or
   expected -- a skill without a genome file is out of scope for this
@@ -62,9 +62,9 @@ decision.
   failure history first. This is the specific failure this skill exists to
   prevent (an early run of this pattern did this and had to be corrected).
 - Never bundle multiple untested candidates into one promotion.
-- Never rewrite an existing technique-library.md entry's substance in
-  place -- append dated notes to existing entries, or add new dated
-  entries; history stays visible.
+- Never rewrite an existing references/technique-library.md entry's
+  substance in place -- append dated notes to existing entries, or add new
+  dated entries; history stays visible.
 
 ## Free choices [IMPLEMENTATION MAY VARY]
 
@@ -114,10 +114,10 @@ G-3: Refuse-to-sandbox ungrounded candidates.
 
 - Mechanically checkable: whether a candidate had both a named,
   skill-specific problem and a constructed test case before any sandbox
-  work began; whether technique-library.md entries were appended rather
-  than edited in place; whether more than one untested candidate was
-  bundled into a single promotion; whether any promotion happened without
-  an explicit human sign-off logged.
+  work began; whether references/technique-library.md entries were
+  appended rather than edited in place; whether more than one untested
+  candidate was bundled into a single promotion; whether any promotion
+  happened without an explicit human sign-off logged.
 - Human-judged: whether a cited "documented problem" genuinely traces to
   the target skill's own eval notes, versus being stretched to justify a
   technique someone wanted to try anyway.

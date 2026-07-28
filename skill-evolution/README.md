@@ -51,8 +51,8 @@ conversation with a human, not something this skill decides on its own.
 ## Install
 
 Drop the `skill-evolution/` folder into your `.claude/skills/` directory.
-It reads and appends to its own `technique-library.md` over time -- treat
-that file as a living catalog, not a static reference.
+It reads and appends to its own `references/technique-library.md` over
+time -- treat that file as a living catalog, not a static reference.
 
 To make a skill eligible as an evolution *target*, give it a
 `genome/intent.md` alongside its `SKILL.md`, following the shape in
@@ -66,4 +66,25 @@ Say "run evolution," "evolve this skill," or "check for new techniques."
 Steps 1-5 (refresh, identify, evaluate, prioritize, sandbox-test) run
 autonomously with no pause for confirmation -- they're reversible work in
 scratch space. Step 6 (gate) always stops for an explicit decision before
-anything touches a skill's live files.
+anything touches a skill's live files. `references/review-checklist.md`
+has the condensed end-of-sweep report format.
+
+## Running it on a schedule
+
+Cadence -- manual invocation vs. a recurring sweep -- is a free choice, not
+a requirement. `scheduled/SKILL.md` is a ready-to-adapt definition for
+running this as a weekly maintenance pass on whichever scheduling
+mechanism your environment provides. It never auto-promotes: a scheduled
+run still stops at the gate and reports what needs a human decision,
+exactly like an interactive run would.
+
+## Contents
+
+- `SKILL.md` -- the phenotype: what the model reads and executes.
+- `genome/intent.md` -- the intent spec.
+- `references/technique-library.md` -- the living technique catalog,
+  refreshed and appended to on every run.
+- `references/review-checklist.md` -- the condensed end-of-sweep report
+  format.
+- `scheduled/SKILL.md` -- an adaptable definition for running this as a
+  recurring weekly sweep instead of only on demand.

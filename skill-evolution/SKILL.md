@@ -43,7 +43,7 @@ write to the live path does.
 ## Steps
 
 1. **Refresh the library.** Before anything else, read
-   `technique-library.md`. Then run a scoped web search for
+   `references/technique-library.md`. Then run a scoped web search for
    agent/skill-design techniques published or updated since the library's
    last research-pass date (see the date at the top of the file). Look
    specifically for: new pattern names, new benchmarked techniques, and
@@ -130,10 +130,11 @@ write to the live path does.
    live skill directory and record the promotion (what changed, why, and
    the fixture that proves it) in the target skill's own history so the
    next sweep can see it. If the user declines, shelve the candidate:
-   log it as evaluated-and-rejected in `technique-library.md`'s
+   log it as evaluated-and-rejected in `references/technique-library.md`'s
    free-choice mapping notes, not as if it were never considered. Most
    sweeps should end with nothing promoted -- that is expected, not a
-   shortfall.
+   shortfall. See `references/review-checklist.md` for the condensed
+   end-of-sweep report format.
 
 ## Genome (intent spec)
 
