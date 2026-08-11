@@ -7,6 +7,7 @@ description: >
   vault, whenever the user says "the vault", "memory vault", "vault fact",
   "check the vault", or "what does the vault say", and before any other
   vault skill runs.
+spec: genome/intent.md
 ---
 
 # Memory Vault Conventions

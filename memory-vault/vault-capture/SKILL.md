@@ -5,6 +5,7 @@ description: >
   end of any substantive work session, when the user says "capture this
   session", "write this to the vault", "log this session", "remember this
   for the vault", or before a long session ends or compacts.
+spec: genome/intent.md
 ---
 
 # Capture a Session Episode

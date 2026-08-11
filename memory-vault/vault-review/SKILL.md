@@ -6,6 +6,7 @@ description: >
   facts, write reflections, and regenerate the catalog. Use when the user
   says "run the vault review", "weekly review", "review my vault",
   "consolidate memory", or "what should be promoted".
+spec: genome/intent.md
 ---
 
 # Vault Review and Promote

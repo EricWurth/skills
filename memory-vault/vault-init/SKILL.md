@@ -5,6 +5,7 @@ description: >
   templates, and starter files. Use when the user says "set up my vault",
   "initialize the memory vault", "create a memory vault", or asks to start
   using the memory vault pattern for the first time.
+spec: genome/intent.md
 ---
 
 # Initialize a Memory Vault
