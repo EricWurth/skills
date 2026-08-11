@@ -76,7 +76,9 @@ a requirement. `scheduled/SKILL.md` is a ready-to-adapt definition for
 running this as a weekly maintenance pass on whichever scheduling
 mechanism your environment provides. It never auto-promotes: a scheduled
 run still stops at the gate and reports what needs a human decision,
-exactly like an interactive run would.
+exactly like an interactive run would. `scheduled/example.md` is a real,
+filled-in instance of that template, included so the pattern isn't just
+theoretical.
 
 ## Contents
 
@@ -88,3 +90,4 @@ exactly like an interactive run would.
   format.
 - `scheduled/SKILL.md` -- an adaptable definition for running this as a
   recurring weekly sweep instead of only on demand.
+- `scheduled/example.md` -- a real, filled-in instance of that template.

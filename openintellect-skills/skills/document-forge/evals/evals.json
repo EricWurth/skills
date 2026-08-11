@@ -1,0 +1,27 @@
+{
+  "skill_name": "document-forge",
+  "evals": [
+    {
+      "id": 1,
+      "name": "decision-memo-with-sparse-inputs",
+      "prompt": "I need a memo recommending we consolidate our three reporting tools into one. Leadership is skeptical because the last consolidation went badly. Forge this document.",
+      "expected_output": "Stage 1 produces a one-sentence decision plus explicit acceptance criteria including addressing the prior-failure objection. Numeric claims are either sourced or tagged [assumption] rather than invented. Gate names specific unmet criteria rather than passing by default.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "vague-brief-should-halt",
+      "prompt": "Forge a document about our data governance situation.",
+      "expected_output": "Stage 1 halts rather than drafting. The skill should refuse to proceed without a stateable decision or action, and ask what decision the document must enable, instead of producing a well-written overview.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "lint-catches-what-judgment-misses",
+      "prompt": "Here's a draft proposal. Run it through document-forge starting at the claim check.",
+      "expected_output": "scripts/lint.py is actually executed rather than described. Mechanical violations (em dashes, untagged numeric claims, filler openers) are caught by the script, not by narration. Stage 6 is either dispatched to a real isolated subagent or explicitly declared skipped, never simulated in-context.",
+      "files": []
+    }
+  ]
+}
+
