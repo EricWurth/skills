@@ -1,6 +1,6 @@
 {
   "name": "delegate",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A senior-resource agent that owns problems end-to-end: builds a mental model before chartering (with a mandatory cast check), works autonomously inside a charter bounded by scope, timeline, cost, and outcome, detects stuck via estimate-vs-actual and frontier movement, treats the director's decisions as logged assumptions with evidence-gated resurfacing, and reports in decision-queue format. Runs enforced under the rulegate plugin; honor-system without it.",
   "author": {
     "name": "Eric Wurth"
