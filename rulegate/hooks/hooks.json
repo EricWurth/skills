@@ -1,0 +1,77 @@
+{
+  "UserPromptSubmit": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "prompt",
+          "prompt": "You are the rulegate front gate. If the file .rulegate/RULES.md does not exist in the project, do nothing and add no context. Otherwise: read .rulegate/RULES.md. If the user's message is a work request (asks for changes, fixes, builds, or analysis with side effects), recompile it into a step plan that satisfies every SEQUENCING rule: each step gets a number, a goal, and a 'files:' line declaring its expected scope (globs allowed; use 'files: *' only when scope is genuinely unknowable). Write the plan to .rulegate/plan.md with the first step marked '## CURRENT'. Then add one line of context to the conversation: 'rulegate: plan written, N steps, step 1 in scope: <files>'. If the message is conversational or a question with no side effects, do nothing. Never rewrite or reinterpret the user's intent; compile its execution order only.",
+          "timeout": 45
+        }
+      ]
+    }
+  ],
+  "PreToolUse": [
+    {
+      "matcher": "Write|Edit|MultiEdit|NotebookEdit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/scope-gate.sh",
+          "timeout": 15
+        }
+      ]
+    },
+    {
+      "matcher": "Bash",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/scope-gate.sh",
+          "timeout": 15
+        }
+      ]
+    }
+  ],
+  "PostToolUse": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/ledger.sh",
+          "timeout": 10
+        }
+      ]
+    }
+  ],
+  "Stop": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/output-gate.sh",
+          "timeout": 20
+        },
+        {
+          "type": "prompt",
+          "prompt": "You are the rulegate advisory judge. If .rulegate/RULES.md does not exist, do nothing. Otherwise read its JUDGMENT section. Evaluate only the assistant's final reply of this turn against those rules. This gate is ADVISORY: never block. If a judgment rule is clearly violated, append one short annotation to the reply in the form 'rulegate note: <rule> — <one-line reason>'. If nothing is clearly violated, add nothing. Do not annotate style, claims, or scope; other gates own those.",
+          "timeout": 30
+        }
+      ]
+    }
+  ],
+  "PreCompact": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash -c 'test -f .rulegate/plan.md && echo \"rulegate: plan state preserved in .rulegate/plan.md — re-read it after compaction before continuing work\" || true'",
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}
