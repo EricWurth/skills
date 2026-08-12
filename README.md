@@ -16,6 +16,7 @@ Built and maintained by [Eric Wurth](https://www.ericwurth.com).
 | [`storm-research/`](storm-research/) | Turns one topic into a verified, multi-perspective HTML research briefing: five expert lenses, a contradiction map, then mandatory adversarial fact-checking before delivery. |
 | [`skill-evolution/`](skill-evolution/) | Evolves other skills on a disciplined schedule — finds a real technique gap, proves the gain with a constructed test, sandboxes it, and gates promotion behind explicit human approval. |
 | [`memory-vault/`](memory-vault/) | A file-based, human-gated memory system for AI agents — a plugin of four skills (init, capture, conventions, review) rather than a single skill. |
+| [`resumebot`](https://github.com/EricWurth/resumebot) | A job-search operating system for Claude Code — master resume builder, job-targeting coach, Excel application tracker, scheduled board scans, tailored resume packets, an apply-tab queue, and email-driven tracker updates. A full plugin in its own repo: install with `/plugin marketplace add EricWurth/resumebot`. |
 
 ## A shared pattern: genome vs. phenotype
 
