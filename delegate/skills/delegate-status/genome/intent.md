@@ -2,15 +2,15 @@
 
 Spec version: 1.0
 Current phenotype: SKILL.md (as packaged in the delegate plugin)
-Owner: the skill's user (Eric)
+Owner: the skill's user
 Replayable: yes -- given the same work state the same decision queue
 should result.
 
 ## Purpose [INVARIANT]
 
 Produce a status report on delegated work that is a decision queue, not
-an inventory: if an item does not require a decision from Eric or inform
-one he would make, it does not appear.
+an inventory: if an item does not require a decision from the user or
+inform one they would make, it does not appear.
 
 ## Inputs [INVARIANT]
 
@@ -31,7 +31,7 @@ one he would make, it does not appear.
 2. The close is a single line of position against the charter: current
    step, actual vs estimate. Nothing else.
 3. No task lists, no activity narration, no "risks have been logged" --
-   these are performative and measure nothing Eric steers by.
+   these are performative and measure nothing the user steers by.
 4. Completion claims are ledger-backed; stale evidence means the work is
    stated as unverified with the check that would verify it named.
 5. Before reporting any discrepancy, the widest reasonable reading of
