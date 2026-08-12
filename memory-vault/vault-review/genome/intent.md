@@ -33,10 +33,9 @@ the catalog.
    procedures/ vs stays put), honestly-assigned provenance (only
    `decision` if the user explicitly decided), and evidence paths/quotes.
 3. Nothing is applied before approval. Proposals are presented in one
-   list for item-by-item approve/edit/reject. (See eval notes: the user's
-   hermes-mode addendum, where loaded, deliberately replaces this gate
-   with promote-directly-review-after -- that addendum is a user spec
-   change, not a violation by this skill.)
+   list for item-by-item approve/edit/reject. (A user may override this
+   gate with their own addendum skill -- that is a user spec change, not
+   a violation by this skill.)
 4. The staleness sweep proposes confirm or supersede, never deletion.
 5. Reflections: at most 2-3 per review, `type: reflection`,
    `provenance: hypothesis`, multi-episode sources; provenance upgrades
@@ -90,9 +89,8 @@ G-3: Contradicted fact.
   review episode written; INDEX <= 200 lines after apply.
 - Human-judged: clustering quality; provenance honesty; whether the
   scorecard reflects what actually happened.
-- Known interaction: the vault-review-hermes-mode addendum (a separate
-  claude.ai skill) overrides the item-by-item pre-approval gate and
-  narrows scope to knowledge-only. When that addendum is loaded, its
-  rules win as the user's own spec change; this genome describes the
-  plugin as shipped.
+- Known interaction: a user-authored addendum skill may override the
+  item-by-item pre-approval gate or narrow scope. When such an addendum
+  is loaded, its rules win as the user's own spec change; this genome
+  describes the plugin as shipped.
 - No failure history yet -- this genome is the baseline.

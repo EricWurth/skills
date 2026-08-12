@@ -1,7 +1,7 @@
 {
   "name": "openintellect-skills",
   "version": "1.0.0",
-  "description": "Eric's authored skill library, bundled: skill-evolution, storm-research, critical-thinking, framework-forge, problem-hunt, document-forge, interview-prep, and vault-review-hermes-mode. Every skill carries a genome/intent.md so the skill-evolution sweep can target it.",
+  "description": "Eric's authored skill library, bundled: skill-evolution, storm-research, critical-thinking, framework-forge, problem-hunt, document-forge, and interview-prep. Every skill carries a genome/intent.md so the skill-evolution sweep can target it.",
   "author": {
     "name": "Eric Wurth",
     "email": "ewurth@gmail.com"
