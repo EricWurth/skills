@@ -1,7 +1,5 @@
 # Memory Vault
 
-*An OpenIntellect pattern*
-
 A file-based, human-gated memory system for AI agents. One folder of plain markdown with YAML frontmatter that any agent surface can read, maintained by a weekly review you approve rather than by unsupervised automation.
 
 The principle: **deliberate writes, gated promotion, quiet reads, cold path only.** Agents append session summaries; only a human-approved review promotes facts, retires stale ones, and keeps the store honest. Nothing is deleted, everything carries provenance, and no memory operation runs per-message.
@@ -35,7 +33,5 @@ The vault also includes a `library/` folder for curated reference artifacts (des
 Every documented failure of file-based agent memory is a failure of files without a curator. If the weekly review stops happening, this vault degrades into the same stale-note graveyard as every unsupervised memory tool. The review is not maintenance on the system. It is the system.
 
 ## Design lineage & provenance
-
-Memory Vault is part of the OpenIntellect R&D portfolio.
 
 Supersede-not-delete follows Zep/Graphiti's temporal invalidation and matches AWS AgentCore and Claude Code's Auto Dream. The reader/writer split follows Letta's sleep-time agent architecture. Reflections follow Stanford's Generative Agents. Layered loading follows MemPalace and MemGPT's block budgets. The human approval gate is the part most tools skip, and the part the failure reports keep proving necessary.

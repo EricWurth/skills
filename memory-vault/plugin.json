@@ -1,9 +1,9 @@
 {
   "name": "memory-vault",
   "version": "0.2.2",
-  "description": "Memory Vault, an OpenIntellect pattern: a file-based, human-gated memory system for AI agents. One vault of markdown files with YAML frontmatter that any agent surface can read; deliberate writes, gated promotion, quiet reads, cold-path maintenance.",
+  "description": "Memory Vault: a file-based, human-gated memory system for AI agents. One vault of markdown files with YAML frontmatter that any agent surface can read; deliberate writes, gated promotion, quiet reads, cold-path maintenance.",
   "author": {
-    "name": "OpenIntellect"
+    "name": "Eric Wurth"
   },
   "keywords": [
     "memory",

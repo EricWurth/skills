@@ -15,13 +15,19 @@ Built and maintained by [Eric Wurth](https://www.ericwurth.com).
 | [`critical-thinking/`](critical-thinking/) | A backward-chaining reasoning method with disciplined assumption-handling — for any problem, plan, or recommendation, not just on explicit request. |
 | [`storm-research/`](storm-research/) | Turns one topic into a verified, multi-perspective HTML research briefing: five expert lenses, a contradiction map, then mandatory adversarial fact-checking before delivery. |
 | [`skill-evolution/`](skill-evolution/) | Evolves other skills on a disciplined schedule — finds a real technique gap, proves the gain with a constructed test, sandboxes it, and gates promotion behind explicit human approval. |
+| [`framework-forge/`](framework-forge/) | Takes a framework thesis drawn from experience and hardens it into a publishable document: verify the author's claims, ground them in the territory, draft, five-persona adversarial review, remediate, land. |
+| [`document-forge/`](document-forge/) | A staged production pipeline for business documents (memos, proposals, strategy docs) — isolated task scoping and explicit acceptance criteria per stage, not one-shot drafting. |
+| [`problem-hunt/`](problem-hunt/) | Hunts for a real, unsolved-in-practice problem in AI — scans practitioner pain, adversarially tries to kill each candidate, gates for novelty, then co-brainstorms a solution. |
+| [`interview-prep/`](interview-prep/) | Builds a complete, research-backed prep report for a specific job interview: company research, role analysis, anticipated questions. |
 | [`memory-vault/`](memory-vault/) | A file-based, human-gated memory system for AI agents — a plugin of four skills (init, capture, conventions, review) rather than a single skill. |
+| [`delegate/`](delegate/) | A plugin with an agent that takes end-to-end ownership of a handed-off problem and reports back in a decision-queue format, plus a status skill. |
+| [`rulegate/`](rulegate/) | A plugin that makes project rules enforceable rather than advisory — audits rules against a quality bar, compiles plans, and gates work against them. |
 | [`resumebot`](https://github.com/EricWurth/resumebot) | A job-search operating system for Claude Code — master resume builder, job-targeting coach, Excel application tracker, scheduled board scans, tailored resume packets, an apply-tab queue, and email-driven tracker updates. A full plugin in its own repo: install with `/plugin marketplace add EricWurth/resumebot`. |
 
 ## A shared pattern: genome vs. phenotype
 
-Three of these skills (`critical-thinking`, `storm-research`, and the
-skills `skill-evolution` targets) separate two files:
+Most of these skills (and every skill `skill-evolution` targets)
+separate two files:
 
 - **`SKILL.md`** — the phenotype. What the model actually reads and
   executes.
