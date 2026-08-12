@@ -18,7 +18,6 @@ Built and maintained by [Eric Wurth](https://www.ericwurth.com).
 | [`framework-forge/`](framework-forge/) | Takes a framework thesis drawn from experience and hardens it into a publishable document: verify the author's claims, ground them in the territory, draft, five-persona adversarial review, remediate, land. |
 | [`document-forge/`](document-forge/) | A staged production pipeline for business documents (memos, proposals, strategy docs) — isolated task scoping and explicit acceptance criteria per stage, not one-shot drafting. |
 | [`problem-hunt/`](problem-hunt/) | Hunts for a real, unsolved-in-practice problem in AI — scans practitioner pain, adversarially tries to kill each candidate, gates for novelty, then co-brainstorms a solution. |
-| [`interview-prep/`](interview-prep/) | Builds a complete, research-backed prep report for a specific job interview: company research, role analysis, anticipated questions. |
 | [`memory-vault/`](memory-vault/) | A file-based, human-gated memory system for AI agents — a plugin of four skills (init, capture, conventions, review) rather than a single skill. |
 | [`delegate/`](delegate/) | A plugin with an agent that takes end-to-end ownership of a handed-off problem and reports back in a decision-queue format, plus a status skill. |
 | [`rulegate/`](rulegate/) | A plugin that makes project rules enforceable rather than advisory — audits rules against a quality bar, compiles plans, and gates work against them. |
