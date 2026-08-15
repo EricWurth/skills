@@ -1,0 +1,21 @@
+{
+  "name": "memory-vault",
+  "version": "0.2.2",
+  "description": "Memory Vault: a file-based, human-gated memory system for AI agents. One vault of markdown files with YAML frontmatter that any agent surface can read; deliberate writes, gated promotion, quiet reads, cold-path maintenance.",
+  "author": {
+    "name": "Eric Wurth"
+  },
+  "keywords": [
+    "memory",
+    "knowledge-management",
+    "agent-memory",
+    "markdown"
+  ],
+  "license": "MIT",
+  "skills": [
+    "./skills/vault-capture",
+    "./skills/vault-conventions",
+    "./skills/vault-init",
+    "./skills/vault-review"
+  ]
+}

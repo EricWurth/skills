@@ -1,0 +1,61 @@
+# Check-in rule: a file belongs here only if a skill or plugin needs it to
+# run, or a maintainer needs it to verify one. Everything else stays local.
+#
+# The three tiers:
+#   ships   -- skills/, plugins/, .claude-plugin/, README, LICENSE
+#   tooling -- scripts/ (tracked: CI and contributors need to run the checks)
+#   local   -- everything below
+
+# --- build output -------------------------------------------------------
+# Artifacts are rebuilt from source on every release. Committing them is how
+# a stale bundle outlives the tree it was built from.
+dist/
+build/
+*.plugin
+*.zip
+*.tar
+*.tgz
+
+# --- python ------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# --- node --------------------------------------------------------------
+node_modules/
+
+# --- local agent + editor state ----------------------------------------
+# Machine-specific: permissions, worktrees, MCP auth. Never portable.
+.claude/settings.local.json
+.claude/worktrees/
+.claude/sessions/
+.vscode/
+.idea/
+*.code-workspace
+
+# --- private working material ------------------------------------------
+# Editorial reasoning, QC notes, and scratch work. Useful to keep, wrong to
+# publish -- see PROVENANCE.md, which records what was deliberately excluded
+# from this collection and why.
+PROVENANCE.md
+scratchpad/
+notes/
+*.local.md
+*.draft.md
+
+# --- secrets -----------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+
+# --- os ----------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini

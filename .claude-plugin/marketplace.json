@@ -1,0 +1,38 @@
+{
+  "name": "ericwurth",
+  "owner": {
+    "name": "Eric Wurth",
+    "url": "https://www.ericwurth.com"
+  },
+  "description": "Reusable Claude skills and plugins — reasoning, research, agent memory, delegation, and rule enforcement. Install any plugin independently.",
+  "plugins": [
+    {
+      "name": "thinking-tools",
+      "source": "./",
+      "description": "Backward-chaining problem analysis, multi-perspective research briefings, staged document production, framework hardening, and a skill-evolution maintenance pass.",
+      "category": "productivity",
+      "keywords": ["reasoning", "research", "writing", "critical-thinking"]
+    },
+    {
+      "name": "memory-vault",
+      "source": "./plugins/memory-vault",
+      "description": "A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance.",
+      "category": "productivity",
+      "keywords": ["memory", "knowledge-management", "agent-memory"]
+    },
+    {
+      "name": "rulegate",
+      "source": "./plugins/rulegate",
+      "description": "Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger.",
+      "category": "engineering",
+      "keywords": ["enforcement", "hooks", "rules", "governance"]
+    },
+    {
+      "name": "delegate",
+      "source": "./plugins/delegate",
+      "description": "A senior-resource agent that owns problems end-to-end and reports in decision-queue format.",
+      "category": "productivity",
+      "keywords": ["agent", "delegation", "charter"]
+    }
+  ]
+}
