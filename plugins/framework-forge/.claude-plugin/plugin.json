@@ -1,0 +1,14 @@
+{
+  "name": "framework-forge",
+  "version": "1.0.0",
+  "description": "Use when someone has a framework thesis drawn from their own experience that they want researched, hardened, and built into a mature publishable document, or says \"forge this framework\" / \"harden...",
+  "author": {
+    "name": "Eric Wurth",
+    "url": "https://www.ericwurth.com"
+  },
+  "repository": "https://github.com/EricWurth/skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/framework-forge"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "document-forge",
+  "version": "1.0.0",
+  "description": "Run a disciplined, staged production pipeline for a business document (memo, proposal, strategy doc, brief, report) that mirrors how coding agent pipelines get reliability: isolated task scoping per...",
+  "author": {
+    "name": "Eric Wurth",
+    "url": "https://www.ericwurth.com"
+  },
+  "repository": "https://github.com/EricWurth/skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/document-forge"
+  ]
+}

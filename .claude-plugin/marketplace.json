@@ -4,18 +4,72 @@
     "name": "Eric Wurth",
     "url": "https://www.ericwurth.com"
   },
-  "description": "Reusable Claude skills and plugins — reasoning, research, agent memory, delegation, and rule enforcement. Install any plugin independently.",
+  "description": "Reusable Claude skills and plugins. Skills are self-contained folders you can copy or upload on their own; plugins install through the marketplace.",
   "plugins": [
     {
-      "name": "thinking-tools",
-      "source": "./plugins/thinking-tools",
-      "description": "Backward-chaining problem analysis, multi-perspective research briefings, staged document production, framework hardening, and a skill-evolution maintenance pass.",
+      "name": "critical-thinking",
+      "source": "./plugins/critical-thinking",
+      "description": "Rigorous problem-solving method for backward-chaining from a goal to a task breakdown, with disciplined assumption-handling and an optimist default. Use whenever solving a problem, designing a system...",
       "category": "productivity",
       "keywords": [
         "reasoning",
-        "research",
+        "problem-solving",
+        "assumptions"
+      ]
+    },
+    {
+      "name": "document-forge",
+      "source": "./plugins/document-forge",
+      "description": "Run a disciplined, staged production pipeline for a business document (memo, proposal, strategy doc, brief, report) that mirrors how coding agent pipelines get reliability: isolated task scoping per...",
+      "category": "productivity",
+      "keywords": [
         "writing",
-        "critical-thinking"
+        "documents",
+        "pipeline"
+      ]
+    },
+    {
+      "name": "framework-forge",
+      "source": "./plugins/framework-forge",
+      "description": "Use when someone has a framework thesis drawn from their own experience that they want researched, hardened, and built into a mature publishable document, or says \"forge this framework\" / \"harden...",
+      "category": "productivity",
+      "keywords": [
+        "writing",
+        "frameworks",
+        "research"
+      ]
+    },
+    {
+      "name": "problem-hunt",
+      "source": "./plugins/problem-hunt",
+      "description": "Hunt for a real, unsolved-in-practice problem in AI, then brainstorm a solution collaboratively with the user. Runs a 5-phase pipeline - scan practitioner pain, adversarially try to kill each...",
+      "category": "productivity",
+      "keywords": [
+        "research",
+        "ideation",
+        "product"
+      ]
+    },
+    {
+      "name": "storm-research",
+      "source": "./plugins/storm-research",
+      "description": "Use when someone asks to run Storm Research, use the storm-research skill, run the STORM method on a topic, says \"storm research this\" / \"storm report on X\" / \"give me a STORM briefing on X\", or...",
+      "category": "productivity",
+      "keywords": [
+        "research",
+        "briefing",
+        "citations"
+      ]
+    },
+    {
+      "name": "skill-evolution",
+      "source": "./plugins/skill-evolution",
+      "description": "Run a disciplined evolution sweep against one or more of your installed skills: refresh the technique library with current research, identify real candidate techniques against each skill's...",
+      "category": "engineering",
+      "keywords": [
+        "skills",
+        "maintenance",
+        "meta"
       ]
     },
     {

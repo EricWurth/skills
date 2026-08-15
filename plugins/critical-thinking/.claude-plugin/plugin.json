@@ -1,0 +1,14 @@
+{
+  "name": "critical-thinking",
+  "version": "1.0.0",
+  "description": "Rigorous problem-solving method for backward-chaining from a goal to a task breakdown, with disciplined assumption-handling and an optimist default. Use whenever solving a problem, designing a system...",
+  "author": {
+    "name": "Eric Wurth",
+    "url": "https://www.ericwurth.com"
+  },
+  "repository": "https://github.com/EricWurth/skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/critical-thinking"
+  ]
+}

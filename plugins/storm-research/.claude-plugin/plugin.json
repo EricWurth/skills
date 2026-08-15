@@ -1,0 +1,14 @@
+{
+  "name": "storm-research",
+  "version": "1.0.0",
+  "description": "Use when someone asks to run Storm Research, use the storm-research skill, run the STORM method on a topic, says \"storm research this\" / \"storm report on X\" / \"give me a STORM briefing on X\", or...",
+  "author": {
+    "name": "Eric Wurth",
+    "url": "https://www.ericwurth.com"
+  },
+  "repository": "https://github.com/EricWurth/skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/storm-research"
+  ]
+}

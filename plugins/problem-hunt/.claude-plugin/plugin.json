@@ -1,0 +1,14 @@
+{
+  "name": "problem-hunt",
+  "version": "1.0.0",
+  "description": "Hunt for a real, unsolved-in-practice problem in AI, then brainstorm a solution collaboratively with the user. Runs a 5-phase pipeline - scan practitioner pain, adversarially try to kill each...",
+  "author": {
+    "name": "Eric Wurth",
+    "url": "https://www.ericwurth.com"
+  },
+  "repository": "https://github.com/EricWurth/skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/problem-hunt"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "skill-evolution",
+  "version": "1.0.0",
+  "description": "Run a disciplined evolution sweep against one or more of your installed skills: refresh the technique library with current research, identify real candidate techniques against each skill's...",
+  "author": {
+    "name": "Eric Wurth",
+    "url": "https://www.ericwurth.com"
+  },
+  "repository": "https://github.com/EricWurth/skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/skill-evolution",
+    "./skills/skill-evolution-sweep"
+  ]
+}
