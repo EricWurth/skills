@@ -38,10 +38,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
 from skillmodel import load_json  # noqa: E402
 
 # Directories a plugin may ship beyond its declared skills. Anything not
-# named here stays out -- notably scripts/ and references/ at the repo root,
-# which are maintainer tooling, and plugins/, which would nest every other
-# plugin inside the root one.
-PLUGIN_DIRS = ["agents", "commands", "hooks", "templates", "examples"]
+# named here stays out.
+PLUGIN_DIRS = ["agents", "commands", "hooks", "templates", "examples", "scripts"]
 PLUGIN_FILES = ["README.md", ".mcp.json", "LICENSE"]
 
 
@@ -80,13 +78,12 @@ def collect(repo: Path, source: Path, manifest: dict) -> list[tuple[Path, str]]:
         f = source / name
         if f.is_file():
             add(f, source)
-
-    # A plugin's own scripts/ ships; the repo root's does not.
-    if source.resolve() != repo.resolve():
-        scripts = source / "scripts"
-        if scripts.is_dir():
-            for f in iter_files(scripts):
-                add(f, source)
+        elif name == "LICENSE":
+            # Plugins inherit the repository's licence rather than each
+            # carrying a copy.
+            root_licence = repo / name
+            if root_licence.is_file():
+                entries.append((root_licence, name))
 
     return entries
 

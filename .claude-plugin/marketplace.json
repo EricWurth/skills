@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "thinking-tools",
-      "source": "./",
+      "source": "./plugins/thinking-tools",
       "description": "Backward-chaining problem analysis, multi-perspective research briefings, staged document production, framework hardening, and a skill-evolution maintenance pass.",
       "category": "productivity",
       "keywords": [
