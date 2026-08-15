@@ -11,28 +11,58 @@
       "source": "./",
       "description": "Backward-chaining problem analysis, multi-perspective research briefings, staged document production, framework hardening, and a skill-evolution maintenance pass.",
       "category": "productivity",
-      "keywords": ["reasoning", "research", "writing", "critical-thinking"]
+      "keywords": [
+        "reasoning",
+        "research",
+        "writing",
+        "critical-thinking"
+      ]
     },
     {
       "name": "memory-vault",
       "source": "./plugins/memory-vault",
       "description": "A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance.",
       "category": "productivity",
-      "keywords": ["memory", "knowledge-management", "agent-memory"]
+      "keywords": [
+        "memory",
+        "knowledge-management",
+        "agent-memory"
+      ]
     },
     {
       "name": "rulegate",
       "source": "./plugins/rulegate",
       "description": "Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger.",
       "category": "engineering",
-      "keywords": ["enforcement", "hooks", "rules", "governance"]
+      "keywords": [
+        "enforcement",
+        "hooks",
+        "rules",
+        "governance"
+      ]
     },
     {
       "name": "delegate",
       "source": "./plugins/delegate",
       "description": "A senior-resource agent that owns problems end-to-end and reports in decision-queue format.",
       "category": "productivity",
-      "keywords": ["agent", "delegation", "charter"]
+      "keywords": [
+        "agent",
+        "delegation",
+        "charter"
+      ]
+    },
+    {
+      "name": "resumebot",
+      "source": "./plugins/resumebot",
+      "description": "A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, and interview prep.",
+      "category": "productivity",
+      "keywords": [
+        "job-search",
+        "resume",
+        "career",
+        "tracker"
+      ]
     }
   ]
 }

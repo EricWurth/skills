@@ -1,0 +1,50 @@
+name: build
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Both scripts are stdlib-only by design, so there is nothing to
+      # install and nothing to pin. Adding a dependency here means the
+      # checks stop being runnable on a bare machine.
+
+      - name: Validate structure
+        run: python scripts/validate.py
+
+      - name: Build plugin archives
+        run: python scripts/package.py --skip-validate
+
+      # Archives are built on Windows day to day and on Linux here. The
+      # packager asserts forward-slash paths, but proving the artifacts open
+      # on a different OS than the one that wrote them is the check that
+      # actually matters.
+      - name: Verify archives open
+        run: |
+          for f in dist/*.plugin; do
+            python -c "
+          import sys, zipfile
+          z = zipfile.ZipFile('$f')
+          bad = z.testzip()
+          assert bad is None, f'corrupt: {bad}'
+          assert '.claude-plugin/plugin.json' in z.namelist(), 'no manifest'
+          print('$f', len(z.namelist()), 'entries')
+          "
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: plugins
+          path: dist/*.plugin
+          retention-days: 14
