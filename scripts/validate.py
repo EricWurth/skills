@@ -17,6 +17,9 @@ Checks, in rough order of how badly they bite:
   8. Relative links inside SKILL.md resolve on disk.
   9. Anything named as third-party in the root PROVENANCE.md carries its own
      PROVENANCE.md, so the claim travels with the files.
+ 10. Relative links inside every README.md resolve on disk -- not just
+     SKILL.md. The root catalogue is checked separately against the
+     manifests; this catches everything else, including the prose around it.
 
 Exit code is 1 if any error fired, 0 otherwise. Warnings never fail the run.
 
@@ -86,7 +89,7 @@ def check_skills(root: Path):
             warn(f"{s.rel}/SKILL.md: user-invoked but carries a "
                  f"{len(desc)}-char description; nothing matches against it")
 
-        check_links(s.path, s.text, s.rel)
+        check_links(s.path, s.text, f"{s.rel}/SKILL.md")
 
     for name, where in sorted(by_name.items()):
         if len(where) > 1:
@@ -95,13 +98,27 @@ def check_skills(root: Path):
     return skills
 
 
-def check_links(skill_dir: Path, text: str, rel: str) -> None:
+def check_links(base_dir: Path, text: str, label: str) -> None:
     for target in LINK_RE.findall(text):
         if target.startswith(("http://", "https://", "#", "mailto:")):
             continue
-        path = (skill_dir / target.split("#", 1)[0]).resolve()
+        path = (base_dir / target.split("#", 1)[0]).resolve()
         if not path.exists():
-            err(f"{rel}/SKILL.md: broken link -> {target}")
+            err(f"{label}: broken link -> {target}")
+
+
+def check_readmes(root: Path) -> None:
+    """Every README.md, not just SKILL.md -- the root catalogue is
+    generated and checked separately, but nothing else ever confirmed a
+    README's own links resolve. Found four true positives (zero broken)
+    and two prose gaps by hand before this existed; this is what makes
+    that a standing check instead of a one-off pass."""
+    for readme in sorted(root.rglob("README.md")):
+        if ".git" in readme.parts:
+            continue
+        rel = readme.relative_to(root).as_posix()
+        text = readme.read_text(encoding="utf-8", errors="replace")
+        check_links(readme.parent, text, rel)
 
 
 def check_manifests(root: Path, skills):
@@ -260,6 +277,7 @@ def main() -> int:
     check_marketplace(root)
     check_unpublished(root)
     check_catalog(root)
+    check_readmes(root)
 
     if unreleased:
         print()
