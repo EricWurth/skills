@@ -27,6 +27,7 @@ Say "set up rulegate". The setup skill scaffolds `.rulegate/`, reads your existi
 - The claims check is keyword-based on both sides. It catches the documented false-green pattern, not adversarial phrasing.
 - The planner can miscompile. Enforcement is then perfect against a wrong plan; the plan file is deliberately short so review is cheap. Use "review the plan" to re-derive from scratch.
 - Works only where a hook engine exists (Claude Code / Cowork). Chat has no checkpoints; do not expect parity.
+- `.rulegate/RULES.md` is read into the front gate's and the judge's own prompts as trusted instruction material. That is inherent to a prompt-based hook reading a project file, not a bug — but it means a compromised or attacker-influenced RULES.md (shared repo, malicious PR) could steer the compiled plan or the judge's annotations. Treat RULES.md with the same trust you'd give CLAUDE.md itself.
 
 ## Rules audit (v0.2)
 

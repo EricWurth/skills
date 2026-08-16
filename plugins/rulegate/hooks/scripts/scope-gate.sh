@@ -20,9 +20,22 @@ SCOPE=$(awk '/^## CURRENT/{f=1} f && /^files:/{sub(/^files:[ ]*/,""); print; exi
 # common write-ish targets inside bash commands).
 PATHS=$(printf '%s' "$INPUT" | grep -oE '"file_path"[[:space:]]*:[[:space:]]*"[^"]+"' | sed 's/.*:[[:space:]]*"//; s/"$//')
 if [ -z "$PATHS" ]; then
-  CMD=$(printf '%s' "$INPUT" | grep -oE '"command"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/.*:[[:space:]]*"//; s/"$//')
+  # [^"\\]* alone stops at the first embedded quote; a command like
+  # echo "hello" > out.txt is JSON-escaped as \"hello\", and the old
+  # pattern truncated CMD to `echo \`, silently losing the redirect that
+  # follows. \\. consumes an escaped char (\" \\ \n ...) as one unit so
+  # extraction runs to the real closing quote instead.
+  CMD=$(printf '%s' "$INPUT" | grep -oE '"command"[[:space:]]*:[[:space:]]*"(\\.|[^"\\])*"' | sed 's/^"command"[[:space:]]*:[[:space:]]*"//; s/"$//')
   # Only gate bash commands that plausibly mutate files; reads pass freely.
-  if printf '%s' "$CMD" | grep -qE '(^|[;&| ])(rm|mv|cp|tee|sed[[:space:]]+-i|>[^>]|>>)'; then
+  # Two independent checks, not one shared alternation: keyword commands
+  # (rm, mv, cp, tee, sed -i) need a preceding separator so they don't
+  # false-match inside an unrelated word ("warm", "form"). Redirect
+  # operators (> and >>) are metacharacters, not words -- requiring that
+  # same separator in front of them meant cat>file.txt (no space before
+  # the >) never matched at all, not just missed one path. They get their
+  # own unconstrained check.
+  if printf '%s' "$CMD" | grep -qE '(^|[;&| ])(rm|mv|cp|tee|sed[[:space:]]+-i)' || \
+     printf '%s' "$CMD" | grep -q '>'; then
     PATHS=$(printf '%s' "$CMD" | grep -oE '[A-Za-z0-9_./-]+\.[A-Za-z0-9]+' | sort -u)
   fi
 fi
