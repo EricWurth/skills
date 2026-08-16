@@ -40,37 +40,45 @@ your threshold, decided since — and an empty queue is a valid report.
 
 ## Requirements
 
-**A graph-shaped memory, for continuity — optional, and nothing here ships
-one.** Two of the agent's behaviours need it. It resurfaces a contradicted
-assumption by naming "what is downstream of it, by graph traversal, not
-remembered grievance," and `delegate-status` cites a node id per decision "so
-'walk me through why' is a traversal, not a reconstruction." Both want
-addressable nodes and edges.
+None. The method is self-contained: hand it an assignment and it will build
+a model, run the cast check, charter the work, execute inside the envelope,
+detect stuck, and report as a decision queue, with nothing else installed.
 
-That rules out a file-based store as a substitute: markdown with frontmatter
-has no node ids and nothing to traverse. Any MCP-backed graph memory will do —
-the agent never names a particular one.
+## What extends it
 
-**Without a graph it still works, and loses two specific things:** continuity
-across sessions, since it re-arrives at a problem by reading its own history;
-and evidence-gated dissent, since an objection that cannot be stored cannot
-resurface when evidence later contradicts the decision. Everything else — the
-cast check, the charter and its four terms, stuck-detection, escalation with
-a recommendation, decision-queue reporting — is self-contained. Run it inside
-one session and you would not notice the difference.
+Two things make it better, and neither is needed to run it.
 
-**A harness that dispatches subagents, for the agent itself.** `delegate` is
-an agent definition, and outside a coding harness there is nothing to
-dispatch it as one. The method still runs — you can hand it work and it
-will charter, execute, and report — but it runs in the main conversation
-rather than in its own context, so it does not keep your context clean.
+**`rulegate` makes its claims checkable.** Delegate already promises that
+completion claims are backed by evidence and that steps stay in scope.
+Rulegate is what turns those promises into something external: the scope
+gate blocks an out-of-scope write, the ledger records what actually ran,
+the output gate blocks a completion claim the ledger does not support.
+Without it the promises still hold as instructions, and nothing verifies
+them — which matters because a run where the agent overclaimed and a run
+where it did not look identical from outside. That is the specific failure
+rulegate was built for.
+
+The pairing runs both ways: rulegate's plan steps carry a mandatory
+`estimate:` line specifically so stuck-detection has a baseline to measure
+actuals against.
+
+**A graph-shaped memory gives it continuity.** Two behaviours use one:
+resurfacing a contradicted assumption by naming "what is downstream of it,
+by graph traversal", and `delegate-status` citing a node id per decision so
+"walk me through why" is a traversal rather than a reconstruction. Both
+want addressable nodes and edges, which rules out a file-based store —
+markdown with frontmatter has nothing to traverse. Any MCP-backed graph
+memory does; the agent never names a particular one.
+
+Without one it loses continuity across sessions and evidence-gated dissent,
+since an objection that cannot be stored cannot resurface when evidence
+later contradicts the decision. Inside a single session the difference does
+not show.
+
+**Outside a coding harness** there is nothing to dispatch the agent as a
+subagent, so the method runs in the main conversation rather than its own
+context. It works; it just does not keep your context clean.
 `delegate-status` is an ordinary skill and works anywhere.
-
-**`rulegate`, for enforcement.** The agent's plans are compiled by
-rulegate's front gate, bounded by its scope gate, and evidenced by its
-ledger. Installed alone, delegate still follows the method, but nothing
-binds it — the completion claims it is told the output gate will block go
-unchecked.
 
 ## The agent is named Rick
 
