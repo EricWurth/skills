@@ -2,11 +2,6 @@
 
 An agent that owns an assigned problem end-to-end and reports as a decision queue.
 
-> **Not published.** This plugin depends on a memory graph that is not yet
-> released, so it is absent from the marketplace and cannot be installed. It
-> is complete and validated; it is waiting on its dependency. See
-> [Requirements](#requirements).
-
 Hand it work — "take this, you own it" — and it builds a model of the system
 before committing to anything, charters the work, then executes inside that
 charter without checking in on every fork.
@@ -45,16 +40,24 @@ your threshold, decided since — and an empty queue is a valid report.
 
 ## Requirements
 
-**A memory graph — currently unavailable.** The agent recalls history before
-proposing, persists dissent as opinions, and traverses the graph to find what
-is downstream of a contradicted assumption: "by graph traversal, not
-remembered grievance." Its own closing line is "you re-arrive at your problem
-each session through the graph; it is your continuity."
+**A graph-shaped memory, for continuity — optional, and nothing here ships
+one.** Two of the agent's behaviours need it. It resurfaces a contradicted
+assumption by naming "what is downstream of it, by graph traversal, not
+remembered grievance," and `delegate-status` cites a node id per decision "so
+'walk me through why' is a traversal, not a reconstruction." Both want
+addressable nodes and edges.
 
-That graph is muninn, which is not published. This is not a soft dependency
-that degrades gracefully — without it the agent holds instructions with
-nothing to read or write, and loses continuity between sessions entirely.
-This plugin stays out of the marketplace until muninn ships.
+That rules out a file-based store as a substitute: markdown with frontmatter
+has no node ids and nothing to traverse. Any MCP-backed graph memory will do —
+the agent never names a particular one.
+
+**Without a graph it still works, and loses two specific things:** continuity
+across sessions, since it re-arrives at a problem by reading its own history;
+and evidence-gated dissent, since an objection that cannot be stored cannot
+resurface when evidence later contradicts the decision. Everything else — the
+cast check, the charter and its four terms, stuck-detection, escalation with
+a recommendation, decision-queue reporting — is self-contained. Run it inside
+one session and you would not notice the difference.
 
 **`rulegate`, for enforcement.** The agent's plans are compiled by
 rulegate's front gate, bounded by its scope gate, and evidenced by its

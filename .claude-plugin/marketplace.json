@@ -51,6 +51,17 @@
         "career",
         "tracker"
       ]
+    },
+    {
+      "name": "delegate",
+      "source": "./plugins/delegate",
+      "description": "A senior-resource agent that owns problems end-to-end and reports in decision-queue format.",
+      "category": "productivity",
+      "keywords": [
+        "agent",
+        "delegation",
+        "charter"
+      ]
     }
   ]
 }
