@@ -3,7 +3,9 @@
 
 Checks, in rough order of how badly they bite:
 
-  1. Every SKILL.md parses and declares a name and description.
+  1. Every SKILL.md parses and declares a name and description, and carries
+     a genome/intent.md. The genome never loads at runtime -- nothing costs
+     more by having one -- so this is unconditional.
   2. Frontmatter `name` matches its directory name, and is kebab-case.
   3. No two skills share a name -- collisions are silent at load time.
   4. Every plugin manifest declares an explicit `skills` array. Without one,
@@ -90,6 +92,13 @@ def check_skills(root: Path):
                  f"{len(desc)}-char description; nothing matches against it")
 
         check_links(s.path, s.text, f"{s.rel}/SKILL.md")
+
+        if not s.has_genome:
+            # genome/intent.md never loads at runtime -- nothing in SKILL.md
+            # instructs reading it during normal execution, only skill-evolution's
+            # explicit sweep does. It costs nothing at rest, so there is no
+            # tradeoff to weigh: every skill carries one.
+            err(f"{s.rel}: no genome/intent.md")
 
     for name, where in sorted(by_name.items()):
         if len(where) > 1:
