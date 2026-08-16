@@ -56,7 +56,7 @@ edits to apply live.
 
 They split on one axis: who can invoke them. **User-invoked** skills are reachable only when you type them — they orchestrate. **Model-invoked** skills can be typed *or* reached for automatically when the task fits — they hold the reusable discipline. A user-invoked skill may call a model-invoked one, never another user-invoked one.
 
-*Chat* marks what works outside a coding harness. Skills get a filesystem and bash everywhere, so bundled scripts are fine; hooks, slash commands, MCP servers, and bundled subagents are not. Derived from contents, not declared. On claude.ai network access varies by account, so anything doing live web research may not work for every reader.
+*Chat* marks what works outside a coding harness. Skills get a filesystem and bash everywhere, and anything calling for parallel agents simply runs in sequence instead — only hooks, slash commands, and MCP servers have no counterpart. On claude.ai network access varies by account, so a skill doing live web research may not work for every reader.
 
 ### Skills
 
@@ -66,10 +66,10 @@ Self-contained folders. Copy one into `.claude/skills/`, or upload it on claude.
 
 | | Chat | What it does |
 |---|:--:|---|
-| [`/document-forge`](skills/document-forge) | — | A staged production pipeline for business documents — isolated scoping and explicit acceptance criteria per stage, not one-shot drafting |
-| [`/framework-forge`](skills/framework-forge) | — | Hardens a framework thesis into a publishable document |
+| [`/document-forge`](skills/document-forge) | ✅ | A staged production pipeline for business documents — isolated scoping and explicit acceptance criteria per stage, not one-shot drafting |
+| [`/framework-forge`](skills/framework-forge) | ✅ | Hardens a framework thesis into a publishable document |
 | [`/problem-hunt`](skills/problem-hunt) | ✅ | Hunt for a real, unsolved-in-practice problem in AI, then co-brainstorm a solution |
-| [`/storm-research`](skills/storm-research) | — | Turns one topic into a verified multi-perspective research briefing — five expert lenses, a contradiction map, then adversarial fact-checking |
+| [`/storm-research`](skills/storm-research) | ✅ | Turns one topic into a verified multi-perspective research briefing — five expert lenses, a contradiction map, then adversarial fact-checking |
 
 **Model-invoked**
 
@@ -86,8 +86,8 @@ Installed through the marketplace. Each carries more than instructions — extra
 | [`skill-evolution`](plugins/skill-evolution) | ✅ | Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
 | [`memory-vault`](plugins/memory-vault) | ✅ | A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance |
 | [`rulegate`](plugins/rulegate) | — | Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
-| [`resumebot`](plugins/resumebot) | — | A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, and interview prep |
-| [`delegate`](plugins/delegate) | — | A senior-resource agent that owns problems end-to-end and reports in decision-queue format |
+| [`resumebot`](plugins/resumebot) | ✅ | A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, and interview prep |
+| [`delegate`](plugins/delegate) | ✅ | A senior-resource agent that owns problems end-to-end and reports in decision-queue format |
 
 **skill-evolution**
 

@@ -59,6 +59,13 @@ cast check, the charter and its four terms, stuck-detection, escalation with
 a recommendation, decision-queue reporting — is self-contained. Run it inside
 one session and you would not notice the difference.
 
+**A harness that dispatches subagents, for the agent itself.** `delegate` is
+an agent definition, and outside a coding harness there is nothing to
+dispatch it as one. The method still runs — you can hand it work and it
+will charter, execute, and report — but it runs in the main conversation
+rather than in its own context, so it does not keep your context clean.
+`delegate-status` is an ordinary skill and works anywhere.
+
 **`rulegate`, for enforcement.** The agent's plans are compiled by
 rulegate's front gate, bounded by its scope gate, and evidenced by its
 ledger. Installed alone, delegate still follows the method, but nothing

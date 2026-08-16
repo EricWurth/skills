@@ -77,43 +77,28 @@ def first_sentence(text: str, limit: int = 155) -> str:
 
 
 def runs_in_chat(path: Path) -> bool:
-    """True when this works outside a coding harness.
+    """True when this still works outside a coding harness.
 
-    Not "is it only instructions". Skills run in a code execution
-    environment on every surface, with filesystem access and bash, and
-    bundled scripts are a documented content type that Claude runs via bash
-    -- including on claude.ai, where custom Skills upload as zips with code
-    execution enabled. Shipping a script disqualifies nothing.
+    Deliberately narrow, after getting it wrong twice in both directions.
 
-    What genuinely does not travel is the plugin machinery of a coding
-    harness: hooks fire on tool-use events, commands are slash commands,
-    an MCP server needs a host to run it, and bundled subagent definitions
-    need a harness that can dispatch them.
+    Not a blocker: bundled scripts, which run via bash on every surface;
+    and instructions calling for subagents or parallel work, which degrade
+    rather than fail -- a skill telling the model to run five lenses in
+    parallel gets five lenses run in sequence, slower, same output. This
+    was verified against actual use in chat, not inferred.
 
-    Subagents are the other half: Claude Code only, and unavailable to
-    every other surface. A skill cannot spawn one -- it tells the main
-    agent to use the Agent tool -- so a skill whose method depends on
-    parallel agents fails in chat with no agents/ directory to give it
-    away. Hence the text check.
+    A blocker only where no counterpart exists at all: hooks need a
+    tool-use lifecycle to fire on, slash commands need a command registry,
+    and an MCP server needs a host process to run it.
 
     One caveat this cannot express: on claude.ai network access varies by
-    user and admin settings, so anything doing live web research may work
+    user and admin settings, so a skill doing live web research may work
     for one reader and not another.
     """
-    harness_only = ("hooks", "commands", "agents")
-    for d in harness_only:
-        if any(c.is_dir() and c.name == d for c in [path / d, *path.rglob(d)]):
+    for d in ("hooks", "commands"):
+        if any(c.is_dir() for c in [path / d, *path.rglob(d)]):
             return False
-    if (path / ".mcp.json").is_file():
-        return False
-    # Subagents are Claude Code only, and a skill cannot create one -- it
-    # instructs the main agent to use the Agent tool, which exists in no
-    # other surface. So instructions depending on parallel agents fail in
-    # chat even when the skill bundles no agents/ directory of its own.
-    for skill_md in path.rglob("SKILL.md"):
-        if NEEDS_AGENTS.search(skill_md.read_text(encoding="utf-8", errors="replace")):
-            return False
-    return True
+    return not (path / ".mcp.json").is_file()
 
 
 def tick(value: bool) -> str:
@@ -151,10 +136,10 @@ def render(plugins, standalone) -> str:
                  "one.")
     lines.append("")
     lines.append("*Chat* marks what works outside a coding harness. Skills "
-                 "get a filesystem and bash everywhere, so bundled scripts "
-                 "are fine; hooks, slash commands, MCP servers, and bundled "
-                 "subagents are not. Derived from contents, not declared. "
-                 "On claude.ai network access varies by account, so anything "
+                 "get a filesystem and bash everywhere, and anything calling "
+                 "for parallel agents simply runs in sequence instead — only "
+                 "hooks, slash commands, and MCP servers have no counterpart. "
+                 "On claude.ai network access varies by account, so a skill "
                  "doing live web research may not work for every reader.")
     lines.append("")
 
