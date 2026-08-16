@@ -123,14 +123,17 @@ The difference is what surrounds it.
 ```
 skills/critical-thinking/        a skill: instructions, nothing else
 ├── SKILL.md                     what the model reads and executes
-├── genome/intent.md             purpose, invariants, golden examples
-└── references/                  supporting material, loaded on demand
+└── genome/intent.md             purpose, invariants, golden examples
 
 plugins/rulegate/                a plugin: carries more than instructions
 ├── .claude-plugin/plugin.json   name, version, and the skills array
 ├── skills/                      one or more skills
 └── hooks/                       plus agents/, commands/, scripts/, templates/
 ```
+
+Some skills add more: `document-forge` also carries `references/`, `scripts/`,
+`agents/`, and `evals/`. None of that is required — the two files above are
+the whole contract.
 
 A skill that is only instructions stays in `skills/`, where it can be
 copied or uploaded directly. Wrapping it in a plugin would add a manifest
@@ -164,7 +167,10 @@ Stdlib only — nothing to install. CI runs all of these on every
 push, plus a check that each built archive opens on Linux.
 
 Standalone skills under `skills/` are published by being there — they are
-copied, not installed, so there is nothing to declare.
+copied, not installed, so there is nothing to declare. `skills/in-progress/`
+is the one exception: anything staged there is unfinished, excluded from the
+catalogue above, and not ready to copy — see its own README before taking
+anything from it.
 
 Inside a plugin it is the opposite: a skill ships only when that plugin's
 `skills` array names it. One present in the plugin but absent from the array
