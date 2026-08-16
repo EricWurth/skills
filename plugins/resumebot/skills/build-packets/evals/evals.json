@@ -1,0 +1,36 @@
+{
+  "skill_name": "build-packets",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "Prep packets for the top 5 roles in my tracker.",
+      "expected_behavior": "Triggers build-packets, matching its own description phrase ('prep packets'). Loads the tracker skill first. Queries via scripts/tracker_io.py for packetComplete=FALSE rows ordered by fit then queueRank, capped at the user's target tier from preferences.md. For each role: maps to a variant (or marks variant=custom for a genuine hybrid no standing variant fits), reuses the variant verbatim except the opening summary sentences and competency retune, generates the docx via scripts/build_resume.py into Applications/<Company>_<RoleName>/, runs scripts/preflight_lint.py before delivery, and runs the fresh-read QA gate (traceability to the master, standing omissions, JD alignment, variant conformance) before setting packetComplete=TRUE and status=ready."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "These roles look good to go -- get them ready to apply.",
+      "expected_behavior": "Triggers build-packets, not apply-tabs, since this echoes build-packets' own description phrase ('get these roles ready to apply') and no packet exists yet for packetComplete=FALSE rows -- 'ready to apply' here means producing the packet, not opening tabs. Runs the same pipeline: variant mapping written back to the tracker, script-generated docx, the lint gate, and the QA gate (traceability/omissions/JD-alignment/variant-conformance) before flipping packetComplete=TRUE and status=ready, then reports packets built, lint/QA results including any drift caught, skipped roles and why, and the new ready-queue count."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "Can you check the status of my applications and tell me how many are in each stage right now?",
+      "expected_behavior": "Does not invoke build-packets. This is a read-only status/counts question -- tracker's territory (its Dashboard sheet or a filtered query), not a request to generate resumes or cover letters. No variant mapping, docx generation, or lint/QA gate is implicated."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "Add a note to the Initech DevOps row -- recruiter said they're pausing the req for two weeks.",
+      "expected_behavior": "Does not invoke build-packets. This is a tracker field update (notes) on an existing row, handled by the tracker skill directly (append-only update, fresh read immediately before write, backup first) -- no packet generation, variant mapping, lint, or QA gate is implicated by adding a note."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "Get the Globex PM application ready -- I want to send it out this afternoon.",
+      "expected_behavior": "Genuinely ambiguous between build-packets and apply-tabs (the same prompt collides from build-packets' side); resolved by the tracker row's actual state, not by phrase-matching. If packetComplete=FALSE, build-packets is the correct skill to run. If the row is already packetComplete=TRUE and status=ready, this is apply-tabs' job to open the tab, and build-packets should not regenerate a packet that already exists and passed lint/QA just because the user said 'ready' or 'send it out.'"
+    }
+  ]
+}

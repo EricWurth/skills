@@ -1,0 +1,36 @@
+{
+  "skill_name": "vault-capture",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "That's everything for today -- capture this session to the vault before we wrap up.",
+      "expected_behavior": "Invokes the skill. \"Capture this session\" is a direct trigger phrase. Loads vault-conventions first, writes exactly one new file at episodes/YYYY-MM-DD-<kebab-topic>.md with the four required sections and nothing else, and confirms in one line with the filename and candidate count."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "We're right at the context limit and need to switch to a different task -- let's stop here for now.",
+      "expected_behavior": "Invokes the skill even without the literal words \"capture\" or \"vault.\" The description's \"before a long session ends or compacts\" covers this situation, not just its exact phrasing. Writes the episode per template, separating Decisions (user's) from Suggestions (Claude's) honestly."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "What does the vault say about my meeting preferences?",
+      "expected_behavior": "Does not invoke vault-capture. This is a read, not a settling event -- nothing is being decided, corrected, or concluded, so there is nothing to write. vault-conventions is the skill that should handle this lookup (INDEX then CATALOG then targeted file), not vault-capture, which only ever writes."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "Can you rename this variable to something clearer while we're in here?",
+      "expected_behavior": "Does not invoke the skill. An ordinary mid-session request with no settling event -- no decision made, no correction given, no session ending or compacting -- and the skill's own description scopes it to real settling events, not every message that touches work in progress."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "Good, let's lock in Redis for session caching -- that's decided. Now let's move on to the next feature.",
+      "expected_behavior": "Judgment call. A real settling event just occurred (a decision was stated), which is exactly what Candidates and Decisions exist to capture -- but the session is explicitly continuing, not ending or compacting, and vault-capture is scoped to session end/compaction rather than firing on every settled decision mid-session (that continuous behavior belongs to a different capture pattern, not this skill). The safer read is to note the decision for the eventual end-of-session episode rather than writing a file now, unless the skill's own judgment treats this as substantial enough on its own to not risk losing it."
+    }
+  ]
+}

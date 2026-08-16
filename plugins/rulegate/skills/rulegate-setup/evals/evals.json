@@ -1,0 +1,24 @@
+{
+  "skill_name": "rulegate-setup",
+  "invocation": "user-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "explicit_invocation",
+      "prompt": "Set up rulegate for this project.",
+      "expected_behavior": "Explicit invocation, matching the plugin README's canonical phrase and the skill's own description. Runs the documented Steps in order: create `.rulegate/` (empty `ledger.jsonl`, gitignored unless the user wants plans versioned), read CLAUDE.md and extract every behavioral rule, run rules-audit first (mandatory -- only enforceable, approved-rewritten, or knowingly-judgment rules proceed), then present the classification table for the user's correction before writing `.rulegate/RULES.md`."
+    },
+    {
+      "id": 2,
+      "category": "explicit_invocation",
+      "prompt": "Migrate my CLAUDE.md rules into rulegate's classified format.",
+      "expected_behavior": "Explicit invocation, matching the description's \"migrate my CLAUDE.md rules\" trigger phrase directly. Same Steps sequence as setup: audit first, then classify each extracted rule into exactly one of SEQUENCING/SCOPE/CLAIMS/STYLE/JUDGMENT. Extracted rules trace back to actual CLAUDE.md content only -- \"Do not invent rules the user's files do not contain.\""
+    },
+    {
+      "id": 3,
+      "category": "should_not_auto_trigger",
+      "prompt": "My rules keep getting ignored by the agent the longer our conversations run -- is there something structural I should be doing about that?",
+      "expected_behavior": "Because `disable-model-invocation: true` is set on this skill, the model must not auto-select rulegate-setup just because this description matches the problem rulegate exists to solve (compliance decaying with context depth, per the plugin README's opening). Without an explicit \"set up rulegate\" / \"init rulegate\" / \"migrate my CLAUDE.md rules\" style ask, the correct behavior is to explain the concept or describe rulegate conversationally, not to silently start scaffolding `.rulegate/` or running rules-audit as setup's first step."
+    }
+  ]
+}

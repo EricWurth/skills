@@ -1,0 +1,36 @@
+{
+  "skill_name": "interview-prep",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "I've got a hiring manager round with Acme Data Corp on Thursday at 2pm for the Compliance Program Manager role. Can you get me ready?",
+      "expected_behavior": "Invokes interview-prep. Gathers inputs first (JD, calendar entry for logistics/interviewer, prior context on Acme), decodes the role to a one-sentence core need, builds the what-good-looks-like section fresh for this function, tailors question anticipation to a hiring-manager round, and runs both gates (consistency against Master/MasterResume.md, recency on any time-sensitive claim) plus the red-team pass before publishing to Notion with a local copy."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "I have a call with the VP of Engineering at Meridian Health next week about their Director of Delivery role. No idea what to expect -- what should I know or study before then?",
+      "expected_behavior": "Invokes interview-prep even though the user didn't say 'prep me' explicitly -- 'mention an upcoming interview and ask what they should know, study, or expect' is a stated trigger. Derives the core need from the JD's duty verbs, builds what-good-looks-like for a delivery-director function filtered through Meridian's context, and reads the round as an exec-adjacent conversation given the VP-level interviewer."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "Can you tailor my resume for the Compliance Program Manager posting at Acme before I submit my application?",
+      "expected_behavior": "Does not invoke interview-prep. This is producing an application packet before any interview is scheduled, which is build-packets' job (variant selection, docx generation, lint/QA gates) -- interview-prep only engages once there is a specific interview to prepare for, not at the application stage."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "Is the Director of Delivery role at Meridian Health actually a good fit for me given my background?",
+      "expected_behavior": "Does not invoke interview-prep. This is a fit/targeting question that belongs to job-profile (or a tracker/job-scan scoring read), asked before any interview exists -- interview-prep assumes a specific scheduled interview and builds toward it, it does not evaluate whether to pursue a role in the first place."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "I've got an interview with Acme tomorrow -- just give me three good questions to ask them at the end, don't need the whole report.",
+      "expected_behavior": "Judgment call on scope, not on whether the topic is interview-prep's territory. The user is explicitly opting out of the full report (gates, publish, Notion), but the skill's Section 6 method still applies to whatever gets produced: avoid the two failure modes (too generic like 'what's the culture like', too far in the trenches like tooling/intake questions), aim at the mid-altitude signal (mandate, manager support, how work gets prioritized), and use at least one of the five mechanics (past-not-hypothetical, specific, triangulate, promise-ownership check, non-badmouthing frame) per question. Failing shape: handing back three generic or textbook questions because the full pipeline was declined."
+    }
+  ]
+}

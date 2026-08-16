@@ -1,0 +1,24 @@
+{
+  "skill_name": "storm-research",
+  "invocation": "user-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "explicit_invocation",
+      "prompt": "/storm-research give me a STORM briefing on whether AI coding agents are actually replacing junior developer hiring",
+      "expected_behavior": "Phase 0 states the topic interpretation and reader role in one line without over-asking. Phase 1 runs all five lenses (Practitioner, Academic, Skeptic, Economist, Historian) with real web research per lens, each returning core position, evidenced bullets with URLs, and the one thing only that lens would say. Phase 2 maps direct conflicts, the resolving question, and the blind spot. Phase 3 clones references/report-template.html verbatim rather than restyling it. Phase 4 runs self-review scoring plus per-cluster primary-source verification, producing a truthful fabricated/corrected/demoted banner, before the report is delivered."
+    },
+    {
+      "id": 2,
+      "category": "explicit_invocation",
+      "prompt": "/storm-research storm report on small modular reactors as a fix for AI datacenter power demand",
+      "expected_behavior": "Full pipeline runs end to end without shortcutting: five lenses each producing distinct evidenced positions rather than restatements of one view, a contradiction map naming universal agreement and the missing 6th lens, an HTML report delivered via the unmodified template with all sections filled, and a Phase 4 verification pass with real per-citation verdicts and a truthful verification banner before the report is called done."
+    },
+    {
+      "id": 3,
+      "category": "should_not_auto_trigger",
+      "prompt": "I'm curious what's actually true about whether AI coding agents are replacing junior devs -- any quick take?",
+      "expected_behavior": "does not invoke automatically -- this is user-invoked only; the model may give a normal quick answer or note that storm-research could produce a fully verified multi-lens briefing if asked, but must not silently run the 5-lens plus verification pipeline unasked."
+    }
+  ]
+}

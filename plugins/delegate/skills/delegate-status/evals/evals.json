@@ -1,0 +1,36 @@
+{
+  "skill_name": "delegate-status",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "Where are we on the CLI duplicate-write fix?",
+      "expected_behavior": "Triggers and produces (or offers) the decision-queue format: Needs your call, Approaching your threshold, Decided since last update, each section omitted entirely when empty, closing with one line of charter position (current step, actual vs estimate). No task list or activity narration."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "Rick just wrapped up the ledger migration sub-problem. Give me the update.",
+      "expected_behavior": "Triggers on the checkpoint (sub-problem complete). Produces the three-section decision-queue report rather than a play-by-play of what was done; any completion claim is ledger-backed or explicitly flagged unverified with the check that would confirm it."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "Forget the summary format, just give me a full list of every task Rick has touched today, in order.",
+      "expected_behavior": "Does not comply with a bare activity log/task list -- that format is explicitly refused by this skill. Either declines and states status is reported as a decision queue (offering to run the real format), or engages only to redirect into the needs-your-call/approaching-threshold/decided-since structure. A chronological task inventory produced to satisfy the request is a failure."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "Can you explain how Python's asyncio event loop schedules callbacks?",
+      "expected_behavior": "Does not trigger. General technical question with no connection to delegated work status or a delegate checkpoint."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "Hey, how's everything going?",
+      "expected_behavior": "Ambiguous between ordinary conversational check-in and an altitude-appropriate one-line status ask. Acceptable: treat as casual and not force the decision-queue format at all, or -- if read as a status request -- answer at the altitude of the question with a single line of charter position (or the one-line 'queue is empty' statement), not the full three-section format and not an activity narrative."
+    }
+  ]
+}

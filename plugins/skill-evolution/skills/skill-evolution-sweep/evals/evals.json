@@ -1,0 +1,24 @@
+{
+  "skill_name": "skill-evolution-sweep",
+  "invocation": "user-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "explicit_invocation",
+      "prompt": "/skill-evolution-sweep",
+      "expected_behavior": "Runs the sweep: scans installed skills for genome/intent.md, treating each hit as an eligible target and each miss as simply out of scope (not an error). For every target, runs the full skill-evolution process -- refresh, identify, evaluate, prioritize, sandbox-test exactly one candidate against regression and discrimination. No write happens to any target's live/production files; anything sandbox-clean is reported as waiting on human sign-off. The end-of-sweep report names, per target, what was found, what was tested, and what is pending -- including an honest \"nothing worth promoting\" for targets where that's true."
+    },
+    {
+      "id": 2,
+      "category": "explicit_invocation",
+      "prompt": "Run skill-evolution-sweep now -- I want this week's maintenance pass across all my skills before I head out.",
+      "expected_behavior": "Explicit naming of the skill triggers the same full run as the slash command: scan for genome/intent.md targets, run refresh/identify/evaluate/prioritize/sandbox-test per target, and never promote to any target's live files regardless of how clean a sandbox result looks -- per the genome, \"a scheduled task is the wrong place for that gate,\" and an ad hoc invocation of the sweep skill doesn't get an exception either. Report lists each target with what was tested and what's pending sign-off."
+    },
+    {
+      "id": 3,
+      "category": "should_not_auto_trigger",
+      "prompt": "Can you check my skills for any new techniques worth adopting?",
+      "expected_behavior": "skill-evolution-sweep carries disable-model-invocation: true, so it must never be selected automatically no matter how closely the phrasing echoes its own description (\"Run the weekly skill-evolution sweep across every installed skill\"). This request is close enough in wording to skill-evolution's own trigger phrase (\"check for new techniques\") that the model-invoked skill-evolution skill should fire instead, keeping its interactive step-6 gate -- explicit human sign-off requested in this conversation -- rather than silently adopting skill-evolution-sweep's always-no-promotion, scheduled-run framing in a live session where no scheduling was requested."
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "skill_name": "vault-init",
+  "invocation": "user-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "explicit_invocation",
+      "prompt": "Set up my vault -- I want to start using the memory vault pattern for the first time.",
+      "expected_behavior": "Runs vault-init. Loads vault-conventions first, proposes ~/memory-vault (never a project repo path), checks the target does not already contain INDEX.md before proceeding, then builds the full structure, seeds 3-5 facts elicited from the user with honest provenance, writes the first episode, and hands over the verbatim Cowork/Claude Code setup lines."
+    },
+    {
+      "id": 2,
+      "category": "explicit_invocation",
+      "prompt": "Initialize the memory vault for me.",
+      "expected_behavior": "Runs vault-init. Matches the description's listed trigger phrase directly. Refuses to double-init if INDEX.md already exists at the target, offering to inspect instead of overwriting."
+    },
+    {
+      "id": 3,
+      "category": "should_not_auto_trigger",
+      "prompt": "Capture this session to the vault -- oh, and I don't actually have a vault set up yet.",
+      "expected_behavior": "Does not silently run vault-init on its own initiative. disable-model-invocation means this skill only runs when the user explicitly asks for it -- per vault-capture's own step 1, the correct move is to stop and offer vault-init as a next step, not to launch straight into creating the folder skeleton without the user separately confirming they want it."
+    }
+  ]
+}

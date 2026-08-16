@@ -1,0 +1,36 @@
+{
+  "skill_name": "vault-conventions",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "What does the vault say about my meeting preferences?",
+      "expected_behavior": "Invokes the skill. \"What does the vault say\" is a direct trigger phrase, and this is a read -- conventions governs it by routing through INDEX.md then CATALOG.md before opening a full semantic file, per the layered-loading rule. This is a lookup, not a write, so it is vault-conventions that should fire here, not vault-capture."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "I want to add a new preference to the memory vault: no meetings before 10am. Just go ahead and save it.",
+      "expected_behavior": "Invokes the skill; mentions \"memory vault\" and a write is being requested, so conventions loads to govern it. Per rule 1 and rule 6, this is not a write conventions performs itself, and \"just go ahead and save it\" is not an approved review -- the conflict (only vault-review may write semantic/) is surfaced to the user rather than silently written or silently refused."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "Format this JSON blob so it's readable, no vault involved.",
+      "expected_behavior": "Does not invoke the skill. No reference to the vault, memory, episodes, or any vault file -- an ordinary formatting task with nothing for the vault's rules or schema to govern."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "What's stored in ChatGPT's memory feature these days?",
+      "expected_behavior": "Does not invoke the skill. \"Memory\" appears but refers to a different product's feature entirely, not this user's memory vault -- surface-level keyword overlap without any actual vault file, folder, or convention in play."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "Remember that I like tabs over spaces.",
+      "expected_behavior": "Judgment call. \"Remember\" gestures at the vault's purpose but never names it, and a lone stylistic aside stated in passing is thin material -- it could be treated as ordinary conversational memory needing no vault machinery, or as a Candidates-worthy preference that should route through capture and eventual review rather than being invented into a standing fact on the spot. Either reading is defensible as long as conventions is not bypassed to write the preference straight into semantic/ without review."
+    }
+  ]
+}

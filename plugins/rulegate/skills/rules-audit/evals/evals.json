@@ -1,0 +1,36 @@
+{
+  "skill_name": "rules-audit",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "It's been a few months since rulegate setup and we've bolted a handful of new lines onto CLAUDE.md since. Audit my rules before I trust them again.",
+      "expected_behavior": "Invokes rules-audit standalone, per \"Runnable any time as a drift check.\" Runs the six checks (atomicity, observability, vague quantifiers, resolvable references, dead weight, contradiction) against at least the newly added rules -- fast mode is acceptable, full re-audit if structure may have rotted -- and returns the one-table verdict output. Does not require going through rulegate-setup to run."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "Are my rules enforceable? I want to know before I have the agent classify them into SEQUENCING/SCOPE/etc.",
+      "expected_behavior": "Invokes rules-audit; \"are my rules enforceable\" is a direct trigger phrase. Evaluates each rule against the requirement/acceptance-criterion/process-instruction bar and returns the full verdict table (enforceable/rewritable/judgment/dead/contradiction) before any classification happens."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "Move the plan marker to step 2, the failing test for the auth bug is in place now.",
+      "expected_behavior": "Does not invoke rules-audit. This is advancing an already-classified plan (a SEQUENCING rule already satisfied by step order) -- a rule-compiler action, not a question about whether any rule is well-formed."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "Remind me what the difference is between a SCOPE rule and a STYLE rule in rulegate.",
+      "expected_behavior": "Does not invoke rules-audit. This asks for an explanation of the shape taxonomy, not an evaluation of specific project rules for enforceability -- there is no rule text supplied or referenced to render a verdict on."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "Let's get rulegate set up for this project -- here's my CLAUDE.md.",
+      "expected_behavior": "Judgment call. This is rulegate-setup's own trigger phrase, and rulegate-setup step 3 makes running rules-audit mandatory before classification -- so the audit still happens, just dispatched by rulegate-setup rather than chosen independently by the model in direct response to this prompt. Whether that counts as rules-audit itself \"triggering\" on this input, or only rulegate-setup triggering with rules-audit following inside it, has no single correct read -- but either way, the same one-table audited verdict output must appear before any rule is classified. Skipping straight to classification without it fails regardless of which framing is used."
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "skill_name": "job-scan",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "My profile's all set -- go ahead and scan LinkedIn and Indeed for new roles tonight.",
+      "expected_behavior": "Invokes job-scan (board scan mode) since the user states a profile already exists and asks for a search. Uses the profile's broad function terms newest-first plus recommended-for-you feeds, dedupes by matchKey against the full tracker before any deep read, applies hard gates in cost order (excluded employer, location, staleness, comp floor, fit minimum), and never takes an apply action -- it only finds and scores."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "Run the weekly pass against the career pages I've been saving up.",
+      "expected_behavior": "Invokes job-scan in employer scan mode, walking Profile/employer-list.md without needing a login. Captures the direct employer ATS applyUrl (never an aggregator's intake), verifies staleness by following through to the ATS page's own date rather than trusting the board label, and ends the report with counts (reviewed, new, duplicates, gate-rejected) plus the top 3 new finds by fit."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "I don't know what roles to even look for at this point.",
+      "expected_behavior": "Does not invoke job-scan. There is no defined target to search against -- this is the job-profile trigger (building the match profile through a coaching conversation), not a request to run a scan. Running job-scan here would have nothing meaningful to search or score against."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "Go ahead and apply to the top 3 roles you found last night.",
+      "expected_behavior": "Does not invoke job-scan to perform this action, or if job-scan's scope is discussed, states plainly it never applies to anything -- finding and scoring is the entire job. Applying is a different skill's responsibility and must not be silently absorbed into a scan."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "Find me some jobs.",
+      "expected_behavior": "Judgment call, hinging on whether Profile/match-profile.md already exists. If it exists, this is a normal board-scan trigger using the profile's function terms. If it doesn't exist yet, job-scan has no rubric to score against -- per job-profile's own trigger condition ('when job-scan has no Profile/match-profile.md to score against'), the right move is to check for the profile first and route to job-profile rather than attempting a scan with nothing to gate or score against."
+    }
+  ]
+}

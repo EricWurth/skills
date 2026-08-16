@@ -1,0 +1,24 @@
+{
+  "skill_name": "problem-hunt",
+  "invocation": "user-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "explicit_invocation",
+      "prompt": "/problem-hunt find me a real unsolved problem in RAG retrieval, something practitioners are still fighting with in production",
+      "expected_behavior": "Phase 1 scans practitioner sources (GitHub issues, forums, postmortems, limitations sections of papers) for 8-10 candidates without showing them to the user yet. Phase 2 tries to kill each candidate by searching for an existing fix and classifies survivors by gap type (ergonomics, misdiagnosis, substrate), discarding roughly half. Phase 3's novelty gate blocks 'chunking strategy in RAG' unless restated as a specific mechanism-level claim. Phase 5 presents finalist cards and stops for the user to pick rather than handing over a finished solution."
+    },
+    {
+      "id": 2,
+      "category": "explicit_invocation",
+      "prompt": "/problem-hunt what's actually broken in multi-agent orchestration right now that people haven't fixed",
+      "expected_behavior": "Runs the full 5-phase pipeline: broad scan producing 8-10 unfiltered candidates, adversarial kill pass that discards a real fraction rather than zero, novelty gate rejecting anything reducible to a blocked slogan like 'agents are unreliable', Phase 4 teaching that loads critical-thinking before the brainstorm, then a collaborative brainstorm limited to one hypothesis, one attackable strawman, and one self-criticism per turn before stopping for the user."
+    },
+    {
+      "id": 3,
+      "category": "should_not_auto_trigger",
+      "prompt": "Our agents keep losing track of state across long multi-step tasks, it's honestly kind of maddening.",
+      "expected_behavior": "does not invoke automatically -- this is user-invoked only; the model may respond helpfully about the state-tracking issue directly or mention that a problem-hunt could dig into the underlying mechanism if asked, but must not silently run the full scan-through-brainstorm pipeline unasked."
+    }
+  ]
+}

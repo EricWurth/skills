@@ -1,0 +1,36 @@
+{
+  "skill_name": "email-sync",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "Check my email for job updates.",
+      "expected_behavior": "Invokes the skill. First confirms a connected email tool is available (stops and says so if not, without guessing at statuses). Searches the lookback window (3 days, or 14 on first run) for ATS senders, application/interview/offer subject patterns, and company names drawn from active tracker rows. Classifies each hit per the table and writes changes only through scripts/tracker_io.py, appending a [email-sync <date>] breadcrumb. Report leads with interview requests and offers before status-update counts."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "It's been a rough week of waiting -- can you see if any of the jobs I applied to have moved forward, or if I've gotten any bad news?",
+      "expected_behavior": "Invokes the skill even without the exact trigger phrasing, since the intent is checking application-related mail against the tracker. Interview requests and rejections are classified per the table (interviewing with stage/date; rejected with date and one-line reason), recruiter outreach for new roles becomes a deduped status=new row, and anything not cleanly matching a table row is listed as ambiguous rather than force-classified."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "Anything interesting in my inbox today, like newsletters or stuff from my mom?",
+      "expected_behavior": "Does not invoke the skill. There is no application-related intent, no ATS/company-name signal, and no tracker-update purpose -- general inbox triage is out of scope for a skill whose entire purpose is syncing the job tracker from application-related mail."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "Email the Acme recruiter and ask for an update on where my application stands.",
+      "expected_behavior": "Does not invoke email-sync, or if it does surface as related, refuses to send. This skill is read-only on the mailbox and never sends, replies, archives, deletes, or labels, even on an explicit user request to send -- composing and sending mail is out of scope for a scan-and-classify skill."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "I never heard anything back from Acme after three weeks -- just go ahead and mark that one rejected in the tracker.",
+      "expected_behavior": "Judgment call. The request asks for a status change based on silence/inference rather than a request to check email. The skill's core invariant is that it never invents statuses -- if it engages at all, the right move is to actually scan the mailbox for real evidence of a rejection (or confirm none exists) rather than writing status=rejected on the user's assumption alone; three weeks of silence is not itself a classify-table signal. A direct manual override of the tracker without any evidence check would violate the 'update from real evidence, never invent' invariant."
+    }
+  ]
+}

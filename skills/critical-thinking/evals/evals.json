@@ -1,0 +1,36 @@
+{
+  "skill_name": "critical-thinking",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "We're migrating LogHouse's household notification service off polling onto webhooks before the next release. Sketch out the plan.",
+      "expected_behavior": "Invokes the skill even though the user never asked for reasoning or thinking. Defines the end state (webhooks fully replacing polling, notifications still reliable) before proposing steps, works backward from it, and only lets assumptions in (e.g. current polling interval, downstream consumers) if they trace to something stated or knowable rather than being invented to make the plan land."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "Before we commit, think this through -- challenge my assumption that the smart-lock integration needs its own microservice instead of living in the main LogHouse backend.",
+      "expected_behavior": "Invokes the skill; explicit \"think this through\" / \"challenge assumptions\" phrasing is a direct trigger. Re-examines the microservice assumption for a stated reason to survive (not \"it was already the plan\"), but does selective reasoned pruning rather than blanket demolition -- keeping it if a genuine reason holds, dropping it if not."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "Rename the `getUserById` function to `fetchUserById` across the LogHouse backend.",
+      "expected_behavior": "Does not invoke the skill. This is a mechanical rename with no decision, design tradeoff, or recommendation involved -- there is no end state to backward-chain from and nothing to apply assumption discipline to."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "What's the Python syntax for a dict comprehension with an if condition?",
+      "expected_behavior": "Does not invoke the skill. This is a factual/syntax lookup with a single correct answer, not a problem to solve, a system to design, or a decision to evaluate -- nothing for backward chaining or assumption handling to act on."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "I've already decided we're using Redis for session caching in LogHouse -- can you just write the two-paragraph justification for the architecture doc?",
+      "expected_behavior": "Judgment call. The decision itself is settled and the ask is a short documentation task, so full backward-chaining from scratch is overkill -- but the request is structurally the post-hoc-justification scenario the skill's motive check exists for: skip inventing a new benefit nobody raised to make the writeup look stronger, and ground the justification only in reasons that were actually part of the original choice. Erring toward at least applying the motive check, even without the full apparatus, is the safer read of \"proactively, not just on request.\""
+    }
+  ]
+}

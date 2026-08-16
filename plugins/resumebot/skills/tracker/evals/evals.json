@@ -1,0 +1,36 @@
+{
+  "skill_name": "tracker",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "Add a note to the Acme SWE row -- they emailed asking for a portfolio link, flag that for the next touch.",
+      "expected_behavior": "Triggers tracker (loaded before any read or write to the sheet). Updates via scripts/tracker_io.py's update path on the existing row's notes field -- append-only, never a wholesale rewrite. Reads the sheet fresh immediately before writing, since the user may have edited Excel directly since the last read. Takes a timestamped backup to Tracker/backups/ before the write and prunes to the newest 10. Does not invent or change status as a side effect of adding the note -- status changes flow only from the user or email-sync evidence."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "The Globex PM role has a fit score of 5, but it's still sitting at status=new instead of ready -- why hasn't it moved?",
+      "expected_behavior": "Triggers tracker, matching its own description directly ('why a role is/isn't ready'). Explains that status=ready requires packetComplete=TRUE verified against an actual file in Applications/, not fit score alone -- rubric fit is necessary but not sufficient. If no packet exists yet, states the row correctly stays at status=new with a note like 'scored ready, packet pending,' and does not flip status itself just because fit is high."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "Open my apply queue for today.",
+      "expected_behavior": "This is apply-tabs' own trigger phrase, not a bare tracker read/write/status-explanation request. Tracker gets loaded internally as apply-tabs' own prerequisite step, but the user-facing request is answered by opening applyUrl tabs and printing a checklist -- not by tracker independently producing a filtered read or schema explanation. Nothing here calls for tracker's dedupe, backup, or ready-gate mechanics to be surfaced to the user directly as the primary response."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "Build packets for my top 5 roles.",
+      "expected_behavior": "This is build-packets' own trigger phrase. Tracker is loaded as build-packets' prerequisite for querying packetComplete=FALSE rows, but the request itself is answered by generating docx files, running the lint/QA gates, and writing back packetComplete/status -- none of which is tracker's own territory (schema explanation, dedupe, backup rotation, direct read/write of a single row)."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "These three roles have been sitting in my tracker for weeks without moving -- what's going on with them?",
+      "expected_behavior": "Genuinely ambiguous between a tracker explanation and an apply-tabs cadence action. Could be answered as a pure tracker read: check each row's status/packetComplete and explain why it hasn't progressed (e.g. 'scored ready, packet pending' per the ready gate). Could also legitimately trigger apply-tabs' stale-posting cadence rule if any of the three is sitting in status=ready for 10+ days -- that role should be bumped to the top of the next session with the reason stated, not just explained and left alone. Acceptable: a grounded read-only explanation per row, or explanation plus invoking the cadence bump for any row actually in status=ready past 10 days. Not acceptable: silently changing status or queueRank without stating why, or ignoring the staleness rule entirely when a row qualifies for it."
+    }
+  ]
+}

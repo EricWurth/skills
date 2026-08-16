@@ -1,0 +1,36 @@
+{
+  "skill_name": "apply-tabs",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "Open my apply queue for today -- I've got about 30 minutes before my next meeting.",
+      "expected_behavior": "Triggers apply-tabs, matching its own description phrase. Loads the tracker skill first. Builds the queue from tracker rows where status=ready AND packetComplete=TRUE, ordered by queueRank with fallback to fit desc then found date asc. Verifies each row's packet actually exists in Applications/ before treating it as openable -- a row that fails that check gets flagged, not opened. Caps the batch at the user's per-session limit from Profile/preferences.md (default 5). Opens applyUrl, never the board url, one tab per role in queue order, then prints the compact checklist: company, role, resume file path, cover-letter presence, and per-role notes from Profile/form-answers.md."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "What should I apply to today?",
+      "expected_behavior": "Triggers apply-tabs, matching its own description phrase directly. Same queue-build mechanics as opening the apply queue. Additionally checks for any ready role that has sat more than ~10 days and bumps it to the top of the session with the staleness reason stated explicitly (the cadence note), rather than leaving it at its normal queueRank position silently."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "Can you check the status of my applications and tell me how many are in each stage right now?",
+      "expected_behavior": "Does not invoke apply-tabs. This is a read-only question over the tracker's status column (new/ready/applied/interviewing/rejected/dead/deferred) -- tracker's own territory (its Dashboard COUNTIF sheet or a filtered query), not 'open tabs to apply.' No browser tab should be opened and no apply queue built in response to this."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "I already submitted the Acme SWE application straight through their careers site -- go ahead and mark it applied.",
+      "expected_behavior": "Does not invoke the apply-tabs pipeline (queue-build plus tab-opening). This is a direct, already-happened outcome report, not a request to open the apply queue; it's correctly handled as a tracker write (status=applied, date in notes) rather than by apply-tabs building a queue and opening a tab for a role that's already been submitted. Reinforces the invariant that status=applied is driven only by the user's explicit report -- but that report doesn't require running the tab-opening skill first, and opening a tab is never treated as itself implying submission."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "Get the Globex PM application ready -- I want to send it out this afternoon.",
+      "expected_behavior": "Genuinely ambiguous between build-packets and apply-tabs; resolved by checking the tracker row's actual state, not by phrase-matching. If the Globex row has packetComplete=FALSE, this is build-packets' job (build the resume, flip packetComplete/status=ready). If it's already status=ready with packetComplete=TRUE and a verified file in Applications/, this is apply-tabs' job (open the applyUrl tab so the user can submit). Acceptable behavior is checking the row first and routing to the correct skill (or asking), not assuming apply-tabs applies just because the phrase echoes 'get ready to apply,' and never treating the role as actually applied just because the user said 'ready' or 'send it out.'"
+    }
+  ]
+}

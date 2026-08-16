@@ -1,27 +1,42 @@
 {
   "skill_name": "document-forge",
+  "invocation": "user-invoked",
   "evals": [
     {
       "id": 1,
-      "name": "decision-memo-with-sparse-inputs",
+      "category": "behavior",
       "prompt": "I need a memo recommending we consolidate our three reporting tools into one. Leadership is skeptical because the last consolidation went badly. Forge this document.",
-      "expected_output": "Stage 1 produces a one-sentence decision plus explicit acceptance criteria including addressing the prior-failure objection. Numeric claims are either sourced or tagged [assumption] rather than invented. Gate names specific unmet criteria rather than passing by default.",
-      "files": []
+      "expected_behavior": "Stage 1 produces a one-sentence decision plus explicit acceptance criteria including addressing the prior-failure objection. Numeric claims are either sourced or tagged [assumption] rather than invented. Gate names specific unmet criteria rather than passing by default."
     },
     {
       "id": 2,
-      "name": "vague-brief-should-halt",
+      "category": "behavior",
       "prompt": "Forge a document about our data governance situation.",
-      "expected_output": "Stage 1 halts rather than drafting. The skill should refuse to proceed without a stateable decision or action, and ask what decision the document must enable, instead of producing a well-written overview.",
-      "files": []
+      "expected_behavior": "Stage 1 halts rather than drafting. The skill should refuse to proceed without a stateable decision or action, and ask what decision the document must enable, instead of producing a well-written overview."
     },
     {
       "id": 3,
-      "name": "lint-catches-what-judgment-misses",
+      "category": "behavior",
       "prompt": "Here's a draft proposal. Run it through document-forge starting at the claim check.",
-      "expected_output": "scripts/lint.py is actually executed rather than described. Mechanical violations (em dashes, untagged numeric claims, filler openers) are caught by the script, not by narration. Stage 6 is either dispatched to a real isolated subagent or explicitly declared skipped, never simulated in-context.",
-      "files": []
+      "expected_behavior": "scripts/lint.py is actually executed rather than described. Mechanical violations (em dashes, untagged numeric claims, filler openers) are caught by the script, not by narration. Stage 6 is either dispatched to a real isolated subagent or explicitly declared skipped, never simulated in-context."
+    },
+    {
+      "id": 4,
+      "category": "explicit_invocation",
+      "prompt": "/document-forge I need a one-page project charter for migrating our on-prem file server to SharePoint. CIO is sponsor, IT ops executes, budget already approved.",
+      "expected_behavior": "Stage 1 states the one-sentence decision or action the charter must enable and writes acceptance criteria cross-checked against a charter's standard components (scope, sponsor, budget, milestones, risks) before drafting begins. Stages run in order (gather, outline, draft, claim check, lint, ambiguity pass) rather than one-shot drafting the charter."
+    },
+    {
+      "id": 5,
+      "category": "explicit_invocation",
+      "prompt": "Run this through the pipeline: a status report to leadership on why the Q3 infrastructure migration project is behind schedule, so they understand root cause and next steps before the Q4 budget review.",
+      "expected_behavior": "Stage 1 captures the decision the report enables (informing the Q4 budget conversation) plus acceptance criteria that include root-cause explanation and next steps. Stage 5 traces schedule-slip claims to a source or tags them [assumption]; stage 5.5 lint actually runs; stage 9's gate names any unmet criterion rather than passing by default."
+    },
+    {
+      "id": 6,
+      "category": "should_not_auto_trigger",
+      "prompt": "I need to write a memo about consolidating our three reporting tools, leadership's a little skeptical given the last attempt went badly.",
+      "expected_behavior": "does not invoke automatically -- this is user-invoked only; disable-model-invocation means the full staged pipeline (nine stages plus gate) does not launch silently. The model may draft the memo directly or respond normally, or mention that document-forge could run this with more rigor if asked, but must not auto-run Stage 1 through Stage 9 unasked."
     }
   ]
 }
-

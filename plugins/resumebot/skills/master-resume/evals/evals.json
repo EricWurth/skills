@@ -1,0 +1,36 @@
+{
+  "skill_name": "master-resume",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "I just got promoted to Senior Director last month and picked up two more direct reports. I need to get that onto my resume.",
+      "expected_behavior": "Invokes master-resume, not build-packets -- this is new content flowing into the evidence library, not a tailored cut from it. Adds the promotion to Master/MasterResume.md first (frame: new title, team size, reporting line; then wins and hidden material for the expanded scope), logs it in the header changelog, and only then notes that standing variants derived from the master should pick it up on their next pass."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "Here's my old resume as a Word doc. Can you get this into resumebot as my master resume?",
+      "expected_behavior": "Invokes master-resume's import path: reads the existing resume, maps it into the master structure (header note, name/contact, professional summary, achievements band, competencies, per-role experience, professional development), then interviews only for the gaps -- missing metrics, missing promotions, thin recent roles. Anything on the imported resume that smells unverifiable gets flagged and confirmed with the user rather than carried forward silently."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "Can you tailor my resume for this Program Manager posting at Vantage Health? Here's the job link.",
+      "expected_behavior": "Does not invoke master-resume. This is cutting a tailored variant FROM the master for one application, which is build-packets' job -- master-resume is the source document and is never touched to produce a single application's resume. The model should route to build-packets (map to a variant, reuse it, retune toward the posting) rather than editing Master/MasterResume.md."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "Based on my background, what kinds of roles should I actually be targeting in this job search?",
+      "expected_behavior": "Does not invoke master-resume. This is a role-targeting/fit conversation, which is job-profile's territory (career-coach conversation producing Profile/match-profile.md) -- not a request to build or edit the evidence-library document itself. Master-resume only engages once there's new career content to capture or an existing resume to import."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "Add this to my master resume: 'Cut deployment incidents dramatically by driving adoption of the new release process.' Can you also just put a number on it, like 40%? I don't have the exact figure but it felt like about that.",
+      "expected_behavior": "Judgment call on how far to push back rather than whether to invoke -- the request clearly belongs to master-resume, but the skill's real invariant is capture numbers only where the number is the story, never manufacture metrics. The correct behavior declines to write 40% as fact, and either keeps the bullet qualitative ('cut deployment incidents by driving adoption of the new release process') or asks the user to check the actual number before it goes in. Failing shape: inserting the 40% because the user supplied it, without flagging that it isn't sourced."
+    }
+  ]
+}

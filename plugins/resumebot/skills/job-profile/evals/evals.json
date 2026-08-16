@@ -1,0 +1,36 @@
+{
+  "skill_name": "job-profile",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "I don't know what roles to even look for at this point.",
+      "expected_behavior": "Invokes job-profile, not job-scan -- the user has no defined target, which is exactly what a missing/undefined match profile looks like. Runs as a coaching conversation via the career-coach agent, starting with 2-3 real job postings the user would love to land before settling anything abstract, and derives candidate search terms as broad functions from those postings rather than guessing at titles."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "I think my job search preferences need a refresh -- my comp floor might be too low and I want to reconsider what I'm targeting.",
+      "expected_behavior": "Invokes job-profile since the user is asking to revise job-search preferences. Runs as a coaching conversation, revisits the comp floor as one of the four hard gates (the real walk-away number, not the hoped-for one), and treats the profile as living config that gets updated in the same session rather than deferred."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "My profile's all set -- go ahead and scan LinkedIn and Indeed for new roles tonight.",
+      "expected_behavior": "Does not invoke job-profile. The user states the profile already exists and is asking for a board scan against it, which is job-scan's job (reading Profile/match-profile.md to search, score, and append to the tracker), not a request to build or revise the profile itself."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "Can you sync my email and see if any of my applications got responses?",
+      "expected_behavior": "Does not invoke job-profile. This is an email-sync request (scanning mail for application-related signals and updating the tracker), with no overlap with building or revising the match profile, search terms, gates, or bonuses."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "Can you search for 'Senior Director of Operations' roles for me?",
+      "expected_behavior": "Judgment call. On its face this reads like a job-scan search request, but the phrasing is a title+level combo, which job-profile's own invariant says must never be encoded as a search term -- search terms are broad functions ('operations'), never title+level strings. Whether or not a profile already exists, the skill should redirect this to the underlying function rather than either silently running job-scan with the title+level string as-is or accepting it into the profile unchallenged."
+    }
+  ]
+}

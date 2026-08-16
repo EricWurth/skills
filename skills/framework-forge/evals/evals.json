@@ -1,0 +1,24 @@
+{
+  "skill_name": "framework-forge",
+  "invocation": "user-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "explicit_invocation",
+      "prompt": "/framework-forge I've spent six years running postmortems for a mid-size infra team, and my framework splits 'contributing factors' from 'root cause' into separate sections so postmortems stop turning into blame sessions. I want this hardened into something I could publish and defend in front of an SRE audience.",
+      "expected_behavior": "Phase 0 captures the seven contract items (thesis, position, experience base, audiences, strongest anticipated attack, the author's own open questions, style constraints) and states them back in under twelve lines before anything is drafted. Phase 1 extracts load-bearing claims, including how blameless postmortems and root-cause analysis are typically framed by SRE practice, and verifies each with real research before drafting starts. Phase 4 runs all five personas per round, not a subset, and remediation on any deployability finding avoids hedging language."
+    },
+    {
+      "id": 2,
+      "category": "explicit_invocation",
+      "prompt": "/framework-forge Harden my framework for change-advisory-board decision cadence in distributed ops teams. The audience is people who might cite it toward a PMP or bring it to a hiring panel.",
+      "expected_behavior": "Phase 0 pins the primary audience and names the secondaries (practitioner, hiring panel, credentialed PMI-style reader), since that gates what Phase 4 findings count as blocking versus a sanity check. Phase 2a checks whether PMI or ITIL already name the proposed CAB mechanisms and grounds/cites rather than reinventing them. Phase 6 runs subtraction, the adoption path, and the signal check before the document is delivered."
+    },
+    {
+      "id": 3,
+      "category": "should_not_auto_trigger",
+      "prompt": "I've got this idea for how we should structure on-call rotations, based on stuff I've watched go wrong for years. Might write it up properly at some point.",
+      "expected_behavior": "does not invoke automatically -- this is user-invoked only; the model may discuss the idea normally or mention that framework-forge could harden it into a publishable document if asked, but must not silently run Phase 0 through Phase 6 unasked."
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "skill_name": "rule-compiler",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "Step 1's failing test (`tests/test_auth.py::test_session_timeout`) is passing now that the source fix landed. Next step.",
+      "expected_behavior": "Invokes rule-compiler; \"next step\" is a direct trigger phrase. Moves the `## CURRENT` marker from Step 1 to Step 2 in `.rulegate/plan.md`, appends `[done <timestamp>]` to Step 1's heading rather than deleting it, and does not silently alter Step 2's `files:`/`estimate:`/`done-when` beyond what was already compiled."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "I'm mid-way through the Step 1 auth fix and noticed the session-timeout logic has the exact same off-by-one bug. Should I just fix it while I'm in this file?",
+      "expected_behavior": "Invokes rule-compiler; reporting discovered work mid-task is a listed trigger. Per the skill's \"Discovered work\" rule, the second bug is not folded into Step 1's `files:` scope -- it gets reported back in the reply so it re-enters through the front gate as its own request. The answer is \"report it, don't fold it in,\" not a yes to fixing it inline."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "Audit my rules -- I want to know if the SEQUENCING and SCOPE entries in RULES.md are actually enforceable before I trust them.",
+      "expected_behavior": "Does not invoke rule-compiler. This asks whether rule *text* is well-formed (atomicity, observability, vague quantifiers) -- that's rules-audit's job. rule-compiler only compiles an already-classified RULES.md into a step plan; it does not evaluate rule quality."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "Go ahead and write the test for the login function like Step 1 says.",
+      "expected_behavior": "Does not invoke rule-compiler. Nothing here needs the plan written, revised, or advanced -- no scope-gate block, no discovered work, no explicit replan/advance phrase. This is ordinary execution of the current step, which the skill's description does not cover."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "The scope gate keeps blocking my edits to vendor/patched-lib.js. Honestly the SCOPE rule banning vendor/ edits might be too strict for this project -- can you take a look?",
+      "expected_behavior": "Judgment call. Read literally, \"a scope-gate block requires restructuring the current plan\" is rule-compiler's trigger -- but \"the rule itself might be too strict\" is a claim about the rule's quality, which belongs to rules-audit (and ultimately rulegate-setup's classification), not to compiling around it. The safer read: widen `files:` with a stated justification only if the work genuinely belongs in the current step, and separately surface the rule-quality question for rules-audit rather than silently deciding to loosen a SCOPE rule inside the plan."
+    }
+  ]
+}

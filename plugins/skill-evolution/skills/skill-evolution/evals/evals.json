@@ -1,0 +1,36 @@
+{
+  "skill_name": "skill-evolution",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "Run evolution on my document-forge skill and see if there's anything worth adopting.",
+      "expected_behavior": "Triggers skill-evolution. Step 1 refreshes references/technique-library.md against current research before any candidate is considered. Step 2 reads document-forge's own genome/intent.md free-choices and failure history rather than reaching for a technique already top of mind. Steps 1-5 run straight through without pausing for confirmation; only step 6 (writing to document-forge's live files) waits for explicit human sign-off."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "What's changed in agent/skill design since our last technique-library refresh? Anything we should be adopting?",
+      "expected_behavior": "Triggers skill-evolution, matching the description's explicit \"ask what's changed in agent/skill design since the last sweep\" phrasing. Runs the refresh step (step 1) against the library's last research-pass date, then continues through identify/evaluate/prioritize/sandbox-test for whichever target skill(s) apply, ending with a gate report rather than promoting anything unilaterally."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "Can you review the document-forge skill and tell me if it's working correctly, or if anything looks off?",
+      "expected_behavior": "Does not trigger the skill-evolution sweep. \"Review this skill\" / \"check if it's working\" is a health check or audit, not a request to run refresh -> identify -> evaluate -> prioritize -> sandbox-test -> gate against the technique library. Nothing in the SKILL.md description covers general review; it covers finding and testing a new technique gap specifically. The skill should answer the review question directly instead of kicking off a technique-library refresh and candidate search."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "The description on this skill is way too verbose -- can you tighten up the wording without changing what it does?",
+      "expected_behavior": "Does not trigger skill-evolution. This is maintenance -- content tuning within the current format -- which the description explicitly distinguishes from evolution: \"evolution is specifically about adopting a new technique.\" No technique is being proposed or tested here, so the refresh/identify/evaluate/sandbox pipeline is the wrong tool; a direct wording edit is appropriate instead."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "This skill has failed the same way twice according to its eval notes -- what should we do about it?",
+      "expected_behavior": "Genuinely ambiguous. A documented, repeated, skill-specific failure is exactly the kind of evidence step 3 requires for candidate fitness, so this could legitimately kick off a full evolution sweep (refresh the library, then check whether a cataloged technique addresses this failure). But the user asked what to do, not to run evolution, and the same failure could also be fixed by a direct content/format change with no new technique involved. Reasonable behavior is to either ask whether they want a full evolution sweep or a direct fix, or to first diagnose the failure and only invoke the full refresh->identify->evaluate pipeline if a plausible technique gap (not a simple content bug) is actually in play. Immediately launching the entire six-step process without surfacing this choice is not clearly correct."
+    }
+  ]
+}

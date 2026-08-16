@@ -1,0 +1,24 @@
+{
+  "skill_name": "vault-review",
+  "invocation": "user-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "explicit_invocation",
+      "prompt": "Run the vault review -- it's been about a week since the last one.",
+      "expected_behavior": "Runs vault-review. Loads vault-conventions first, gathers episodes since the last review boundary, clusters Candidates against the 2-plus-distinct-contexts evidence bar, presents all promotion/staleness/reflection proposals in one list, and applies nothing until the user approves item by item."
+    },
+    {
+      "id": 2,
+      "category": "explicit_invocation",
+      "prompt": "What should be promoted from my episodes this week? Let's consolidate memory.",
+      "expected_behavior": "Runs vault-review. Matches the description's listed trigger phrases (\"what should be promoted\", \"consolidate memory\"). Reads Candidates sections first, treats any Claude Code auto-memory as unverified corroborating evidence rather than authority, and closes with the required scorecard, flagging it if Candidates sections were consistently empty."
+    },
+    {
+      "id": 3,
+      "category": "should_not_auto_trigger",
+      "prompt": "Great, that episode is captured. Anything else before we close out?",
+      "expected_behavior": "Does not run vault-review on its own. disable-model-invocation means a freshly written episode with populated Candidates does not by itself justify launching the review -- review runs on the user's weekly cadence or explicit request, not automatically every time capture produces candidates worth promoting."
+    }
+  ]
+}

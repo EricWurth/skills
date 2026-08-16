@@ -1,0 +1,24 @@
+{
+  "skill_name": "setup",
+  "invocation": "user-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "explicit_invocation",
+      "prompt": "/setup I'm brand new to resumebot, nothing exists yet. Let's get my job-search workspace set up from scratch.",
+      "expected_behavior": "Stage 0 asks where the workspace should live, creates the full JobSearch/ tree, copies all seven named template/example files into place, and writes JobSearch/CLAUDE.md. Then Stage 1 invokes master-resume (full interview, since there's no existing resume), Stage 2 invokes job-profile, Stage 3 walks the tracker's row model and states plainly that 'ready' requires a built packet, Stage 4 offers scheduling as optional, and Stage 5 summarizes what exists and the first manual action."
+    },
+    {
+      "id": 2,
+      "category": "explicit_invocation",
+      "prompt": "/setup I already have a resume.docx and I started a JobSearch folder a while back -- Master/ and Profile/ exist but nothing else does, and match-profile.md was never filled in.",
+      "expected_behavior": "Does not recreate the Master/ and Profile/ folders or clobber what's there; Stage 0 fills in only the missing pieces (Variants/, Applications/, Tracker/, Reference/, Archive/, JobSearch/CLAUDE.md if absent). Stage 1 starts master-resume from the existing resume.docx rather than running the full from-scratch interview. Stage 2 still runs since match-profile.md is unfilled. Setup picks up from the actual state rather than restarting the whole flow."
+    },
+    {
+      "id": 3,
+      "category": "should_not_auto_trigger",
+      "prompt": "My JobSearch workspace at ~/Documents/JobSearch is already fully set up from before. Let's build my master resume from scratch now -- I never finished that part.",
+      "expected_behavior": "Does not invoke setup automatically -- setup carries disable-model-invocation and is user-invoked only. Even though setup's own Stage 1 calls master-resume as one of its steps, a mid-conversation request to build a resume in an already-established workspace should route directly to master-resume, not implicitly re-run Stage 0 through Stage 5. Failing shape: treating 'build my resume from scratch' as a signal to launch the full setup flow because setup happens to invoke master-resume internally."
+    }
+  ]
+}
