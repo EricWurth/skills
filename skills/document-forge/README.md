@@ -1,0 +1,62 @@
+# document-forge
+
+A staged production pipeline for business documents, with acceptance criteria per stage instead of one-shot drafting.
+
+## Why this exists
+
+Asking for a memo produces a draft that reads well and commits to nothing.
+The failure is structural: everything happens in one pass, so there is no
+point at which a claim can be checked before it is built on. This borrows
+the reliability pattern from coding agent pipelines — isolated task scoping
+per stage, explicit acceptance criteria — and applies it to prose.
+
+## How it works
+
+Stage 0 sets up the workspace, once. Then the pipeline runs in order:
+
+1. **Brief** — what the document must do, for whom, and what changes if it works
+2. **Gather** — source material, before any drafting
+3. **Outline** — structure agreed before prose exists
+4. **Draft** — the first pass that anyone would call writing
+5. **Claim check** — every factual assertion traced or cut
+6. **Mechanical lint** — `scripts/lint.py`, deterministic rules enforced in code rather than by judgment
+7. **Ground truth check** — runs when the document invokes named practice, so borrowed frameworks are checked against their source
+8. **Ambiguity pass** — a dedicated subagent reads for what could be misread
+9. **Adversarial content review** — attacks the argument
+10. **Style and structure check**
+
+The split between stages 5 and 6 is the load-bearing idea: rules that can be
+pattern-matched live in the linter where they run deterministically, and
+only judgment-based rules are checked by reading. A rule that keeps getting
+missed by eye should move into the linter rather than be restated.
+
+## Requirements
+
+- **Subagents.** The ambiguity pass runs as a separate agent so it reads the
+  document cold, without the drafting context. This is Claude Code only —
+  subagents are not available on other surfaces.
+- **A writable workspace.** Stage 0 scaffolds one, and handles the case where
+  the target is not directly writable (cloud sandbox, device-bridged folder).
+- **Python**, for `scripts/lint.py`.
+
+## Install
+
+```
+cp -r skills/document-forge ~/.claude/skills/
+```
+
+## Use
+
+Type `/document-forge`. It is user-invoked deliberately: it sets up a
+workspace and runs a long pipeline, which should happen because you asked,
+not because a memo came up in conversation.
+
+Wrong tool for a quick draft or a summary. The whole point is doing more
+work than one pass would.
+
+## Limits
+
+The mechanical linter catches what can be pattern-matched and nothing else;
+everything past that depends on the reviewing stages doing real work. The
+ground truth check only fires when the document names an outside framework —
+it will not catch an unattributed one.

@@ -1,7 +1,11 @@
 # delegate
 
-An agent that owns an assigned problem end-to-end and reports as a decision
-queue rather than a status narrative.
+An agent that owns an assigned problem end-to-end and reports as a decision queue.
+
+> **Not published.** This plugin depends on a memory graph that is not yet
+> released, so it is absent from the marketplace and cannot be installed. It
+> is complete and validated; it is waiting on its dependency. See
+> [Requirements](#requirements).
 
 Hand it work — "take this, you own it" — and it builds a model of the system
 before committing to anything, charters the work, then executes inside that
@@ -41,12 +45,16 @@ your threshold, decided since — and an empty queue is a valid report.
 
 ## Requirements
 
-**A memory graph.** The agent recalls history before proposing, persists
-dissent as opinions, and traverses the graph to find what is downstream of a
-contradicted assumption — "by graph traversal, not remembered grievance."
-Without a graph backing it, those instructions have nothing to read or
-write, and continuity between sessions is lost. This plugin does not ship
-one.
+**A memory graph — currently unavailable.** The agent recalls history before
+proposing, persists dissent as opinions, and traverses the graph to find what
+is downstream of a contradicted assumption: "by graph traversal, not
+remembered grievance." Its own closing line is "you re-arrive at your problem
+each session through the graph; it is your continuity."
+
+That graph is muninn, which is not published. This is not a soft dependency
+that degrades gracefully — without it the agent holds instructions with
+nothing to read or write, and loses continuity between sessions entirely.
+This plugin stays out of the marketplace until muninn ships.
 
 **`rulegate`, for enforcement.** The agent's plans are compiled by
 rulegate's front gate, bounded by its scope gate, and evidenced by its

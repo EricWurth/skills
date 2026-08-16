@@ -52,7 +52,7 @@ edits to apply live.
 
 <!-- catalog:start -->
 
-5 standalone skills and 5 plugins (19 skills). Skills are copied; plugins are installed.
+5 standalone skills and 4 plugins (18 skills). Skills are copied; plugins are installed.
 
 They split on one axis: who can invoke them. **User-invoked** skills are reachable only when you type them — they orchestrate. **Model-invoked** skills can be typed *or* reached for automatically when the task fits — they hold the reusable discipline. A user-invoked skill may call a model-invoked one, never another user-invoked one.
 
@@ -86,7 +86,6 @@ Installed through the marketplace. Each carries more than instructions — extra
 | [`skill-evolution`](plugins/skill-evolution) | ✅ | Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
 | [`memory-vault`](plugins/memory-vault) | ✅ | A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance |
 | [`rulegate`](plugins/rulegate) | — | Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
-| [`delegate`](plugins/delegate) | — | A senior-resource agent that owns problems end-to-end and reports in decision-queue format |
 | [`resumebot`](plugins/resumebot) | — | A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, and interview prep |
 
 **skill-evolution**

@@ -214,6 +214,23 @@ def check_marketplace(root: Path):
                 f"'{pdata.get('name')}'")
 
 
+def check_unpublished(root: Path) -> None:
+    """A plugin can be complete and still not for sale.
+
+    marketplace.json is the plugin-level equivalent of a manifest's `skills`
+    array: present in the tree but absent from the marketplace means built,
+    validated, and deliberately not installable. Without this report that
+    state is invisible, and an unpublished plugin looks identical to one
+    someone forgot to register.
+    """
+    market, _ = load_json(root / ".claude-plugin" / "marketplace.json")
+    listed = {(root / e["source"]).resolve() for e in market.get("plugins", [])}
+    for man in sorted(root.glob("plugins/*/.claude-plugin/plugin.json")):
+        if man.parent.parent.resolve() not in listed:
+            rel = man.parent.parent.relative_to(root).as_posix()
+            print(f"  unpublished: {rel}")
+
+
 def check_catalog(root: Path) -> None:
     """The README restates the manifests, so assert the two agree."""
     rc = subprocess.run(
@@ -232,6 +249,7 @@ def main() -> int:
     unreleased = check_manifests(root, skills)
     check_provenance(root, skills)
     check_marketplace(root)
+    check_unpublished(root)
     check_catalog(root)
 
     if unreleased:
