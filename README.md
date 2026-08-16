@@ -29,7 +29,7 @@ into `.claude/skills/` in your project, or `~/.claude/skills/` for all
 projects, and it works immediately:
 
 ```
-cp -r plugins/critical-thinking/skills/critical-thinking ~/.claude/skills/
+cp -r skills/critical-thinking ~/.claude/skills/
 ```
 
 **Upload to claude.ai.** Build the archives, then upload the one you want
@@ -54,15 +54,26 @@ instead of GitHub, so edits take effect without publishing:
 
 <!-- catalog:start -->
 
-10 plugins, 24 skills. Each installs on its own.
+5 standalone skills and 5 plugins (19 skills). Skills are copied; plugins are installed.
+
+### Skills
+
+Self-contained folders. Copy one into `.claude/skills/`, or upload it on claude.ai.
+
+| Skill | What it does |
+|---|---|
+| [`critical-thinking`](skills/critical-thinking) | Rigorous problem-solving method for backward-chaining from a goal to a task breakdown, with disciplined assumption-handling and an optimist default |
+| [`document-forge`](skills/document-forge) | Run a disciplined, staged production pipeline for a business document (memo, proposal, strategy doc, brief, report) that mirrors how coding agent… |
+| [`framework-forge`](skills/framework-forge) | Use when someone has a framework thesis drawn from their own experience that they want researched, hardened, and built into a mature publishable document,… |
+| [`problem-hunt`](skills/problem-hunt) | Hunt for a real, unsolved-in-practice problem in AI, then brainstorm a solution collaboratively with the user |
+| [`storm-research`](skills/storm-research) | Use when someone asks to run Storm Research, use the storm-research skill, run the STORM method on a topic, says "storm research this" / "storm report on… |
+
+### Plugins
+
+Installed through the marketplace. Each carries more than instructions — extra skills, agents, hooks, or scripts.
 
 | Plugin | Ver | What it does |
 |---|---|---|
-| [`critical-thinking`](plugins/critical-thinking) | 1.0.0 | Backward-chaining problem analysis with disciplined assumption-handling, for plans, designs, and recommendations |
-| [`document-forge`](plugins/document-forge) | 1.0.0 | A staged production pipeline for business documents — isolated scoping and explicit acceptance criteria per stage, not one-shot drafting |
-| [`framework-forge`](plugins/framework-forge) | 1.0.0 | Hardens a framework thesis into a publishable document: verify the author's claims, ground them, draft, adversarial review, remediate, land |
-| [`problem-hunt`](plugins/problem-hunt) | 1.0.0 | Finds a real, unsolved-in-practice problem in AI, adversarially kills the weak candidates, then co-brainstorms a solution |
-| [`storm-research`](plugins/storm-research) | 1.0.0 | Turns a topic into a verified multi-perspective research briefing: five expert lenses, a contradiction map, then adversarial fact-checking |
 | [`skill-evolution`](plugins/skill-evolution) | 1.0.0 | Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
 | [`memory-vault`](plugins/memory-vault) | 0.2.2 | A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance |
 | [`rulegate`](plugins/rulegate) | 0.3.2 | Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
@@ -90,11 +101,20 @@ Most also carry `genome/intent.md`, and some add `references/`, `scripts/`,
 or `agents/`.
 
 ```
-critical-thinking/
-├── SKILL.md              what the model reads and executes
-├── genome/intent.md      purpose, invariants, golden examples
-└── references/           supporting material, loaded on demand
+skills/critical-thinking/        a skill: instructions, nothing else
+├── SKILL.md                     what the model reads and executes
+├── genome/intent.md             purpose, invariants, golden examples
+└── references/                  supporting material, loaded on demand
+
+plugins/rulegate/                a plugin: carries more than instructions
+├── .claude-plugin/plugin.json   name, version, and the skills array
+├── skills/                      one or more skills
+└── hooks/                       plus agents/, commands/, scripts/, templates/
 ```
+
+A skill that is only instructions stays in `skills/`, where it can be
+copied or uploaded directly. Wrapping it in a plugin would add a manifest
+and two directory levels and buy nothing.
 
 **Genome and phenotype.** `SKILL.md` is the phenotype — the instructions
 that run. `genome/intent.md` is the spec: purpose, success criteria,

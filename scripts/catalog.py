@@ -69,11 +69,37 @@ def first_sentence(text: str, limit: int = 155) -> str:
     return text.rstrip(".")
 
 
-def render(plugins) -> str:
+def collect_standalone(repo: Path):
+    """Skills under skills/ -- copied or uploaded, never installed."""
+    out = []
+    for skill_md in sorted((repo / "skills").glob("*/SKILL.md")):
+        out.append(read_skill(skill_md))
+    return out
+
+
+def render(plugins, standalone) -> str:
     lines = [START, ""]
     total = sum(len(p["skills"]) for p in plugins)
-    lines.append(f"{len(plugins)} plugins, {total} skills. "
-                 "Each installs on its own.")
+    lines.append(
+        f"{len(standalone)} standalone skills and {len(plugins)} plugins "
+        f"({total} skills). Skills are copied; plugins are installed."
+    )
+    lines.append("")
+    lines.append("### Skills")
+    lines.append("")
+    lines.append("Self-contained folders. Copy one into `.claude/skills/`, "
+                 "or upload it on claude.ai.")
+    lines.append("")
+    lines.append("| Skill | What it does |")
+    lines.append("|---|---|")
+    for s in standalone:
+        lines.append(f"| [`{s['name']}`](skills/{s['name']}) | "
+                     f"{first_sentence(s['description'])} |")
+    lines.append("")
+    lines.append("### Plugins")
+    lines.append("")
+    lines.append("Installed through the marketplace. Each carries more than "
+                 "instructions — extra skills, agents, hooks, or scripts.")
     lines.append("")
     lines.append("| Plugin | Ver | What it does |")
     lines.append("|---|---|---|")
@@ -117,7 +143,7 @@ def main() -> int:
         print(f"README.md: missing {START} / {END} markers", file=sys.stderr)
         return 1
 
-    block = render(collect(repo))
+    block = render(collect(repo), collect_standalone(repo))
     updated = re.sub(
         re.escape(START) + r".*?" + re.escape(END), lambda _: block, text, flags=re.S
     )

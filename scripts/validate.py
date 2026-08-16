@@ -142,9 +142,19 @@ def check_manifests(root: Path, skills):
             rp = path.relative_to(root).as_posix()
             err(f"{rp}: shipped by multiple plugins ({', '.join(owners)})")
 
-    unreleased = sorted(on_disk - set(shipped))
-    for path in unreleased:
+    # Two different things look identical here: a skill under skills/ at the
+    # repository root is standalone by design -- copied or uploaded directly,
+    # never installed -- while a skill inside a plugin that its manifest does
+    # not name is genuinely unreleased. Only the second is worth reporting.
+    accounted = set(shipped)
+    standalone, unreleased = [], []
+    for path in sorted(on_disk - accounted):
         rp = path.relative_to(root).as_posix()
+        (standalone if rp.startswith("skills/") else unreleased).append(rp)
+
+    for rp in standalone:
+        print(f"  standalone: {rp}")
+    for rp in unreleased:
         print(f"  unreleased: {rp}")
     return unreleased
 
