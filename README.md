@@ -1,52 +1,50 @@
 # Skills
 
-Reusable skills and plugins for Claude — disciplined methods for reasoning,
-research, writing, agent memory, delegation, rule enforcement, and job
-search. Each one installs on its own.
+Disciplined methods for Claude — reasoning, research, writing, agent memory,
+delegation, rule enforcement, and job search.
+
+Two kinds of thing live here, and they are used differently. A **skill** is
+instructions: a folder you copy or upload. A **plugin** is an installable
+package that carries skills plus whatever else they need — agents, hooks,
+scripts, templates — and it installs through the marketplace.
 
 Built and maintained by [Eric Wurth](https://www.ericwurth.com). MIT licensed.
 
-## Install
+## Install a plugin
 
-Add the marketplace once:
+Add the marketplace once, then install the plugins you want:
 
 ```
 /plugin marketplace add EricWurth/skills
+/plugin install rulegate@ericwurth
+/plugin install memory-vault@ericwurth
 ```
 
-Then install what you want:
+## Use a skill
 
-```
-/plugin install critical-thinking@ericwurth
-/plugin install storm-research@ericwurth
-```
-
-<details>
-<summary>Other ways to install</summary>
-
-**Copy a single skill.** Every skill is a self-contained folder. Copy one
-into `.claude/skills/` in your project, or `~/.claude/skills/` for all
-projects, and it works immediately:
+Skills are not installed. Copy the folder into `.claude/skills/` in a
+project, or `~/.claude/skills/` for every project, and it is available
+immediately:
 
 ```
 cp -r skills/critical-thinking ~/.claude/skills/
 ```
 
-**Upload to claude.ai.** Build the archives, then upload the one you want
-under Settings:
+To use one on claude.ai instead, zip that same folder and upload it under
+Settings. Nothing needs building.
 
-```
-py -3 scripts/package.py
-```
+<details>
+<summary>Developing against a local checkout</summary>
 
-Artifacts land in `dist/`, one `.plugin` per plugin.
-
-**Develop against a local checkout.** Point a marketplace at the directory
-instead of GitHub, so edits take effect without publishing:
+Point a marketplace at the directory rather than GitHub, so plugin edits
+take effect without publishing:
 
 ```
 /plugin marketplace add ./path/to/skills
 ```
+
+Skills need no equivalent — copy them, or symlink the folder if you want
+edits to apply live.
 
 </details>
 
@@ -60,25 +58,27 @@ instead of GitHub, so edits take effect without publishing:
 
 Self-contained folders. Copy one into `.claude/skills/`, or upload it on claude.ai.
 
-| Skill | What it does |
-|---|---|
-| [`critical-thinking`](skills/critical-thinking) | Rigorous problem-solving method for backward-chaining from a goal to a task breakdown, with disciplined assumption-handling and an optimist default |
-| [`document-forge`](skills/document-forge) | Run a disciplined, staged production pipeline for a business document (memo, proposal, strategy doc, brief, report) that mirrors how coding agent… |
-| [`framework-forge`](skills/framework-forge) | Use when someone has a framework thesis drawn from their own experience that they want researched, hardened, and built into a mature publishable document,… |
-| [`problem-hunt`](skills/problem-hunt) | Hunt for a real, unsolved-in-practice problem in AI, then brainstorm a solution collaboratively with the user |
-| [`storm-research`](skills/storm-research) | Use when someone asks to run Storm Research, use the storm-research skill, run the STORM method on a topic, says "storm research this" / "storm report on… |
+*Runs in* is derived from contents: anything carrying scripts or agents needs a surface that can run them.
+
+| Skill | Runs in | What it does |
+|---|---|---|
+| [`critical-thinking`](skills/critical-thinking) | Code · Cowork · chat | Rigorous problem-solving method for backward-chaining from a goal to a task breakdown, with disciplined assumption-handling and an optimist default |
+| [`document-forge`](skills/document-forge) | Code · Cowork | A staged production pipeline for business documents — isolated scoping and explicit acceptance criteria per stage, not one-shot drafting |
+| [`framework-forge`](skills/framework-forge) | Code · Cowork · chat | Hardens a framework thesis into a publishable document |
+| [`problem-hunt`](skills/problem-hunt) | Code · Cowork · chat | Hunt for a real, unsolved-in-practice problem in AI, then brainstorm a solution collaboratively with the user |
+| [`storm-research`](skills/storm-research) | Code · Cowork · chat | Turns one topic into a verified multi-perspective research briefing — five expert lenses, a contradiction map, then adversarial fact-checking |
 
 ### Plugins
 
 Installed through the marketplace. Each carries more than instructions — extra skills, agents, hooks, or scripts.
 
-| Plugin | Ver | What it does |
-|---|---|---|
-| [`skill-evolution`](plugins/skill-evolution) | 1.0.0 | Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
-| [`memory-vault`](plugins/memory-vault) | 0.2.2 | A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance |
-| [`rulegate`](plugins/rulegate) | 0.3.2 | Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
-| [`delegate`](plugins/delegate) | 0.1.2 | A senior-resource agent that owns problems end-to-end and reports in decision-queue format |
-| [`resumebot`](plugins/resumebot) | 0.2.0 | A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, and interview prep |
+| Plugin | Ver | Runs in | What it does |
+|---|---|---|---|
+| [`skill-evolution`](plugins/skill-evolution) | 1.0.0 | Code · Cowork | Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
+| [`memory-vault`](plugins/memory-vault) | 0.2.2 | Code · Cowork | A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance |
+| [`rulegate`](plugins/rulegate) | 0.3.2 | Code | Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
+| [`delegate`](plugins/delegate) | 0.1.2 | Code · Cowork | A senior-resource agent that owns problems end-to-end and reports in decision-queue format |
+| [`resumebot`](plugins/resumebot) | 0.2.0 | Code · Cowork | A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, and interview prep |
 
 Plugins carrying more than one skill:
 
@@ -93,12 +93,14 @@ Skills that only run when you type them (`disable-model-invocation`):
 
 <!-- catalog:end -->
 
-## How a skill is put together
+## How this is laid out
 
-Each skill is a directory with a `SKILL.md`, whose frontmatter carries the
-name and the description Claude matches against to decide when it applies.
-Most also carry `genome/intent.md`, and some add `references/`, `scripts/`,
-or `agents/`.
+Every skill, standalone or inside a plugin, is a directory with a
+`SKILL.md` whose frontmatter carries its `name` and the `description` Claude
+matches against to decide when it applies. Most also carry
+`genome/intent.md`.
+
+The difference is what surrounds it.
 
 ```
 skills/critical-thinking/        a skill: instructions, nothing else
@@ -140,11 +142,17 @@ py -3 scripts/package.py      build dist/*.plugin  (validates first)
 py -3 scripts/catalog.py      regenerate the catalogue above
 ```
 
-Stdlib only — nothing to install. CI runs all three on every push.
+Stdlib only — nothing to install. CI runs all of these on every
+push, plus a check that each built archive opens on Linux.
 
-A skill ships when a plugin's `skills` array names it, and only then. A
-skill present in the tree but absent from the array is unreleased, which is
-where work in progress lives. Nothing ships by existing.
+Standalone skills under `skills/` are published by being there — they are
+copied, not installed, so there is nothing to declare.
+
+Inside a plugin it is the opposite: a skill ships only when that plugin's
+`skills` array names it. One present in the plugin but absent from the array
+is unreleased, which is where work in progress lives. The validator reports
+those two states separately, so an unreleased skill never hides among the
+standalone ones.
 
 [`CONTEXT.md`](CONTEXT.md) defines the terms used here — skill, plugin,
 release, surface, ship — and is worth reading before making changes.

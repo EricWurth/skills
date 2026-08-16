@@ -1,5 +1,6 @@
 ---
 name: framework-forge
+summary: Hardens a framework thesis into a publishable document — verifies the author's claims, grounds them in the territory, then runs a five-persona adversarial review
 description: Use when someone has a framework thesis drawn from their own experience that they want researched, hardened, and built into a mature publishable document, or says "forge this framework" / "harden this framework" / "run framework-forge on X". Runs a 7-phase pipeline: contract -> verify the author's own claims -> map and ground in the territory -> draft -> five-persona adversarial review -> remediate and loop -> subtract and land. Best when the author already has a point of view and needs it stress-tested, grounded, and made runnable; overkill for a summary or a first-draft brainstorm.
 argument-hint: "[framework thesis, or path/link to a draft]"
 spec: genome/intent.md

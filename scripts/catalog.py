@@ -32,7 +32,10 @@ def read_skill(path: Path):
     fm = parse_frontmatter(path.read_text(encoding="utf-8", errors="replace"))
     return {
         "name": fm.get("name") or path.parent.name,
-        "description": fm.get("description", "").strip(),
+        # `description` is written for the matcher and often opens with
+        # "Use when someone asks to..." -- correct there, unreadable in a
+        # table. `summary` is the human-facing line when one is supplied.
+        "description": (fm.get("summary") or fm.get("description", "")).strip(),
         "user_invoked": fm.get("disable-model-invocation", "").lower() == "true",
     }
 
@@ -49,6 +52,7 @@ def collect(repo: Path):
         )
         skills = [read_skill(source / rel / "SKILL.md") for rel in man["skills"]]
         out.append({
+            "surfaces": surfaces(source, standalone=False),
             "name": man["name"],
             "version": man["version"],
             "description": entry.get("description") or man["description"],
@@ -69,11 +73,37 @@ def first_sentence(text: str, limit: int = 155) -> str:
     return text.rstrip(".")
 
 
+def surfaces(path: Path, standalone: bool) -> str:
+    """Where this can actually run, derived from what it contains.
+
+    Surfaces differ in capability, and the differences are hard: plain
+    claude.ai chat has no shell, no filesystem, and no subagents; Cowork has
+    files and subagents but not hooks or MCP servers. So the question "can I
+    use this here" is answerable from the contents, and deriving it beats
+    declaring it -- a declared field goes stale the first time a skill grows
+    a script.
+
+    Heuristic, deliberately conservative: anything that could need a shell
+    loses chat.
+    """
+    if (path / "hooks").is_dir() or (path / ".mcp.json").is_file() \
+            or (path / "commands").is_dir():
+        return "Code"
+    needs_tools = (path / "scripts").is_dir() or (path / "agents").is_dir()
+    if not standalone:
+        # A plugin installs through the marketplace, which chat has no
+        # mechanism for, whatever its contents.
+        return "Code · Cowork"
+    return "Code · Cowork" if needs_tools else "Code · Cowork · chat"
+
+
 def collect_standalone(repo: Path):
     """Skills under skills/ -- copied or uploaded, never installed."""
     out = []
     for skill_md in sorted((repo / "skills").glob("*/SKILL.md")):
-        out.append(read_skill(skill_md))
+        entry = read_skill(skill_md)
+        entry["surfaces"] = surfaces(skill_md.parent, standalone=True)
+        out.append(entry)
     return out
 
 
@@ -90,10 +120,13 @@ def render(plugins, standalone) -> str:
     lines.append("Self-contained folders. Copy one into `.claude/skills/`, "
                  "or upload it on claude.ai.")
     lines.append("")
-    lines.append("| Skill | What it does |")
-    lines.append("|---|---|")
+    lines.append("*Runs in* is derived from contents: anything carrying "
+                 "scripts or agents needs a surface that can run them.")
+    lines.append("")
+    lines.append("| Skill | Runs in | What it does |")
+    lines.append("|---|---|---|")
     for s in standalone:
-        lines.append(f"| [`{s['name']}`](skills/{s['name']}) | "
+        lines.append(f"| [`{s['name']}`](skills/{s['name']}) | {s['surfaces']} | "
                      f"{first_sentence(s['description'])} |")
     lines.append("")
     lines.append("### Plugins")
@@ -101,11 +134,11 @@ def render(plugins, standalone) -> str:
     lines.append("Installed through the marketplace. Each carries more than "
                  "instructions — extra skills, agents, hooks, or scripts.")
     lines.append("")
-    lines.append("| Plugin | Ver | What it does |")
-    lines.append("|---|---|---|")
+    lines.append("| Plugin | Ver | Runs in | What it does |")
+    lines.append("|---|---|---|---|")
     for p in plugins:
         lines.append(f"| [`{p['name']}`](plugins/{p['name']}) | {p['version']} | "
-                     f"{first_sentence(p['description'])} |")
+                     f"{p['surfaces']} | {first_sentence(p['description'])} |")
     lines.append("")
 
     multi = [p for p in plugins if len(p["skills"]) > 1]

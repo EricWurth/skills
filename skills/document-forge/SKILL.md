@@ -1,5 +1,6 @@
 ---
 name: document-forge
+summary: A staged production pipeline for business documents — isolated scoping and explicit acceptance criteria per stage, not one-shot drafting
 description: Run a disciplined, staged production pipeline for a business document (memo, proposal, strategy doc, brief, report) that mirrors how coding agent pipelines get reliability: isolated task scoping per stage plus explicit acceptance criteria, not one-shot drafting. Also sets up the workspace it runs in. Use when the user says "forge this document," "run document-forge," "/init-doc-forge," asks to set up a document workspace, or wants a memo/proposal/strategy doc/brief built with real rigor rather than a quick draft. Distinct from framework-forge (which hardens a framework thesis) and storm-research (which produces a research briefing): document-forge is for a document meant to drive a decision or action, where getting it wrong has a real cost.
 spec: genome/intent.md
 ---
