@@ -72,13 +72,15 @@ Self-contained folders. Copy one into `.claude/skills/`, or upload it on claude.
 
 Installed through the marketplace. Each carries more than instructions — extra skills, agents, hooks, or scripts.
 
-| Plugin | Ver | What it does |
-|---|---|---|
-| [`skill-evolution`](plugins/skill-evolution) | 1.0.0 | Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
-| [`memory-vault`](plugins/memory-vault) | 0.2.2 | A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance |
-| [`rulegate`](plugins/rulegate) | 0.3.2 | Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
-| [`delegate`](plugins/delegate) | 0.1.2 | A senior-resource agent that owns problems end-to-end and reports in decision-queue format |
-| [`resumebot`](plugins/resumebot) | 0.2.0 | A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, and interview prep |
+| Plugin | Code | Chat | What it does |
+|---|:--:|:--:|---|
+| [`skill-evolution`](plugins/skill-evolution) | ✅ | ✅ | Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
+| [`memory-vault`](plugins/memory-vault) | ✅ | ✅ | A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance |
+| [`rulegate`](plugins/rulegate) | ✅ | — | Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
+| [`delegate`](plugins/delegate) | ✅ | — | A senior-resource agent that owns problems end-to-end and reports in decision-queue format |
+| [`resumebot`](plugins/resumebot) | ✅ | — | A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, and interview prep |
+
+A plugin marked *Chat* carries only skills, so uploading it works where a shell does not. Hooks, subagents, and scripts need a coding environment.
 
 Plugins carrying more than one skill:
 

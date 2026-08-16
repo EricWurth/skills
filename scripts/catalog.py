@@ -52,7 +52,7 @@ def collect(repo: Path):
         )
         skills = [read_skill(source / rel / "SKILL.md") for rel in man["skills"]]
         out.append({
-            "chat": False,   # plugins install through a marketplace
+            "chat": runs_in_chat(source),
             "name": man["name"],
             "version": man["version"],
             "description": entry.get("description") or man["description"],
@@ -84,7 +84,14 @@ def runs_in_chat(path: Path) -> bool:
     blockers = ("scripts", "hooks", "commands", "agents")
     if any((path / d).is_dir() for d in blockers):
         return False
-    return not (path / ".mcp.json").is_file()
+    if (path / ".mcp.json").is_file():
+        return False
+    # A plugin can be skills-only at the top level while one of its skills
+    # ships a script. Check the whole tree, not just the root.
+    return not any(
+        d.is_dir() and d.name in blockers
+        for d in path.rglob("*")
+    )
 
 
 def tick(value: bool) -> str:
@@ -128,11 +135,15 @@ def render(plugins, standalone) -> str:
     lines.append("Installed through the marketplace. Each carries more than "
                  "instructions — extra skills, agents, hooks, or scripts.")
     lines.append("")
-    lines.append("| Plugin | Ver | What it does |")
-    lines.append("|---|---|---|")
+    lines.append("| Plugin | Code | Chat | What it does |")
+    lines.append("|---|:--:|:--:|---|")
     for p in plugins:
-        lines.append(f"| [`{p['name']}`](plugins/{p['name']}) | {p['version']} | "
-                     f"{first_sentence(p['description'])} |")
+        lines.append(f"| [`{p['name']}`](plugins/{p['name']}) | ✅ | "
+                     f"{tick(p['chat'])} | {first_sentence(p['description'])} |")
+    lines.append("")
+    lines.append("A plugin marked *Chat* carries only skills, so uploading it "
+                 "works where a shell does not. Hooks, subagents, and scripts "
+                 "need a coding environment.")
     lines.append("")
 
     multi = [p for p in plugins if len(p["skills"]) > 1]
