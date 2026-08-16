@@ -15,10 +15,11 @@ been checked against its primary source.
 **The pipeline:**
 
 1. **Scope** -- pin down the topic and the reader's role.
-2. **Five lenses, run in parallel** -- Practitioner, Academic, Skeptic,
-   Economist, Historian. Each does real web research and returns a
-   distinct position with sourced evidence -- not five restatements of the
-   same take.
+2. **Five lenses** -- Practitioner, Academic, Skeptic, Economist,
+   Historian. Run in parallel as subagents when an `Agent` tool is
+   available, or one at a time in a single context otherwise. Each does
+   real web research and returns a distinct position with sourced
+   evidence -- not five restatements of the same take.
 3. **Contradiction map** -- where the lenses genuinely conflict, which
    evidence is strongest vs. weakest, the one question that would resolve
    the biggest disagreement, what everyone agrees on, and the blind spot no
@@ -35,10 +36,13 @@ A report that skips step 5 is not a Storm Research report, full stop.
 ## Install
 
 Drop the `storm-research/` folder into your `.claude/skills/` directory.
-It depends only on built-in Claude Code tooling (the `Agent` tool with a
-general-purpose agent, `Write`, and web search/fetch used inside those
-agents) plus the bundled `report-template.html`. No external services, no
-paid APIs, no other skills required.
+It adapts to whatever tooling is on hand: with an `Agent`/subagent tool
+and file `Write` (e.g. Claude Code), it spawns the lenses and verifiers
+as parallel agents and writes the report to disk; without those (e.g.
+claude.ai chat), it runs the same phases sequentially inline and delivers
+the report as an HTML artifact instead. Either path needs only built-in
+tooling (web search/fetch) plus the bundled `report-template.html`. No
+external services, no paid APIs, no other skills required.
 
 ## Use
 

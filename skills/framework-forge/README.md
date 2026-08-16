@@ -43,9 +43,14 @@ a point of view.
 
 ## Requirements
 
-- **Subagents.** Phase 4 runs its persona panel in parallel. Claude Code only.
-- **Web research**, for phase 2.
+- **Web research**, for verifying claims (phase 1), mapping the territory
+  (phase 2), and the Standards Reader persona (phase 4).
 - Nothing else. No scripts, no other skills.
+
+Subagents are not required. In an agent-capable runtime (Claude Code),
+phase 1's verifiers and phase 4's personas run as parallel agents; in
+chat, the same prompts run sequentially inline with the same outputs. No
+phase is dropped either way.
 
 ## Install
 

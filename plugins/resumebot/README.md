@@ -13,8 +13,8 @@ Okafor"). Your real data lives only in your local workspace, never in the plugin
 ## Install
 
 ```
-/plugin marketplace add EricWurth/resumebot
-/plugin install resumebot
+/plugin marketplace add EricWurth/skills
+/plugin install resumebot@ericwurth
 ```
 
 Then say: **"set up resumebot"** — the guided setup scaffolds your workspace and
@@ -77,4 +77,4 @@ corresponding skill, so logic never forks between the schedule and the skill.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](../../LICENSE).

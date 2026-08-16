@@ -30,17 +30,28 @@ skills, so they belong in the README.>
 
 ## Requirements
 
-<Everything that must exist for this to work:
+<The test is narrow: remove this and does the plugin stop working? Not
+"does the plugin mention it" — an agent's own text can assert a pairing in
+the present tense ("you work under X") without X being installed, and that
+assertion is not evidence the pairing is required. Only list what is
+actually load-bearing:
 
-- other plugins it composes with, and what degrades without them
-- services, MCP servers, databases, or private systems
+- services, MCP servers, databases, or private systems it cannot run without
 - files or folders it expects
 - surfaces it will not run on, and why
 
-State the negative case explicitly — "installed alone it still follows the
-method, but nothing enforces it" is more useful than silence. An undeclared
-dependency is the single worst README defect: the reader installs, it half
-works, and nothing says why.>
+Write "None." when that is true.
+
+## What extends it
+
+<Other plugins or systems that make this better without being required —
+this is where a companion plugin belongs if the method still runs alone.
+State plainly what is gained and what is lost without each one; "installed
+alone it still follows the method, but nothing enforces it" is the shape.
+An undeclared real requirement is the single worst README defect — the
+reader installs, it half works, and nothing says why. A requirement claimed
+that turns out to be optional is the second worst — it stops someone
+installing something that would have worked fine.>
 
 ## Setup
 

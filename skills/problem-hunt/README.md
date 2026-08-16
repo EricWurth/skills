@@ -14,7 +14,7 @@ before any of them reach you.
 
 Five phases, and the middle three are all filters:
 
-1. **Scan** — practitioner pain, where people actually complain, not where papers say the gaps are
+1. **Scan** — practitioner pain, where people actually complain, not where vendors market
 2. **Adversarial pass** — each candidate is attacked against existing solutions. Most die here, which is the point
 3. **Novelty gate** — survivors are checked for whether the fix is genuinely unknown or merely unadopted
 4. **Teach** — the underlying mechanism is explained, so you understand *why* the problem persists despite known fixes
@@ -32,7 +32,9 @@ rather than assumed.
 
 - **Web research**, for the scan and novelty gate. On claude.ai, network
   access varies by account, so this may be limited there.
-- Nothing else. No scripts, no subagents, no other skills.
+- The `critical-thinking` skill, loaded for the brainstorm phase instead of
+  reinventing goal decomposition.
+- No scripts, no subagents.
 
 ## Install
 

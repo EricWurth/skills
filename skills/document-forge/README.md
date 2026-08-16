@@ -24,6 +24,8 @@ Stage 0 sets up the workspace, once. Then the pipeline runs in order:
 8. **Ambiguity pass** — a dedicated subagent reads for what could be misread
 9. **Adversarial content review** — attacks the argument
 10. **Style and structure check**
+11. **Contract check** — the draft walked against every acceptance criterion from stage 1
+12. **Gate** — pass or fail, naming the specific failing criterion; a fail returns to the stage that owns the gap
 
 The split between stages 5 and 6 is the load-bearing idea: rules that can be
 pattern-matched live in the linter where they run deterministically, and
@@ -32,9 +34,11 @@ missed by eye should move into the linter rather than be restated.
 
 ## Requirements
 
-- **Subagents.** The ambiguity pass runs as a separate agent so it reads the
-  document cold, without the drafting context. This is Claude Code only —
-  subagents are not available on other surfaces.
+- **Isolation for the ambiguity pass.** It needs to read the document cold,
+  without the drafting context. On Claude Code or Cowork that's a subagent;
+  without one (Claude.ai chat), it's a fresh separate conversation given the
+  draft alone — not a requirement the skill fails without, but skipping the
+  isolation on any surface defeats the stage.
 - **A writable workspace.** Stage 0 scaffolds one, and handles the case where
   the target is not directly writable (cloud sandbox, device-bridged folder).
 - **Python**, for `scripts/lint.py`.

@@ -12,6 +12,7 @@ Prose rules in CLAUDE.md influence an agent; they do not bind it. Compliance dec
 | Action attempted | PreToolUse (script) | Scope gate diffs the attempted write against the CURRENT step's declared files. Out-of-scope blocks with "report it instead". |
 | Action completes | PostToolUse (script) | Evidence ledger silently records what actually ran (`.rulegate/ledger.jsonl`). |
 | Reply finishes | Stop (script + prompt) | Output gate: deterministic lint on STYLE rules, then completion-claim language checked against fresh ledger evidence. Both block. A prompt-based judge annotates JUDGMENT rules; advisory only in v0.1. |
+| Context compacts | PreCompact (script) | Points back at `.rulegate/plan.md` so the plan survives compaction instead of being silently forgotten. |
 
 Discovered work re-enters through the front gate as a normal message. The conversation is the channel.
 

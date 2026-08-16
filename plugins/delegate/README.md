@@ -84,5 +84,6 @@ context. It works; it just does not keep your context clean.
 
 It identifies as Rick, signs reports as Rick, and answers to "Rick, take
 this." That is deliberate, not a leftover. If you would rather it did not,
-edit `agents/delegate.md` — the name appears four times and nothing depends
-on it.
+edit `agents/delegate.md` — the name appears ten times, spread across the
+frontmatter description, its examples, and the opening paragraph, and
+nothing outside that file depends on it.

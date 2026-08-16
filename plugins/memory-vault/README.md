@@ -32,6 +32,9 @@ The vault also includes a `library/` folder for curated reference artifacts (des
 
 Every documented failure of file-based agent memory is a failure of files without a curator. If the weekly review stops happening, this vault degrades into the same stale-note graveyard as every unsupervised memory tool. The review is not maintenance on the system. It is the system.
 
-## Design lineage & provenance
+## Why the approval gate is not optional
 
-Supersede-not-delete follows Zep/Graphiti's temporal invalidation and matches AWS AgentCore and Claude Code's Auto Dream. The reader/writer split follows Letta's sleep-time agent architecture. Reflections follow Stanford's Generative Agents. Layered loading follows MemPalace and MemGPT's block budgets. The human approval gate is the part most tools skip, and the part the failure reports keep proving necessary.
+File-based agent memory fails the same way regardless of implementation: it
+degrades into stale, uncurated notes once nothing is reading and pruning it.
+The gate exists to be the thing that keeps reading and pruning. Remove it and
+this system fails the same way, not a different one.

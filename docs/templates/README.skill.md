@@ -22,17 +22,26 @@ to do something, say so here.>
 
 ## Requirements
 
-<Everything that must exist for this skill to work, including things that
-are not files:
+<The test is narrow: remove this and does the skill stop working? Not
+"does the skill mention it" — a skill's instructions can describe an ideal
+world without depending on it. Only list what is actually load-bearing:
 
-- tools it calls (subagents, web search, a shell)
-- files it expects to find or writes to
-- other skills it loads or is loaded by
-- services, MCP servers, or private systems
+- tools it calls that it cannot do without (subagents, web search, a shell)
+- files it expects to find or write
+- other skills it cannot run without
+- services, MCP servers, or private systems it cannot substitute
 
-Write "None. It is instructions only, with no dependencies." when that is
-true — the absence is worth stating, because it is what makes a skill
-portable to chat.>
+Write "None." when that is true — the absence is worth stating, because it
+is what makes a skill portable to chat. "None" is also the default: most
+skills are instructions plus judgment, and nothing about them is
+load-bearing infrastructure.
+
+Something the skill's instructions reference but does not need — a
+companion skill that makes it better, a system its text assumes is present
+— belongs in a separate "What extends it" section, not here. Confusing the
+two is the single worst README defect: it tells a reader the skill will not
+work when it will, or hides a real gap behind a sentence written in the
+present tense as if the dependency were already satisfied.>
 
 ## Install
 
