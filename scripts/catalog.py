@@ -52,7 +52,7 @@ def collect(repo: Path):
         )
         skills = [read_skill(source / rel / "SKILL.md") for rel in man["skills"]]
         out.append({
-            "surfaces": surfaces(source, standalone=False),
+            "chat": False,   # plugins install through a marketplace
             "name": man["name"],
             "version": man["version"],
             "description": entry.get("description") or man["description"],
@@ -73,28 +73,22 @@ def first_sentence(text: str, limit: int = 155) -> str:
     return text.rstrip(".")
 
 
-def surfaces(path: Path, standalone: bool) -> str:
-    """Where this can actually run, derived from what it contains.
+def runs_in_chat(path: Path) -> bool:
+    """True when this is only instructions.
 
-    Surfaces differ in capability, and the differences are hard: plain
-    claude.ai chat has no shell, no filesystem, and no subagents; Cowork has
-    files and subagents but not hooks or MCP servers. So the question "can I
-    use this here" is answerable from the contents, and deriving it beats
-    declaring it -- a declared field goes stale the first time a skill grows
-    a script.
-
-    Heuristic, deliberately conservative: anything that could need a shell
-    loses chat.
+    A chat surface has no shell and no filesystem, so anything shipping
+    scripts, hooks, commands, an MCP server, or subagents needs a coding
+    environment. Derived rather than declared, so it cannot go stale the
+    first time something grows a scripts/ folder.
     """
-    if (path / "hooks").is_dir() or (path / ".mcp.json").is_file() \
-            or (path / "commands").is_dir():
-        return "Code"
-    needs_tools = (path / "scripts").is_dir() or (path / "agents").is_dir()
-    if not standalone:
-        # A plugin installs through the marketplace, which chat has no
-        # mechanism for, whatever its contents.
-        return "Code · Cowork"
-    return "Code · Cowork" if needs_tools else "Code · Cowork · chat"
+    blockers = ("scripts", "hooks", "commands", "agents")
+    if any((path / d).is_dir() for d in blockers):
+        return False
+    return not (path / ".mcp.json").is_file()
+
+
+def tick(value: bool) -> str:
+    return "✅" if value else "—"
 
 
 def collect_standalone(repo: Path):
@@ -102,7 +96,7 @@ def collect_standalone(repo: Path):
     out = []
     for skill_md in sorted((repo / "skills").glob("*/SKILL.md")):
         entry = read_skill(skill_md)
-        entry["surfaces"] = surfaces(skill_md.parent, standalone=True)
+        entry["chat"] = runs_in_chat(skill_md.parent)
         out.append(entry)
     return out
 
@@ -120,25 +114,25 @@ def render(plugins, standalone) -> str:
     lines.append("Self-contained folders. Copy one into `.claude/skills/`, "
                  "or upload it on claude.ai.")
     lines.append("")
-    lines.append("*Runs in* is derived from contents: anything carrying "
-                 "scripts or agents needs a surface that can run them.")
-    lines.append("")
-    lines.append("| Skill | Runs in | What it does |")
-    lines.append("|---|---|---|")
+    lines.append("| Skill | Code | Chat | What it does |")
+    lines.append("|---|:--:|:--:|---|")
     for s in standalone:
-        lines.append(f"| [`{s['name']}`](skills/{s['name']}) | {s['surfaces']} | "
-                     f"{first_sentence(s['description'])} |")
+        lines.append(f"| [`{s['name']}`](skills/{s['name']}) | ✅ | "
+                     f"{tick(s['chat'])} | {first_sentence(s['description'])} |")
+    lines.append("")
+    lines.append("*Chat* means it works with no filesystem or shell. "
+                 "Derived from contents, not declared.")
     lines.append("")
     lines.append("### Plugins")
     lines.append("")
     lines.append("Installed through the marketplace. Each carries more than "
                  "instructions — extra skills, agents, hooks, or scripts.")
     lines.append("")
-    lines.append("| Plugin | Ver | Runs in | What it does |")
-    lines.append("|---|---|---|---|")
+    lines.append("| Plugin | Ver | What it does |")
+    lines.append("|---|---|---|")
     for p in plugins:
         lines.append(f"| [`{p['name']}`](plugins/{p['name']}) | {p['version']} | "
-                     f"{p['surfaces']} | {first_sentence(p['description'])} |")
+                     f"{first_sentence(p['description'])} |")
     lines.append("")
 
     multi = [p for p in plugins if len(p["skills"]) > 1]

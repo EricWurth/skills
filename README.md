@@ -58,27 +58,27 @@ edits to apply live.
 
 Self-contained folders. Copy one into `.claude/skills/`, or upload it on claude.ai.
 
-*Runs in* is derived from contents: anything carrying scripts or agents needs a surface that can run them.
+| Skill | Code | Chat | What it does |
+|---|:--:|:--:|---|
+| [`critical-thinking`](skills/critical-thinking) | ✅ | ✅ | Rigorous problem-solving method for backward-chaining from a goal to a task breakdown, with disciplined assumption-handling and an optimist default |
+| [`document-forge`](skills/document-forge) | ✅ | — | A staged production pipeline for business documents — isolated scoping and explicit acceptance criteria per stage, not one-shot drafting |
+| [`framework-forge`](skills/framework-forge) | ✅ | ✅ | Hardens a framework thesis into a publishable document |
+| [`problem-hunt`](skills/problem-hunt) | ✅ | ✅ | Hunt for a real, unsolved-in-practice problem in AI, then brainstorm a solution collaboratively with the user |
+| [`storm-research`](skills/storm-research) | ✅ | ✅ | Turns one topic into a verified multi-perspective research briefing — five expert lenses, a contradiction map, then adversarial fact-checking |
 
-| Skill | Runs in | What it does |
-|---|---|---|
-| [`critical-thinking`](skills/critical-thinking) | Code · Cowork · chat | Rigorous problem-solving method for backward-chaining from a goal to a task breakdown, with disciplined assumption-handling and an optimist default |
-| [`document-forge`](skills/document-forge) | Code · Cowork | A staged production pipeline for business documents — isolated scoping and explicit acceptance criteria per stage, not one-shot drafting |
-| [`framework-forge`](skills/framework-forge) | Code · Cowork · chat | Hardens a framework thesis into a publishable document |
-| [`problem-hunt`](skills/problem-hunt) | Code · Cowork · chat | Hunt for a real, unsolved-in-practice problem in AI, then brainstorm a solution collaboratively with the user |
-| [`storm-research`](skills/storm-research) | Code · Cowork · chat | Turns one topic into a verified multi-perspective research briefing — five expert lenses, a contradiction map, then adversarial fact-checking |
+*Chat* means it works with no filesystem or shell. Derived from contents, not declared.
 
 ### Plugins
 
 Installed through the marketplace. Each carries more than instructions — extra skills, agents, hooks, or scripts.
 
-| Plugin | Ver | Runs in | What it does |
-|---|---|---|---|
-| [`skill-evolution`](plugins/skill-evolution) | 1.0.0 | Code · Cowork | Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
-| [`memory-vault`](plugins/memory-vault) | 0.2.2 | Code · Cowork | A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance |
-| [`rulegate`](plugins/rulegate) | 0.3.2 | Code | Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
-| [`delegate`](plugins/delegate) | 0.1.2 | Code · Cowork | A senior-resource agent that owns problems end-to-end and reports in decision-queue format |
-| [`resumebot`](plugins/resumebot) | 0.2.0 | Code · Cowork | A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, and interview prep |
+| Plugin | Ver | What it does |
+|---|---|---|
+| [`skill-evolution`](plugins/skill-evolution) | 1.0.0 | Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
+| [`memory-vault`](plugins/memory-vault) | 0.2.2 | A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance |
+| [`rulegate`](plugins/rulegate) | 0.3.2 | Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
+| [`delegate`](plugins/delegate) | 0.1.2 | A senior-resource agent that owns problems end-to-end and reports in decision-queue format |
+| [`resumebot`](plugins/resumebot) | 0.2.0 | A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, and interview prep |
 
 Plugins carrying more than one skill:
 
