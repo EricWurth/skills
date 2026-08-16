@@ -63,3 +63,21 @@ Runnable any time as a drift check ("audit my rules"). Rules files grow by accre
 - Do not reject a rule for being strict. Strict and vague are different defects; only vague is a defect here.
 - Do not rewrite JUDGMENT rules into fake requirements. "Prefer thin subsystems" losing its "prefer" becomes a lie about what is checkable. Taste rules stay taste rules, honestly advisory.
 - Do not delete anything without approval, including dead weight.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "The user really wants this enforced, so I'll mark it enforceable anyway" | A genuine taste rule like "prefer thin subsystems" stays verdict judgment, kept advisory. Stripping the hedge word to fabricate checkability is a lie about what the rule can actually bind. |
+| "This rule is strict, so it's probably too vague to keep" | Strict and vague are different defects. Only vague is a defect here — do not reject a rule for demanding a lot. |
+| "This dead-weight rule is obviously redundant, I'll just remove it now" | Nothing is deleted without approval, including dead weight. Recommend deletion and name the enforcing mechanism; do not act on it unilaterally. |
+| "The rewrite barely changes the meaning, I don't need to wait for approval" | Every rewrite requires explicit approval. A meaning-changing rewrite is a miscompile at the rules layer, the one place it propagates into everything downstream. |
+| "These two rules conflict, but one is clearly the better one — I'll just go with it" | Surface the contradictory pair and let the author pick. Never silently resolve a contradiction. |
+
+## Red Flags
+
+- A rule containing "prefer", "generally", or similar hedges being marked enforceable with the hedge quietly dropped.
+- Applying a rewrite or deletion to RULES.md before the author has approved it.
+- A contradiction pair where only one rule survives the table with no note of the conflict.
+- A rule rejected as "too strict" rather than flagged for an actual vague quantifier, unresolvable reference, or missing observability.
+- A compound rule audited as a single row instead of split into its atoms first.

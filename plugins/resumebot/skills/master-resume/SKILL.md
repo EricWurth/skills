@@ -155,3 +155,21 @@ standing variant rather than keep hand-cutting.
 New accomplishments append to the master first, then flow into variants. The master
 carries a header changelog note (see the example) so every edit session sees what
 has already been incorporated.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "The bullet needs a number to land — I'll estimate something reasonable." | You're manufacturing a KPI. Capture numbers only where the number is the story; a qualitative bullet that's true beats a quantified one that's invented. |
+| "It was already on their old resume, so it's probably fine to carry forward." | Prior existence isn't verification. Anything that smells unverifiable gets flagged and confirmed with the user, not imported silently because a past version of the document already made the claim. |
+| "This was basically delivered — I'll just say they built it and skip the caveat." | "Responsible for X" becomes "did X" or gets cut. An unexecuted proposal is not resume material even with a hedge attached; there's no version of "designed but not built" that belongs in the master. |
+| "It's obviously client work, I'll just [name it / anonymize it] — no need to ask." | Client-naming is a conditional default, not a rule you get to guess. Ask whether clients may be named, default to sector + scale if undecided, and record the decision in content-rules.md either way. |
+
+## Red Flags
+
+- A percentage, dollar figure, or headcount appears in a bullet that the interview or source material never supplied.
+- "Responsible for," "helped with," or similar passive-credit phrasing survives into the final draft instead of a real delivered verb or a cut.
+- A claim imported from an existing resume has no confirmation note and no record of being flagged to the user.
+- A certification is listed without the user having confirmed they actually hold it (versus willing-to-earn).
+- A graduation year, "25+ years," or other age signal appears anywhere in the document.
+- The same hybrid-shaped custom cut shows up a third time in the tracker with no note about promoting it to a standing variant.

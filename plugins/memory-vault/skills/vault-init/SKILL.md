@@ -44,3 +44,21 @@ Create the vault skeleton and seed it so the first real session can use it immed
    - Claude Code, `~/.claude/CLAUDE.md`: an `@<vault path>/INDEX.md` import line, plus the session-end capture rule from the vault-capture skill.
 
 10. **Close with the cadence:** episodes happen every session automatically; the user should run vault-review weekly, and the vault degrades into clutter if the review stops. Say this plainly once, without lecturing.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "This project repo is right here and convenient, I'll just put the vault folder in it." | Never scatter vault folders inside project repos. Propose `~/memory-vault` and honor a different path only if the user gives one. |
+| "The user said 'sure' to my suggested fact, that's close enough to a standing decision." | Provenance at seeding is honest or it poisons the vault from day one: `decision` only when the user states it as their own standing choice, `suggestion` otherwise. |
+| "I already have the context loaded, I'll add one more procedure file while I'm in here." | After init, `procedures/` belongs to the review. The chat-capture playbook is the one permitted exception, written once, at init, and nothing else. |
+| "The Cowork working folder is right here, connecting a separate folder is extra friction for the user." | In Cowork the vault must be a connected folder matching the absolute path other surfaces reference, not the session's working folder, or the Claude Code import silently points at nothing. |
+
+## Red Flags
+
+- Initializing a vault inside a project repository instead of the proposed or user-given location
+- Proceeding without checking whether the target already has an INDEX.md
+- A seeded fact marked `provenance: decision` when the user only agreed to a proposal
+- Any write to `procedures/` at init beyond the one chat-capture-playbook file
+- Handing the user paraphrased setup lines instead of the verbatim text for each surface
+- An INDEX.md at init that exceeds 60 lines or omits the seven rules, load order, or the two empty sections

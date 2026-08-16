@@ -123,6 +123,28 @@ Check the draft against every item in stage 1's acceptance criteria, one by one.
 ### 9. Gate
 Pass or fail, with the specific failing criterion named if fail. This stage is currently self-graded, see `references/rationale.md` for why that's a known weak point. On fail, return to the specific stage that owns the gap, don't redraft from stage 4. If stages 5.6 or 6.5 ran, their non-CONFIRMED verdicts and unresolved findings need a stated resolution (fixed, or explicitly deferred with reasoning) before this stage passes - a document can't gate PASS with an open CONTRADICTED verdict sitting unaddressed.
 
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "I'll draft the whole thing now and check it at the end" | The pipeline exists to resist exactly this. Each stage has a narrow job, run in order, re-read fresh - not folded into one pass and reviewed after the fact. |
+| "This stat is well-known, I don't need to tag it" | Stage 5: every specific claim, number, or quote is traced to a source or tagged `[assumption]` - no silent unsourced assertions, confidence isn't a source. |
+| "I already read it while writing it, that's my ambiguity pass" | Stage 6 says this directly: a same-context re-read isn't a real substitute. Anything less than a genuinely isolated reader is skipping the stage, not a lighter version of it. |
+| "The linter passed, so the draft is clean" | Stage 5.5 is explicit that it's "not a substitute for stages 6-8, only for the parts that don't need judgment" - it catches unsourced numerics, not whether the document actually holds up. |
+| "House style says be concise, so I'll cut this section" | Stage 7: a terse voice writes a complete document in fewer words, it doesn't write an incomplete one. Cutting a standard section is a Stage 1 completeness call, not a style edit - and it's the documented failure (three template documents shipped under-scoped this way). |
+| "Everything passed except one open finding, but it's minor - ship it" | Stage 9: the gate cannot pass with an open CONTRADICTED verdict or an unresolved finding lacking a stated resolution (fixed, or explicitly deferred with reasoning). |
+
+## Red Flags
+
+- Writing prose before Stage 1's one-sentence decision and acceptance criteria exist as a durable artifact.
+- Treating a pre-existing draft as proof stages 2-4 already happened, instead of as Stage 2/3 source material.
+- A claim in the draft with no source and no `[assumption]` tag.
+- Running the ambiguity pass in the same conversation or context window that produced the draft.
+- Bulk-fixing lint's generic-default findings (em-dash, filler openers) that haven't been confirmed against `context/tone-of-voice.md`, or treating a lint pass as covering stages 6-8.
+- Skipping Stage 5.6 or 6.5 without stating why in the artifact - versus stating the skip explicitly when the document genuinely makes no named-practice claims or is genuinely low-stakes.
+- `projects/<project>/review-notes.md` doesn't exist even though stages 5, 6, 5.6, or 6.5 supposedly ran.
+- Redrafting from Stage 4 after a gate failure instead of returning to the specific stage that owns the gap.
+
 ## Notes
 
 - This pipeline is for documents where being wrong costs something. For a quick summary or casual note, skip it and just write. An internal document with no external audience still qualifies if getting it wrong has a real cost - audience being "just me" doesn't mean low-stakes.

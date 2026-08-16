@@ -67,3 +67,22 @@ are fine but must merge into the xlsx in the same pass.
 The `Dashboard` sheet holds live `COUNTIF` formulas over the Tracker sheet — status
 counts and packet-pending counts. It recalculates itself in Excel; automation never
 writes to it.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "The fit score's a 5, that's basically ready" | `packetComplete=TRUE` has to be verified against a real file in `Applications/` before `status=ready` is set — fit score, however high, never substitutes for a packet that actually exists. |
+| "I'll keep a quick side list so I don't have to requery the sheet every time" | Any second markdown/JSON "queue" or "priority list" is forked state, and forked state drifts and eventually clobbers the real sheet. Everything merges into the xlsx in the same pass. |
+| "It's on a different board, so it's a different row" | `matchKey` is `company|title`, lowercased — board and url are never part of the identity. The same job on two boards is one job; dedupe against the full sheet before appending. |
+| "I read the sheet a few minutes ago, it's probably still current" | The user edits the xlsx directly between runs. A write from anything but a fresh, immediately-prior read risks clobbering their edits. |
+| "It's just one row, I'll skip the backup this once" | Every automated write is preceded by a backup, no matter how small the change — that's the rollback path if the write goes wrong. |
+
+## Red Flags
+
+- Setting `status=ready` with `packetComplete=TRUE` but no verified file in `Applications/`
+- Writing or updating the tracker without a fresh timestamped backup immediately before it
+- Writing from a sheet state read earlier in the session rather than immediately before the write
+- Any second file (markdown, JSON, or otherwise) holding job-search state outside the xlsx
+- Appending a row without checking `matchKey` against the full existing sheet
+- Automation setting a status change the user never stated and email-sync never reported

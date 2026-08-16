@@ -103,3 +103,22 @@ Packets built (company/role/variant), lint and QA results (including any drift
 caught and where it came from), any roles skipped and why, and the new ready-queue
 count. Spot-check offer: render 1–2 to PDF for the user to eyeball
 when the batch is large or a variant changed.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "This claim is basically true, I'll just add it to this one packet" | If it's not traceable to the master, it either doesn't belong or hasn't been added to the source of truth yet. Patching it into one packet only is how forks start — it goes to master-resume first, then the packet gets rebuilt. |
+| "I only found drift in this one packet, the others are probably fine" | Packets in a batch share a template. A drift found in one is a signal the same mistake is in every sibling built from that variant — the whole batch gets checked, not just the packet where it surfaced. |
+| "Lint passed, that's basically QA" | Lint catches mechanical violations (em dashes, forbidden names, formatting). It doesn't catch traceability, JD alignment, or variant drift — those require the separate fresh-read QA gate, every time. |
+| "I just wrote this, I can eyeball it myself instead of a fresh read" | QA is explicitly meant to be a fresh read, not a re-skim by the pass that wrote it — the pass that generated the drift is the least likely to spot it. |
+| "The cover letter's short, I'll just tack it on as page 2 to save a file" | Merged resume/cover-letter files mis-parse in ATS systems. The cover letter is always a separate file, no exceptions for length or convenience. |
+
+## Red Flags
+
+- Adding an unsourced claim to a single packet instead of routing it through master-resume
+- Setting `status=ready` before the file is confirmed on disk and both lint and QA have passed
+- Merging a cover letter into the resume as a second page
+- QA performed by the same pass that generated the packet, with no fresh read
+- Drift found in one packet and not checked against the rest of the batch built from the same variant
+- A standing omission (education years, a forbidden client name, etc.) surviving into a delivered packet

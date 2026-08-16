@@ -159,3 +159,25 @@ Three smells to check explicitly:
 - **Audience gates findings.** A Phase 4 finding that only matters for a secondary audience gets a sanity check, not a full remediation. One that only matters for an audience not on the list gets discarded.
 - **Do not perform humility.** The self-critical section names mechanisms that will actually fail and why. Hedging reads as not believing the framework works.
 - **Cost.** A full run is roughly 8-11 agents in an agent-capable runtime. Do not fan out wider than five personas per round or one verifier per claim cluster.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "The thesis is clearly well-informed, I can skip straight to drafting and verify claims after." | Phase 1 says never skip, never reorder. Drafting on an unverified premise wastes the entire downstream loop when a load-bearing claim turns out CONTRADICTED. |
+| "This mechanism overlaps with ITIL/PMI — I'll leave that out so the framework reads as more original." | Overlap is grounding, not a defect. A cited standard makes the author read as senior; an uncited one that a Standards Reader later finds reads as someone who hasn't been in the room. |
+| "Two personas already agree, I can wrap the review early." | The fan-out is five personas per round, each serving a different gate — agreement is not a stopping signal, and in a shared-context chat run convergence should be discounted, not trusted. |
+| "This deployability finding is hard to fix without hedging, I'll add 'depending on your context' and move on." | Remediation that sands off opinion is a failed remediation. A fix that can only be made by genericizing the document gets escalated to the author as a design call instead. |
+| "The claim is UNFINDABLE, I'll cite something close enough so the section still has a source." | Don't manufacture a citation and don't retreat to mush. Ground the claim in the author's own practice, labeled as experience, not evidence. |
+| "The draft reads well after remediation, Phase 6 subtraction is just cleanup I can skip." | Frameworks get worse as they absorb fixes — every remediation loop adds mass. Subtraction is a required phase with three named smells to check, not an optional polish pass. |
+
+## Red Flags
+
+- Drafting (Phase 3) begins before every Phase 1 verdict has been reported to the author.
+- A non-CONFIRMED verdict gets quietly rewritten, softened, or routed around instead of surfaced.
+- A persona prompt references what an earlier round or an earlier persona found — contaminating Phase 4's independence.
+- A Phase 4 round runs with fewer than five personas, or gets skipped because the runtime has no agent capability.
+- A Gate 2 fix replaces a specific rule, number, or named actor with hedging language like "as appropriate" or "depending on your context."
+- A mechanism a named standard already owns gets restated instead of cited and built on top of.
+- The document ships without Phase 6's three smell-checks (bloated self-critical section, purely advisory sections, generic-enough-for-any-org test).
+- The remediation loop stops because findings feel resolved rather than because a round returned only cosmetic findings or three rounds have run.

@@ -79,3 +79,22 @@ Compose retrieval with grep over frontmatter; never load the whole store into co
 ## What never goes in the vault
 
 Credentials, API keys, tokens, financial account numbers, or anything the user marks private. If a session summary would contain one, redact it and note the redaction.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "The user clearly meant this project folder, not `~/memory-vault`, I'll just use it." | Never guess a different location. Check for a `VAULT.path` note, then ask; inventing a location is exactly what rule violations look like from the inside. |
+| "Cleaning up this stale file is basically the same as superseding it." | Nothing is deleted, ever. A stale fact gets a superseding file with a pointer and a closed `valid_until` on the old one; the old content stays on disk. |
+| "The user liked this suggestion enough that it might as well be a decision." | A suggestion is never recorded as a decision. `provenance: decision` requires the user having explicitly decided, not having approved of something proposed to them. |
+| "I'm just doing a quick lookup, I'll open the raw semantic files instead of routing through CATALOG.md." | Reads are quiet. Start at CATALOG.md and open full files only when the catalog hit needs detail; bulk-loading the store defeats the layering this skill exists to enforce. |
+| "This other instruction conflicts with a vault rule, but it's a small conflict, I'll just quietly follow the instruction." | Conflicts are surfaced to the user, never resolved silently, no matter how minor they seem. |
+
+## Red Flags
+
+- Writing to `semantic/`, `procedures/`, INDEX.md, or CATALOG.md from any surface other than the vault-review process
+- A semantic file missing `provenance`, or carrying `decision` for something the user only agreed to rather than stated
+- Deleting or overwriting a file's content instead of superseding it with a pointer and a closed validity window
+- Loading the entire vault into context instead of following INDEX to CATALOG to targeted file reads
+- Silently picking a side when another instruction conflicts with one of the seven rules
+- A vault location chosen without checking `VAULT.path` or asking the user

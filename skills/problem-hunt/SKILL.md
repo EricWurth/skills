@@ -136,3 +136,25 @@ Output markdown by default. No em dashes; use commas, colons, semicolons, or res
 - Teaching a concept the user could have guessed.
 - Solving it alone in one message. Phase 5 is collaborative or it failed.
 - Padding to three finalists with weak candidates. Two strong beats three where one is filler.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "This one's obviously still unsolved, I don't need to search for a killer" | The default assumption is the opposite: "assume by default that a candidate is already solved and that the user has heard of it." Skipping the search doesn't skip the risk, it just means you present an unvalidated candidate as if it survived Phase 2. |
+| "The adversarial pass didn't kill anything, but that just means I found three strong candidates" | "Rule of thumb: if this phase kills nothing, Phase 1 was too shallow. Go back and scan harder." A pass with a zero discard rate is a sign of a shallow scan, not a sign of unusually good candidates. |
+| "It's a specific instance of hallucination, not the blocked topic itself, so it clears the gate" | The novelty gate applies the same test to candidates that aren't on the blocked list: "If the candidate can be restated as a widely repeated slogan without losing anything, it is not specific enough." Being a specific instance of a blocked topic is not the same as being a mechanism-level claim. |
+| "I'll show the candidate list now, the adversarial pass can run after, the user should see the raw options" | "Do not show them to the user yet. An unfiltered candidate list is exactly the listicle this skill exists to avoid." The filtering is the product; showing the list first defeats the phase that follows it. |
+| "I already know how to structure a brainstorm, no need to load another skill first" | "Load the `critical-thinking` skill for the brainstorm phase rather than reinventing goal decomposition." The instruction is explicit and not conditioned on confidence in freehand structuring. |
+| "I'll write out the full mechanism now so the user has everything up front" | Phase 4 requires holding the full payload back: "Do not dump the full payloads unprompted; an essay before the pick buries the choice." The service-level version is the pitch; the full mechanism is only for a finalist the user asks about. |
+
+## Red Flags
+
+- A candidate list appears before the adversarial pass has run.
+- A candidate gets discarded with "too hard" or an equivalent as the stated reason.
+- A discarded candidate has no named gap classification (solved, adoption, ergonomics, misdiagnosis, substrate).
+- The adversarial pass discards none of the candidates it was run against.
+- A finalist is reducible to a blocked slogan ("hallucination," "evals are hard," "agents are unreliable") without losing anything.
+- The brainstorm phase starts without loading `critical-thinking` first.
+- A brainstorm turn delivers a finished solution or more than one hypothesis instead of one hypothesis, one attackable strawman, and one self-criticism.
+- A symptom ("agents lose track of state") is presented as the problem instead of the mechanism underneath it.

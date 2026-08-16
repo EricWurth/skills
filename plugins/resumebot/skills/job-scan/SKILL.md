@@ -104,3 +104,22 @@ End with counts only, not a row dump: N postings reviewed, N new rows added, N
 duplicates skipped, N gate-rejected (by gate), plus the top 3 new finds by fit with
 one line each. If run interactively, offer to run build-packets on the new high-fit
 rows.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "This deferred role is stale weight, I'll just reject it to tidy the tracker" | `deferred` parks a priority tier — it is never a fit judgment. Turning a park into a rejection destroys information the user asked to keep for later. |
+| "The board says posted 3 days ago, that's probably close enough" | Board dates are unreliable by design of this pipeline. Follow the ATS link and read its own date, or record "date unverified" — never present the board's number as fact. |
+| "This is a real stretch, I'll just tell the user to skip it" | Fit is information, not a verdict. Only a hard gate justifies passing on a role — a wide net means partial fits get applied to, not talked out of. |
+| "While I'm rescoring this row, I'll also fix its status to match" | Rescore touches only `fit`, `fitEvidence`, and `queueRank`. Status is a separate decision the user already made (or hasn't) — rescoring never reaches into it. |
+| "I've already scored this one highly, I might as well submit it" | This skill never applies to anything, ever. Finding and scoring is the entire job; application is a different skill's decision. |
+
+## Red Flags
+
+- A `deferred` row flipped to `rejected` (or the reverse) without a fit-based reason
+- Any apply/submit action taken directly by this skill
+- A posting scored before a `matchKey` dedupe check against the full tracker
+- `applyUrl` pointing at an aggregator's intake instead of the employer's own ATS
+- A board "posted" date reported as fact without following through to the ATS page
+- A rescore that touches `status`, `applied`/`interviewing` rows, or built packets

@@ -34,3 +34,22 @@ Write one append-only episode file summarizing the current session. Load vault-c
 ## Intentions
 
 If the session produced a follow-up ("check X next week"), also append an entry to `intentions/QUEUE.md` per the schema: status pending, a concrete trigger date or event, and a context link to the episode just written. This is the one other write this skill is allowed.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "The user seemed happy with my plan, this is basically a decision at this point." | It isn't. A decision is something the user stated as decided. However well received, an agent's proposal is a suggestion, and mislabeling it corrupts provenance for everything downstream in review. |
+| "This pattern is obviously worth promoting, I'll just note it in semantic/ now and save review a step." | Capture never promotes, no matter how obvious the pattern looks. List it in Candidates and stop; promotion is review's job. |
+| "The session ran long, I'll write a thorough 60-line episode so nothing gets lost." | The cap is hard at 40 lines. Compress Actions harder, not the cap softer, it is a summary, not a log. |
+| "There's already an episode for today on this topic, I'll just add to it." | An existing episode is never opened or edited. A same-day, same-topic capture gets `-2`, not an append. |
+| "I should flag which candidates review ought to promote, to save it time." | That's editorializing about review's decision. List the pattern smell and stop; judging it is out of scope here. |
+
+## Red Flags
+
+- Writing "Decisions" for anything the user did not explicitly state as decided
+- Creating or editing a file under `semantic/`, `procedures/`, INDEX.md, or CATALOG.md from within this skill
+- An episode file over 40 lines, or missing the exact four sections
+- Opening an existing episode file to append or edit it instead of writing a new one
+- A Candidates entry that reads like a promotion recommendation rather than a one-line observation
+- A credential, key, or user-marked-private item appearing in the episode text unredacted

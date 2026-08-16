@@ -91,3 +91,22 @@ Create the report as a child page under the company's page in Notion's Job Hunt 
 ## After the interview
 
 When the user next mentions how it went, offer a short debrief: what was actually asked vs. predicted, what landed, what was missing. Capture it (vault episode if the vault is in use, or memory) so the next prep's question-anticipation is sharper. If the interview surfaced a prep failure, name it plainly and note which step above should have caught it.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "The submitted resume already says they're cert-in-progress — matching it keeps the story consistent for the interviewer." | The interviewer holding a stale claim doesn't make it true. The consistency gate corrects the verbal guidance to the standing rule (willing-to-earn, not candidate) and flags the resume drift in Open Gaps — it never repeats the resume's version to stay "consistent." |
+| "I already researched this last week — no need to search it again today." | Regulations shift, executives change, sanctions resolve. The recency gate requires a fresh dated verification in this session; "recently" researched is not the same as "verified now." |
+| "This is a compliance role, so I'll lead with the NIST/ISO structure — that's the standard reference." | Framework recitation is reference material, not the spine. The core need — what the hire is paid to build or run — has to lead; frameworks displacing it is the exact failure this skill exists to prevent. |
+| "This project is their strongest story — it fits three of these questions well enough." | Hanging multiple answers on one engagement reads as a one-engagement career. Spread stories across engagements even when one story is objectively the best fit for several questions. |
+| "There's no clean story for this one, but a composite built from two projects would read fine." | A forced or composited story collapses under one follow-up. No story beats a fabricated one — it goes in Open Gaps instead. |
+
+## Red Flags
+
+- A claim in the draft report (certification, client name, delivery status) doesn't match Master/MasterResume.md or the user's standing memory rules.
+- A time-sensitive fact (law, deadline, executive name, news item) is cited with no dated search performed in this session.
+- The report's opening sections recite frameworks or regulatory context before stating the core-need sentence.
+- Two or more anticipated questions in the same report are assigned to the same engagement.
+- A question or claim appears with no traceable story behind it and no corresponding Open Gaps entry.
+- The report is published without a visible consistency-gate, recency-gate, or red-team pass having run.

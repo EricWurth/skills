@@ -88,3 +88,22 @@ master resume:
 When the user reports a scan miss ("why did this good role get dropped?") or noise
 ("stop showing me these"), trace it to the specific gate/bonus line, propose the
 edit, and update the file in the same session. The profile is living config.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "The user wants 'Senior Director of Operations,' I'll just search that" | Title+level combos are exactly what search terms must never be. Redirect to the underlying function ("operations") — broad search plus scoring beats pre-filtering every time. |
+| "They said they'd rather not do hybrid, that's basically a location gate" | A soft preference isn't a gate unless it traces to a real disqualifier. Recording it as a gate hides jobs forever; it belongs in bonuses. |
+| "This posting wants a skill the resume doesn't show, I'll flag the role as not viable" | A gap is tailoring information, not an auto-reject — dig first, since users routinely have relevant experience missing from the page. Only a quantified years-of-specific-experience requirement that IS the role's core mandate disqualifies. |
+| "I already know their comp floor, I'll just fill in the negotiation essay for them" | Judgment-tier answers (comp numbers, essays, attestations) are always drafted for approval, never auto-filled or auto-submitted — only standing facts get silent automation. |
+| "A quick form will get through the gates faster than a full conversation" | This runs as a coaching conversation via the career-coach agent, not a form — the point is surfacing options and forcing real decisions, which a form can't do. |
+
+## Red Flags
+
+- A search term that's a title+level string instead of a function
+- A gate added without a traceable hard disqualifier behind it
+- A resume gap treated as disqualifying without checking whether it's the quantified core-mandate requirement
+- A judgment-tier form answer filled or submitted without surfacing it for user approval
+- Wish-list items settled before the four hard gates
+- Skipping the 2-3 example-posting step and jumping straight to abstract preferences

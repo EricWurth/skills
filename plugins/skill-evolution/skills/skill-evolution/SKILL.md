@@ -136,6 +136,25 @@ write to the live path does.
    shortfall. See `references/review-checklist.md` for the condensed
    end-of-sweep report format.
 
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "It passed regression and discrimination cleanly, that's basically sign-off" | A clean sandbox result is what makes promotion *eligible*, not what makes it *approved*. Step 6 requires explicit human sign-off "every time, no exceptions for how confident the sandbox result looks." |
+| "This change is small/obviously safe, I can skip straight to applying it" | Step 5 exists precisely to stop the "technique I already know" shortcut -- the genome names this as "the specific failure this skill exists to prevent," from a past run that did exactly this and had to be corrected. |
+| "The technique is well-regarded in the literature, that's enough to sandbox it" | Fitness is skill-specific, not generic. Step 3 requires a documented problem *for this skill*, traced to its own eval notes -- general reputation fails fitness "full stop, regardless of how well-regarded." |
+| "Regression passed, so the change is proven" | Regression only shows nothing broke. Discrimination -- a new adversarial fixture the unmodified skill would have passed incorrectly -- is what proves the gain is real, per Step 5. |
+| "I found a second good candidate, might as well bundle both in" | Step 4 requires selecting exactly one new candidate per pass, so a pass/fail result stays attributable to a single change; layering happens across passes, not within one. |
+
+## Red Flags
+
+- Applying a technique to the live/production skill directory before the user has explicitly signed off, no matter how clean the sandbox looked
+- Sandboxing a candidate that has no documented, skill-specific failure in that skill's own eval notes or history
+- Skipping the library refresh (Step 1) and going straight to a technique already top of mind
+- Treating a regression pass alone as sufficient proof, with no discrimination fixture constructed
+- Promoting more than one untested candidate in a single gate decision
+- Rewriting an existing technique-library.md entry's substance in place instead of appending a dated note or new entry
+
 ## Genome (intent spec)
 
 This skill's genome -- purpose, success criteria, behavioral invariants,

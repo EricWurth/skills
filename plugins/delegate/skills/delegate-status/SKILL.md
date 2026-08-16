@@ -37,3 +37,22 @@ Close with a single line of position against the charter: current step, actual v
 ## Stuck escalations
 
 A stuck flag (frontier stopped moving, or actuals an order of magnitude past estimate) always lands in **Needs your call**, formatted as: the wall, what was thrown at it, what the wall appears to be made of, and a recommended path (different approach, charter change, or abandon-with-reasoning).
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "The queue is empty, so I'll add a line that risks were logged to show I did something" | This is the exact failure named in the rules: "no 'risks have been logged'" is performative and measures nothing the user steers by. An empty queue stated plainly is the good report. |
+| "I'll list what got done since last time — it shows progress" | That is an inventory, not a decision queue. If an item does not require a decision from the user or inform one, it does not appear, no matter how much work it represents. |
+| "This step is probably done, I'll just report it complete" | A completion claim must be ledger-backed. Without fresh evidence, the correct move is to state it as unverified and name the check that would verify it — not to round up to done. |
+| "This risk is worth flagging even though I don't have a clear recommendation yet" | Needs-your-call items are never a bare question. If there's no options-plus-recommendation to offer, it isn't ready for that section. |
+| "I'll add a sentence explaining why the decision was made, it's more helpful" | Justifications live in the graph, reachable by node id. Reconstructing them inline defeats the point — "walk me through why" should be a traversal, not something the report already did for them. |
+
+## Red Flags
+
+- A bullet list of completed tasks, or any phrase like "risks have been logged," appearing in the report.
+- A Needs-your-call entry that is a bare question with no options or recommendation attached.
+- A completion claim with no ledger evidence cited, or evidence that is stale but not flagged as such.
+- Justification prose following a Decided-since-last-update line instead of just the node id.
+- The full three-section format produced for a one-line status question that didn't ask for it.
+- A section header left in place with nothing under it, instead of being omitted or replaced with the one-line "queue is empty" statement.

@@ -81,3 +81,20 @@ trusting the schedule.
 
 Summarize what exists, what was skipped, and the first manual action (usually: run a
 first `job-scan` and review what lands in the tracker).
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "It's simpler to just lay down the whole `JobSearch/` tree again than figure out what's already there." | Each stage is independently re-runnable specifically so you don't have to do this. Check what exists and pick up from there — recreating a populated workspace risks clobbering real work. |
+| "They already have a resume file, but running the full interview anyway is more thorough." | If the user has an existing resume, master-resume starts from it and interviews only the gaps. Running the full from-scratch interview on top of a real document wastes their time and second-guesses the invariant. |
+| "I'll register the schedule now — the first real nightly run will prove it works." | Scheduled runs stall on any tool lacking standing permission. Skipping the manual test-run-and-grant step just moves the failure to 11pm with nobody watching. |
+| "The status lifecycle explanation basically implies 'ready' needs a packet — I don't need to spell it out." | The rule is stated plainly for a reason: a role never becomes ready until its tailored resume exists in Applications/. Implying it isn't the same as saying it. |
+
+## Red Flags
+
+- Stage 0 overwrites or recreates folders/files that already existed, without first checking what was there.
+- Master-resume runs the full interview even though the user pointed at an existing resume file.
+- Setup treats declining Stage 4 as blocking completion, instead of noting scheduling as skipped and finishing through Stage 5.
+- A registered scheduled prompt contains multi-step logic instead of the one-line "run the resumebot `<skill>` skill for the workspace at `<root>`" delegation.
+- A schedule gets registered and left untested — no manual run, no permission grants — before being called done.

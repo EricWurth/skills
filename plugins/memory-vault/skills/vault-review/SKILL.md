@@ -57,3 +57,26 @@ Close with a short scorecard: episodes read, proposals made and approved, facts 
 ## Read reference
 
 `references/review-checklist.md` holds the condensed checklist for repeat runs.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "This technique only showed up once, but it's clearly a strong pattern, I'll propose it anyway." | The evidence bar is 2 or more distinct contexts. One occurrence is an anecdote: note it and move on, not propose it. |
+| "The user praised this workflow twice, that's basically them deciding to keep it." | Praise is not a decision. Provenance stays `suggestion` unless the user explicitly decided; enthusiasm across episodes doesn't upgrade it. |
+| "These five proposals are so clearly good, I'll just apply them and let the user know afterward." | Nothing is applied before approval. Proposals go into one list for item-by-item approve, edit, or reject, never a batch nod. |
+| "This fact is contradicted by a newer episode, easiest fix is to just edit the old file." | Never edit or delete; propose supersession, a new file with `supersedes:` and the old file closed with `status: superseded` and a shut `valid_until`. |
+| "Auto-memory says this clearly, I'll fold it straight into the proposal as settled." | Auto-memory is unverified, machine-written, and may be stale or misattributed. It's a capture source to cluster against episodes, never authority on its own. |
+| "The scorecard is a formality, I'll skip mentioning that Candidates sections were mostly empty." | An empty-Candidates pattern is a signal that capture is failing upstream, and the close is required to flag it, not just report counts. |
+| "INDEX.md is over the cap, I'll trim whatever's fastest to cut." | Cuts have to target the least load-bearing content specifically, not just whatever is quickest to remove. |
+
+## Red Flags
+
+- A promotion proposal built on a single occurrence with no second context
+- `provenance: decision` assigned to anything the user did not explicitly decide, including well-received suggestions
+- Any write to `semantic/`, `procedures/`, INDEX.md, or CATALOG.md before the corresponding proposal was approved
+- A stale or contradicted fact edited or deleted instead of superseded
+- Auto-memory content promoted without corroborating episode evidence
+- More than 2-3 reflections drafted in one review, or a reflection missing `provenance: hypothesis`
+- A sync-conflict file resolved unilaterally instead of surfaced to the user
+- The closing scorecard omitting a flag for consistently empty Candidates sections

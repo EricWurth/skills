@@ -118,6 +118,28 @@ Prompt (per cluster):
 - **Cost.** In an agent-capable runtime this spawns ~9-11 agents per run; that is expected. Do not fan out wider than five lenses or one verifier per citation cluster. In a chat runtime the same work runs sequentially, so expect many web searches and a longer single turn.
 - **Design.** Keep the template CSS verbatim. Do not swap in a different visual style.
 
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "All five lenses converged on the same take, so this topic is settled" | "Convergence is a strong hypothesis, not independent proof. The panel is author-built — say so, and never present agreement as field consensus." |
+| "I'm on the chat path, I can't spawn agents, so I'll fold verification into the synthesis instead of running it separately" | "The rule is explicit: if you can't spawn agents, do the same work inline and in sequence. Never drop a phase because the execution mechanism differs." |
+| "I already found these sources while running the lenses, re-checking them in Phase 4 is redundant" | "Phase 4 verification means fetching the primary source and being skeptical of secondary blog summaries — the same URL surfacing twice is not the same as it being confirmed." |
+| "This figure is close enough to what the source says, I'll leave it as stated" | "Never paper over it. If a figure can't be verified against its primary source, demote or cut it — that's the whole point of the honest verification banner." |
+| "The template's CSS looks dated, a cleaner style would make the report better" | "Keep the `<style>` block verbatim. Do not swap in a different visual style, no matter how well-intentioned." |
+| "A report that skips step 5 is basically done, I'll ship it and note verification as a follow-up" | "A report that skips step 5 is not a Storm Research report, full stop." |
+
+## Red Flags
+
+- Delivering a report with no verification banner, or a banner that doesn't state real fabricated/corrected/demoted counts.
+- All five lens briefs reading as restatements of one position rather than genuinely distinct core positions and evidence.
+- Treating cross-lens agreement as consensus of the field instead of disclosing the panel as author-built.
+- Skipping or compressing Phase 4 because the runtime has no subagent tool or no file write.
+- A citation clause with no URL, or a Phase 4 verdict accepted from a secondary source instead of the primary one.
+- A claim left at CONFIRMED-level confidence after Phase 4 actually returned PARTIALLY CONFIRMED, UNVERIFIED, or FALSE.
+- An unverifiable number or citation left in the report instead of being demoted or cut.
+- The report's `<style>` block modified from the bundled template.
+
 ---
 
 ## Genome (intent spec)

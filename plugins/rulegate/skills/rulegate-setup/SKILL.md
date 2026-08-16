@@ -58,3 +58,22 @@ STYLE entries use `lint: <extended-regex> :: <message>`; everything else is pros
 - Do not invent rules the user's files do not contain.
 - Do not classify a rule into two shapes; pick the moment that actually stops the bad outcome.
 - Do not write regex STYLE rules for things that need judgment; a tone rule is JUDGMENT even if a keyword approximates it.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "These rules look fine, I'll skip the audit and go straight to classification" | Running rules-audit first is mandatory. Classification of an unaudited set propagates vague rules into gates that cannot hold them. |
+| "This tone rule is basically a keyword problem, a regex gets close enough" | A tone rule is JUDGMENT even if a keyword approximates it. Writing a STYLE regex for something that needs taste masquerades as enforcement it isn't. |
+| "This compound rule is one idea, I'll classify it as a single entry" | A compound rule ("write tests first and never touch vendor/") splits into its atoms first; each atom gets its own shape. One rule in two shapes is never correct. |
+| "I'm not sure which shape this is, JUDGMENT is the safe default" | Each rule gets exactly one shape from the actual test table, not a default bucket for uncertainty. Misclassification binds the rule at the wrong moment or not at all. |
+| "I'll write RULES.md now and let the user correct it after the fact" | The classification table is presented for correction before anything is written. This human gate is load-bearing, not a formality to backfill. |
+
+## Red Flags
+
+- Proceeding to classification without the rules-audit step having run.
+- A `lint:` regex written for a rule that actually requires taste to evaluate.
+- `.rulegate/RULES.md` written before the user has seen and corrected the classification table.
+- The same rule listed under two shape headers.
+- A rule in RULES.md that doesn't trace back to the user's CLAUDE.md or instruction files.
+- Telling the user a JUDGMENT-classified rule will be enforced rather than disclosing it as advisory-only.

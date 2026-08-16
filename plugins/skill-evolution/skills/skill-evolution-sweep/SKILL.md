@@ -23,6 +23,23 @@ Run the `skill-evolution` skill as a recurring maintenance pass.
    worth promoting is a normal, healthy result; say so plainly rather than
    padding the report.
 
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "Nobody's watching, and the sandbox result is clean -- just ship it" | This is the exact failure this skill exists to prevent. Step 3 and the genome are explicit: promotion always requires an explicit, synchronous human decision, and "a scheduled task is the wrong place for that gate" -- an unattended context is not implicit approval. |
+| "It's a scheduled run, so a lighter pass through the steps is fine" | Unattended changes what happens at the gate, not what happens before it. Every per-target step -- refresh, identify, evaluate, prioritize, sandbox-test -- still runs in full. |
+| "This skill has no genome/intent.md, that's a problem I should flag" | A skill without a genome is simply out of scope for this sweep, not an error condition -- it should be silently excluded, not logged as a failure. |
+| "Nothing passed the gates this sweep, I should find something to report" | An all-clear sweep is a normal, healthy result. Padding the report to look like more happened is worse than plainly stating nothing was found worth promoting. |
+
+## Red Flags
+
+- Writing to any target skill's live/production files during a scheduled sweep run, regardless of how clean the sandbox result looks
+- Treating "this is an unattended run" as a reason to skip or shortcut refresh, identify, evaluate, prioritize, or sandbox-test for any target
+- Logging a genome-less skill as an error or failure instead of simply excluding it from the sweep
+- An end-of-sweep report that omits, for any target, what was found, what was tested, or what's waiting on human sign-off
+- Manufacturing a marginal candidate to make an all-clear sweep look more productive than it was
+
 ## Setting this up
 
 This file follows the same shape your scheduling tool expects for a

@@ -6,7 +6,7 @@ Idempotent: never overwrites an existing file. Reports what it created,
 what it skipped, and what it could not find. Safe to re-run.
 
 Usage:
-    python scaffold.py <workspace-path> [--skill-source <path-to-document-forge>]
+    python init-workspace.py <workspace-path> [--skill-source <path-to-document-forge>]
 """
 import argparse
 import shutil

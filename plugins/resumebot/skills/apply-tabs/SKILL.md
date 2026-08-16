@@ -43,3 +43,22 @@ the next session.
 
 Postings die on a clock. If a role has sat in `ready` for more than ~10 days, bump
 it to the top of the next session and say why.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "The tab probably opened fine, I'll just mark it applied" | Opening a tab is not submitting a form. Status only moves to `applied` when the user reports it (or email-sync confirms it) — never inferred from having opened the tab. |
+| "`packetComplete` is TRUE in the tracker, no need to check the folder" | The sheet cell can be stale or wrong. The row only gets opened as a tab after the packet file is confirmed to actually exist in `Applications/`; otherwise it's flagged, not opened. |
+| "The board listing link is right there, I'll just use that" | The board URL and the direct apply URL are not interchangeable — one is the aggregator page, the other is the real ATS form. Always `applyUrl`, never `url`. |
+| "The user's clearly on a roll today, I'll open all 12 instead of stopping at 5" | The per-session cap exists because a wall of tabs kills momentum, not because 5 is a hard technical limit. Qualifying for more doesn't override the cap. |
+| "This form looks quick, I'll just fill it in for them" | The skill's one hard boundary is that it opens tabs and never fills or submits forms — quickness doesn't create an exception. |
+
+## Red Flags
+
+- Setting `status=applied` without the user reporting it or email-sync confirming it
+- Opening the board `url` instead of `applyUrl` for any tab
+- Opening more tabs than the user's per-session batch cap
+- Opening a tab for a row whose packet file doesn't actually exist in `Applications/`
+- Filling in or submitting any part of an application form
+- Leaving a role stale in `ready` for 10+ days without bumping it and stating why
