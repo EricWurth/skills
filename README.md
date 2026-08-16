@@ -56,7 +56,7 @@ edits to apply live.
 
 They split on one axis: who can invoke them. **User-invoked** skills are reachable only when you type them — they orchestrate. **Model-invoked** skills can be typed *or* reached for automatically when the task fits — they hold the reusable discipline. A user-invoked skill may call a model-invoked one, never another user-invoked one.
 
-*Chat* marks what runs with no filesystem or shell. Derived from contents, not declared.
+*Chat* marks what works outside a coding harness. Skills get a filesystem and bash everywhere, so bundled scripts are fine; hooks, slash commands, MCP servers, and bundled subagents are not. Derived from contents, not declared. On claude.ai network access varies by account, so anything doing live web research may not work for every reader.
 
 ### Skills
 

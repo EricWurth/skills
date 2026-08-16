@@ -24,6 +24,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
 from skillmodel import parse_frontmatter  # noqa: E402
 
+NEEDS_AGENTS = re.compile(
+    r"\b(Agent tool|subagents?|sub-agents?|parallel agents)\b", re.I)
+
 START = "<!-- catalog:start -->"
 END = "<!-- catalog:end -->"
 
@@ -74,24 +77,28 @@ def first_sentence(text: str, limit: int = 155) -> str:
 
 
 def runs_in_chat(path: Path) -> bool:
-    """True when this is only instructions.
+    """True when this works outside a coding harness.
 
-    A chat surface has no shell and no filesystem, so anything shipping
-    scripts, hooks, commands, an MCP server, or subagents needs a coding
-    environment. Derived rather than declared, so it cannot go stale the
-    first time something grows a scripts/ folder.
+    Not "is it only instructions". Skills run in a code execution
+    environment on every surface, with filesystem access and bash, and
+    bundled scripts are a documented content type that Claude runs via bash
+    -- including on claude.ai, where custom Skills upload as zips with code
+    execution enabled. Shipping a script disqualifies nothing.
+
+    What genuinely does not travel is the plugin machinery of a coding
+    harness: hooks fire on tool-use events, commands are slash commands,
+    an MCP server needs a host to run it, and bundled subagent definitions
+    need a harness that can dispatch them.
+
+    One caveat this cannot express: on claude.ai network access varies by
+    user and admin settings, so anything doing live web research may work
+    for one reader and not another.
     """
-    blockers = ("scripts", "hooks", "commands", "agents")
-    if any((path / d).is_dir() for d in blockers):
-        return False
-    if (path / ".mcp.json").is_file():
-        return False
-    # A plugin can be skills-only at the top level while one of its skills
-    # ships a script. Check the whole tree, not just the root.
-    return not any(
-        d.is_dir() and d.name in blockers
-        for d in path.rglob("*")
-    )
+    harness_only = ("hooks", "commands", "agents")
+    for d in harness_only:
+        if any(c.is_dir() and c.name == d for c in [path / d, *path.rglob(d)]):
+            return False
+    return not (path / ".mcp.json").is_file()
 
 
 def tick(value: bool) -> str:
@@ -124,8 +131,12 @@ def render(plugins, standalone) -> str:
                  "may call a model-invoked one, never another user-invoked "
                  "one.")
     lines.append("")
-    lines.append("*Chat* marks what runs with no filesystem or shell. "
-                 "Derived from contents, not declared.")
+    lines.append("*Chat* marks what works outside a coding harness. Skills "
+                 "get a filesystem and bash everywhere, so bundled scripts "
+                 "are fine; hooks, slash commands, MCP servers, and bundled "
+                 "subagents are not. Derived from contents, not declared. "
+                 "On claude.ai network access varies by account, so anything "
+                 "doing live web research may not work for every reader.")
     lines.append("")
 
     def table(rows, where):
