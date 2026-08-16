@@ -153,15 +153,24 @@ def check_manifests(root: Path, skills):
     # never installed -- while a skill inside a plugin that its manifest does
     # not name is genuinely unreleased. Only the second is worth reporting.
     accounted = set(shipped)
-    standalone, unreleased = [], []
+    standalone, in_progress, unreleased = [], [], []
     for path in sorted(on_disk - accounted):
         rp = path.relative_to(root).as_posix()
-        (standalone if rp.startswith("skills/") else unreleased).append(rp)
+        if rp.startswith("skills/in-progress/"):
+            # A standalone skill is published by existing, so unfinished ones
+            # need somewhere that existing does not mean published.
+            in_progress.append(rp)
+        elif rp.startswith("skills/"):
+            standalone.append(rp)
+        else:
+            unreleased.append(rp)
 
     for rp in standalone:
-        print(f"  standalone: {rp}")
+        print(f"  standalone:  {rp}")
+    for rp in in_progress:
+        print(f"  in progress: {rp}")
     for rp in unreleased:
-        print(f"  unreleased: {rp}")
+        print(f"  unreleased:  {rp}")
     return unreleased
 
 

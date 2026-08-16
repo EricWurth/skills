@@ -123,7 +123,11 @@ def tick(value: bool) -> str:
 def collect_standalone(repo: Path):
     """Skills under skills/ -- copied or uploaded, never installed."""
     out = []
+    # Deliberately one level deep, not rglob: skills/in-progress/ holds
+    # unfinished work and must never reach the catalogue.
     for skill_md in sorted((repo / "skills").glob("*/SKILL.md")):
+        if "in-progress" in skill_md.parts:
+            continue
         entry = read_skill(skill_md)
         entry["chat"] = runs_in_chat(skill_md.parent)
         out.append(entry)
