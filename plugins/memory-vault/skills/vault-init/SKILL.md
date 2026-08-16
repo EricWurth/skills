@@ -1,11 +1,8 @@
 ---
 name: vault-init
-description: >
-  Create a new memory vault: the folder skeleton, INDEX.md, CATALOG.md,
-  templates, and starter files. Use when the user says "set up my vault",
-  "initialize the memory vault", "create a memory vault", or asks to start
-  using the memory vault pattern for the first time.
+description: Create a new memory vault.
 spec: genome/intent.md
+disable-model-invocation: true
 ---
 
 # Initialize a Memory Vault

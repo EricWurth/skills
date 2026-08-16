@@ -1,12 +1,8 @@
 ---
 name: vault-review
-description: >
-  Run the weekly memory vault review: cluster patterns across episodes and
-  local agent memories, propose promotions with evidence, sweep for stale
-  facts, write reflections, and regenerate the catalog. Use when the user
-  says "run the vault review", "weekly review", "review my vault",
-  "consolidate memory", or "what should be promoted".
+description: Run the weekly memory vault review.
 spec: genome/intent.md
+disable-model-invocation: true
 ---
 
 # Vault Review and Promote

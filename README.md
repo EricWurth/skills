@@ -54,44 +54,60 @@ edits to apply live.
 
 5 standalone skills and 5 plugins (19 skills). Skills are copied; plugins are installed.
 
+They split on one axis: who can invoke them. **User-invoked** skills are reachable only when you type them — they orchestrate. **Model-invoked** skills can be typed *or* reached for automatically when the task fits — they hold the reusable discipline. A user-invoked skill may call a model-invoked one, never another user-invoked one.
+
+*Chat* marks what runs with no filesystem or shell. Derived from contents, not declared.
+
 ### Skills
 
 Self-contained folders. Copy one into `.claude/skills/`, or upload it on claude.ai.
 
-| Skill | Code | Chat | What it does |
-|---|:--:|:--:|---|
-| [`critical-thinking`](skills/critical-thinking) | ✅ | ✅ | Rigorous problem-solving method for backward-chaining from a goal to a task breakdown, with disciplined assumption-handling and an optimist default |
-| [`document-forge`](skills/document-forge) | ✅ | — | A staged production pipeline for business documents — isolated scoping and explicit acceptance criteria per stage, not one-shot drafting |
-| [`framework-forge`](skills/framework-forge) | ✅ | ✅ | Hardens a framework thesis into a publishable document |
-| [`problem-hunt`](skills/problem-hunt) | ✅ | ✅ | Hunt for a real, unsolved-in-practice problem in AI, then brainstorm a solution collaboratively with the user |
-| [`storm-research`](skills/storm-research) | ✅ | ✅ | Turns one topic into a verified multi-perspective research briefing — five expert lenses, a contradiction map, then adversarial fact-checking |
+**User-invoked**
 
-*Chat* means it works with no filesystem or shell. Derived from contents, not declared.
+| | Chat | What it does |
+|---|:--:|---|
+| [`/document-forge`](skills/document-forge) | — | A staged production pipeline for business documents — isolated scoping and explicit acceptance criteria per stage, not one-shot drafting |
+| [`/framework-forge`](skills/framework-forge) | ✅ | Hardens a framework thesis into a publishable document |
+| [`/problem-hunt`](skills/problem-hunt) | ✅ | Hunt for a real, unsolved-in-practice problem in AI, then co-brainstorm a solution |
+| [`/storm-research`](skills/storm-research) | ✅ | Turns one topic into a verified multi-perspective research briefing — five expert lenses, a contradiction map, then adversarial fact-checking |
+
+**Model-invoked**
+
+| | Chat | What it does |
+|---|:--:|---|
+| [`critical-thinking`](skills/critical-thinking) | ✅ | Rigorous problem-solving method for backward-chaining from a goal to a task breakdown, with disciplined assumption-handling and an optimist default |
 
 ### Plugins
 
 Installed through the marketplace. Each carries more than instructions — extra skills, agents, hooks, or scripts.
 
-| Plugin | Code | Chat | What it does |
-|---|:--:|:--:|---|
-| [`skill-evolution`](plugins/skill-evolution) | ✅ | ✅ | Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
-| [`memory-vault`](plugins/memory-vault) | ✅ | ✅ | A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance |
-| [`rulegate`](plugins/rulegate) | ✅ | — | Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
-| [`delegate`](plugins/delegate) | ✅ | — | A senior-resource agent that owns problems end-to-end and reports in decision-queue format |
-| [`resumebot`](plugins/resumebot) | ✅ | — | A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, and interview prep |
+| Plugin | Chat | What it does |
+|---|:--:|---|
+| [`skill-evolution`](plugins/skill-evolution) | ✅ | Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
+| [`memory-vault`](plugins/memory-vault) | ✅ | A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance |
+| [`rulegate`](plugins/rulegate) | — | Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
+| [`delegate`](plugins/delegate) | — | A senior-resource agent that owns problems end-to-end and reports in decision-queue format |
+| [`resumebot`](plugins/resumebot) | — | A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, and interview prep |
 
-A plugin marked *Chat* carries only skills, so uploading it works where a shell does not. Hooks, subagents, and scripts need a coding environment.
+**skill-evolution**
 
-Plugins carrying more than one skill:
+- *You type* — `/skill-evolution-sweep`
+- *Automatic* — `skill-evolution`
 
-- **skill-evolution** — `skill-evolution`, `skill-evolution-sweep`
-- **memory-vault** — `vault-capture`, `vault-conventions`, `vault-init`, `vault-review`
-- **rulegate** — `rule-compiler`, `rulegate-setup`, `rules-audit`
-- **resumebot** — `apply-tabs`, `build-packets`, `email-sync`, `interview-prep`, `job-profile`, `job-scan`, `master-resume`, `setup`, `tracker`
+**memory-vault**
 
-Skills that only run when you type them (`disable-model-invocation`):
+- *You type* — `/vault-init`, `/vault-review`
+- *Automatic* — `vault-capture`, `vault-conventions`
 
-- `skill-evolution-sweep` — Run the weekly skill-evolution sweep across every installed skill
+**rulegate**
+
+- *You type* — `/rulegate-setup`
+- *Automatic* — `rule-compiler`, `rules-audit`
+
+**resumebot**
+
+- *You type* — `/setup`
+- *Automatic* — `apply-tabs`, `build-packets`, `email-sync`, `interview-prep`, `job-profile`, `job-scan`, `master-resume`, `tracker`
 
 <!-- catalog:end -->
 

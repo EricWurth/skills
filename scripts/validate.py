@@ -76,9 +76,15 @@ def check_skills(root: Path):
         if not desc:
             # Without a description the model has nothing to trigger on.
             err(f"{s.rel}/SKILL.md: frontmatter missing `description`")
-        elif len(desc) < 40:
+        elif len(desc) < 40 and not s.user_invoked:
+            # Only model-invoked skills are matched against, so only they
+            # need a description rich enough to trigger. A user-invoked one
+            # should be a single plain line and nothing more.
             warn(f"{s.rel}/SKILL.md: description is {len(desc)} chars; "
                  "too thin to trigger reliably")
+        elif len(desc) > 200 and s.user_invoked:
+            warn(f"{s.rel}/SKILL.md: user-invoked but carries a "
+                 f"{len(desc)}-char description; nothing matches against it")
 
         check_links(s.path, s.text, s.rel)
 

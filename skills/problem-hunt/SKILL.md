@@ -1,7 +1,8 @@
 ---
 name: problem-hunt
-description: Hunt for a real, unsolved-in-practice problem in AI, then brainstorm a solution collaboratively with the user. Runs a 5-phase pipeline - scan practitioner pain, adversarially try to kill each candidate against existing solutions, gate for novelty, teach the underlying mechanism, then co-brainstorm. Use this whenever the user says "lets solve a problem", "let's solve a problem", "find me a problem to solve", "what's broken in AI right now", "problem hunt", or asks for an AI challenge worth working on. Also use when the user wants to find a gap worth building into, is looking for a product or research thesis, or wants to understand why a known AI problem persists despite known fixes. Do not use for debugging a specific system the user already has; that is a troubleshooting task, not a hunt.
+description: Hunt for a real, unsolved-in-practice problem in AI, then co-brainstorm a solution.
 spec: genome/intent.md
+disable-model-invocation: true
 ---
 
 # Problem Hunt

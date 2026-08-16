@@ -1,13 +1,10 @@
 ---
 name: rulegate-setup
-description: >
-  This skill should be used when the user says "set up rulegate", "init rulegate",
-  "initialize rule enforcement", "migrate my CLAUDE.md rules", or asks to make their
-  project rules enforceable. It scaffolds the .rulegate directory and converts existing
-  prose rules into the classified RULES.md format the gates read.
+description: Set up rulegate in this project.
 metadata:
   version: "0.1.0"
 spec: genome/intent.md
+disable-model-invocation: true
 ---
 
 # Rulegate Setup

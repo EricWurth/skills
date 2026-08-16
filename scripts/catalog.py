@@ -116,53 +116,74 @@ def render(plugins, standalone) -> str:
         f"({total} skills). Skills are copied; plugins are installed."
     )
     lines.append("")
-    lines.append("### Skills")
+    lines.append("They split on one axis: who can invoke them. "
+                 "**User-invoked** skills are reachable only when you type "
+                 "them — they orchestrate. **Model-invoked** skills can be "
+                 "typed *or* reached for automatically when the task fits — "
+                 "they hold the reusable discipline. A user-invoked skill "
+                 "may call a model-invoked one, never another user-invoked "
+                 "one.")
     lines.append("")
-    lines.append("Self-contained folders. Copy one into `.claude/skills/`, "
-                 "or upload it on claude.ai.")
-    lines.append("")
-    lines.append("| Skill | Code | Chat | What it does |")
-    lines.append("|---|:--:|:--:|---|")
-    for s in standalone:
-        lines.append(f"| [`{s['name']}`](skills/{s['name']}) | ✅ | "
-                     f"{tick(s['chat'])} | {first_sentence(s['description'])} |")
-    lines.append("")
-    lines.append("*Chat* means it works with no filesystem or shell. "
+    lines.append("*Chat* marks what runs with no filesystem or shell. "
                  "Derived from contents, not declared.")
     lines.append("")
-    lines.append("### Plugins")
-    lines.append("")
-    lines.append("Installed through the marketplace. Each carries more than "
-                 "instructions — extra skills, agents, hooks, or scripts.")
-    lines.append("")
-    lines.append("| Plugin | Code | Chat | What it does |")
-    lines.append("|---|:--:|:--:|---|")
-    for p in plugins:
-        lines.append(f"| [`{p['name']}`](plugins/{p['name']}) | ✅ | "
-                     f"{tick(p['chat'])} | {first_sentence(p['description'])} |")
-    lines.append("")
-    lines.append("A plugin marked *Chat* carries only skills, so uploading it "
-                 "works where a shell does not. Hooks, subagents, and scripts "
-                 "need a coding environment.")
-    lines.append("")
 
-    multi = [p for p in plugins if len(p["skills"]) > 1]
-    if multi:
-        lines.append("Plugins carrying more than one skill:")
-        lines.append("")
-        for p in multi:
-            names = ", ".join(f"`{s['name']}`" for s in p["skills"])
-            lines.append(f"- **{p['name']}** — {names}")
-        lines.append("")
+    def table(rows, where):
+        out = ["| | Chat | What it does |", "|---|:--:|---|"]
+        for name, chat, desc, prefix in rows:
+            out.append(f"| [`{prefix}{name}`]({where}/{name}) | {tick(chat)} "
+                       f"| {first_sentence(desc)} |")
+        return out
 
-    user = [(p, s) for p in plugins for s in p["skills"] if s["user_invoked"]]
-    if user:
-        lines.append("Skills that only run when you type them "
-                     "(`disable-model-invocation`):")
+    for heading, blurb, rows_user, rows_model in (
+        ("Skills",
+         "Self-contained folders. Copy one into `.claude/skills/`, or upload "
+         "it on claude.ai.",
+         [(s["name"], s["chat"], s["description"], "/")
+          for s in standalone if s["user_invoked"]],
+         [(s["name"], s["chat"], s["description"], "")
+          for s in standalone if not s["user_invoked"]]),
+        ("Plugins",
+         "Installed through the marketplace. Each carries more than "
+         "instructions — extra skills, agents, hooks, or scripts.",
+         [], []),
+    ):
+        lines.append(f"### {heading}")
         lines.append("")
-        for p, s in user:
-            lines.append(f"- `{s['name']}` — {first_sentence(s['description'])}")
+        lines.append(blurb)
         lines.append("")
+        if heading == "Plugins":
+            lines.append("| Plugin | Chat | What it does |")
+            lines.append("|---|:--:|---|")
+            for p in plugins:
+                lines.append(f"| [`{p['name']}`](plugins/{p['name']}) | "
+                             f"{tick(p['chat'])} | "
+                             f"{first_sentence(p['description'])} |")
+            lines.append("")
+            for p in plugins:
+                if len(p["skills"]) < 2:
+                    continue
+                lines.append(f"**{p['name']}**")
+                lines.append("")
+                for group, label in (("user", "You type"), ("model", "Automatic")):
+                    members = [s for s in p["skills"]
+                               if s["user_invoked"] == (group == "user")]
+                    if not members:
+                        continue
+                    joined = ", ".join(
+                        f"`{'/' if group == 'user' else ''}{s['name']}`"
+                        for s in members)
+                    lines.append(f"- *{label}* — {joined}")
+                lines.append("")
+            continue
+        for label, rows in (("User-invoked", rows_user),
+                            ("Model-invoked", rows_model)):
+            if not rows:
+                continue
+            lines.append(f"**{label}**")
+            lines.append("")
+            lines.extend(table(rows, "skills"))
+            lines.append("")
 
     lines.append(END)
     return "\n".join(lines)

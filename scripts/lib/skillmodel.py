@@ -93,6 +93,12 @@ class Skill:
         return [s.strip() for s in raw.strip("[]").split(",") if s.strip()]
 
     @property
+    def user_invoked(self) -> bool:
+        """Reachable only when the human types it -- never matched against,
+        and never callable from another skill."""
+        return self.fm.get("disable-model-invocation", "").lower() == "true"
+
+    @property
     def has_genome(self) -> bool:
         return (self.path / "genome" / "intent.md").is_file()
 

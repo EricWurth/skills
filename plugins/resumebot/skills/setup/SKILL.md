@@ -1,6 +1,7 @@
 ---
 name: setup
-description: Initialize a resumebot job-search workspace. Use when the user says "set up resumebot", "start my job search workspace", "initialize resumebot", or installs the plugin and asks where to begin. Scaffolds the folder structure, copies the tracker template, then walks the user through master resume, job profile, and scheduling — each stage skippable and resumable.
+description: Initialize a resumebot job-search workspace.
+disable-model-invocation: true
 ---
 
 # Resumebot Setup
