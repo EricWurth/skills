@@ -26,6 +26,7 @@ Usage:  py -3 scripts/validate.py [repo_root]
 from __future__ import annotations
 
 import re
+import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -197,6 +198,16 @@ def check_marketplace(root: Path):
                 f"'{pdata.get('name')}'")
 
 
+def check_catalog(root: Path) -> None:
+    """The README restates the manifests, so assert the two agree."""
+    rc = subprocess.run(
+        [sys.executable, str(root / "scripts" / "catalog.py"), "--check"],
+        capture_output=True, text=True,
+    )
+    if rc.returncode != 0:
+        err(rc.stderr.strip() or "README catalogue is out of date")
+
+
 def main() -> int:
     root = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
     print(f"validating {root}\n")
@@ -205,6 +216,7 @@ def main() -> int:
     unreleased = check_manifests(root, skills)
     check_provenance(root, skills)
     check_marketplace(root)
+    check_catalog(root)
 
     if unreleased:
         print()

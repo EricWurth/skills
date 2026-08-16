@@ -23,6 +23,11 @@ jobs:
       - name: Validate structure
         run: python scripts/validate.py
 
+      # The README's catalogue is generated from the manifests. This asserts
+      # nobody edited one without regenerating the other.
+      - name: Check README catalogue
+        run: python scripts/catalog.py --check
+
       - name: Build plugin archives
         run: python scripts/package.py --skip-validate
 

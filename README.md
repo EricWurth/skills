@@ -1,63 +1,134 @@
-# Claude Skills
+# Skills
 
-A small collection of Claude Code / Claude skills — reusable, self-contained
-instruction sets that give Claude a disciplined method for a specific kind
-of work. Each one is designed to be dropped into your own `.claude/skills/`
-directory and used as-is; none of them depend on each other or on any
-private setup.
+Reusable skills and plugins for Claude — disciplined methods for reasoning,
+research, writing, agent memory, delegation, rule enforcement, and job
+search. Each one installs on its own.
 
-Built and maintained by [Eric Wurth](https://www.ericwurth.com).
-
-## What's here
-
-| Skill | What it does |
-|---|---|
-| [`critical-thinking/`](critical-thinking/) | A backward-chaining reasoning method with disciplined assumption-handling — for any problem, plan, or recommendation, not just on explicit request. |
-| [`storm-research/`](storm-research/) | Turns one topic into a verified, multi-perspective HTML research briefing: five expert lenses, a contradiction map, then mandatory adversarial fact-checking before delivery. |
-| [`skill-evolution/`](skill-evolution/) | Evolves other skills on a disciplined schedule — finds a real technique gap, proves the gain with a constructed test, sandboxes it, and gates promotion behind explicit human approval. |
-| [`framework-forge/`](framework-forge/) | Takes a framework thesis drawn from experience and hardens it into a publishable document: verify the author's claims, ground them in the territory, draft, five-persona adversarial review, remediate, land. |
-| [`document-forge/`](document-forge/) | A staged production pipeline for business documents (memos, proposals, strategy docs) — isolated task scoping and explicit acceptance criteria per stage, not one-shot drafting. |
-| [`problem-hunt/`](problem-hunt/) | Hunts for a real, unsolved-in-practice problem in AI — scans practitioner pain, adversarially tries to kill each candidate, gates for novelty, then co-brainstorms a solution. |
-| [`memory-vault/`](memory-vault/) | A file-based, human-gated memory system for AI agents — a plugin of four skills (init, capture, conventions, review) rather than a single skill. |
-| [`delegate/`](delegate/) | A plugin with an agent that takes end-to-end ownership of a handed-off problem and reports back in a decision-queue format, plus a status skill. |
-| [`rulegate/`](rulegate/) | A plugin that makes project rules enforceable rather than advisory — audits rules against a quality bar, compiles plans, and gates work against them. |
-| [`resumebot`](https://github.com/EricWurth/resumebot) | A job-search operating system for Claude Code — master resume builder, job-targeting coach, Excel application tracker, scheduled board scans, tailored resume packets, an apply-tab queue, and email-driven tracker updates. A full plugin in its own repo: install with `/plugin marketplace add EricWurth/resumebot`. |
-
-## A shared pattern: genome vs. phenotype
-
-Most of these skills (and every skill `skill-evolution` targets)
-separate two files:
-
-- **`SKILL.md`** — the phenotype. What the model actually reads and
-  executes.
-- **`genome/intent.md`** — the spec. Purpose, success criteria, behavioral
-  invariants, the choices left free to vary, and golden test examples.
-  Changed by hand only.
-
-The idea: when a skill's packaging format changes, or the phenotype drifts
-out of sync with its own intent, you regenerate `SKILL.md` from the genome
-rather than patching a stale file and hoping it still matches what the
-skill was supposed to do. `skill-evolution/` is built directly on this
-split — it discovers which skills are eligible targets by checking for a
-`genome/intent.md`, and treats anything marked `[INVARIANT]` in that file
-as off-limits for autonomous change.
-
-Not every skill needs this — it's most useful once a skill matters enough
-that you want a record of *why* it works the way it does, separate from
-the instructions themselves.
+Built and maintained by [Eric Wurth](https://www.ericwurth.com). MIT licensed.
 
 ## Install
 
-Each skill is a self-contained folder. Copy the one you want into your
-`.claude/skills/` directory (project-level, or `~/.claude/skills/` for
-global) and it's available immediately — no build step, no external
-dependencies beyond what's noted in each skill's own README.
+Add the marketplace once:
+
+```
+/plugin marketplace add EricWurth/skills
+```
+
+Then install what you want:
+
+```
+/plugin install critical-thinking@ericwurth
+/plugin install storm-research@ericwurth
+```
+
+<details>
+<summary>Other ways to install</summary>
+
+**Copy a single skill.** Every skill is a self-contained folder. Copy one
+into `.claude/skills/` in your project, or `~/.claude/skills/` for all
+projects, and it works immediately:
+
+```
+cp -r plugins/critical-thinking/skills/critical-thinking ~/.claude/skills/
+```
+
+**Upload to claude.ai.** Build the archives, then upload the one you want
+under Settings:
+
+```
+py -3 scripts/package.py
+```
+
+Artifacts land in `dist/`, one `.plugin` per plugin.
+
+**Develop against a local checkout.** Point a marketplace at the directory
+instead of GitHub, so edits take effect without publishing:
+
+```
+/plugin marketplace add ./path/to/skills
+```
+
+</details>
+
+## What's here
+
+<!-- catalog:start -->
+
+10 plugins, 24 skills. Each installs on its own.
+
+| Plugin | Ver | What it does |
+|---|---|---|
+| [`critical-thinking`](plugins/critical-thinking) | 1.0.0 | Backward-chaining problem analysis with disciplined assumption-handling, for plans, designs, and recommendations |
+| [`document-forge`](plugins/document-forge) | 1.0.0 | A staged production pipeline for business documents — isolated scoping and explicit acceptance criteria per stage, not one-shot drafting |
+| [`framework-forge`](plugins/framework-forge) | 1.0.0 | Hardens a framework thesis into a publishable document: verify the author's claims, ground them, draft, adversarial review, remediate, land |
+| [`problem-hunt`](plugins/problem-hunt) | 1.0.0 | Finds a real, unsolved-in-practice problem in AI, adversarially kills the weak candidates, then co-brainstorms a solution |
+| [`storm-research`](plugins/storm-research) | 1.0.0 | Turns a topic into a verified multi-perspective research briefing: five expert lenses, a contradiction map, then adversarial fact-checking |
+| [`skill-evolution`](plugins/skill-evolution) | 1.0.0 | Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
+| [`memory-vault`](plugins/memory-vault) | 0.2.2 | A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance |
+| [`rulegate`](plugins/rulegate) | 0.3.2 | Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
+| [`delegate`](plugins/delegate) | 0.1.2 | A senior-resource agent that owns problems end-to-end and reports in decision-queue format |
+| [`resumebot`](plugins/resumebot) | 0.2.0 | A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, and interview prep |
+
+Plugins carrying more than one skill:
+
+- **skill-evolution** — `skill-evolution`, `skill-evolution-sweep`
+- **memory-vault** — `vault-capture`, `vault-conventions`, `vault-init`, `vault-review`
+- **rulegate** — `rule-compiler`, `rulegate-setup`, `rules-audit`
+- **resumebot** — `apply-tabs`, `build-packets`, `email-sync`, `interview-prep`, `job-profile`, `job-scan`, `master-resume`, `setup`, `tracker`
+
+Skills that only run when you type them (`disable-model-invocation`):
+
+- `skill-evolution-sweep` — Run the weekly skill-evolution sweep across every installed skill
+
+<!-- catalog:end -->
+
+## How a skill is put together
+
+Each skill is a directory with a `SKILL.md`, whose frontmatter carries the
+name and the description Claude matches against to decide when it applies.
+Most also carry `genome/intent.md`, and some add `references/`, `scripts/`,
+or `agents/`.
+
+```
+critical-thinking/
+├── SKILL.md              what the model reads and executes
+├── genome/intent.md      purpose, invariants, golden examples
+└── references/           supporting material, loaded on demand
+```
+
+**Genome and phenotype.** `SKILL.md` is the phenotype — the instructions
+that run. `genome/intent.md` is the spec: purpose, success criteria,
+behavioural invariants, the choices deliberately left free, and test
+examples. It is edited by hand only.
+
+The point of the split is repair. When a packaging format changes, or a
+skill drifts from what it was meant to do, you regenerate the phenotype from
+the genome instead of patching a stale file and hoping it still matches the
+intent. `skill-evolution` is built directly on this: it finds eligible
+targets by looking for a genome, and treats anything marked `[INVARIANT]`
+as off-limits to autonomous change.
+
+Not every skill needs one. It earns its keep once a skill matters enough
+that you want a record of *why* it works the way it does, kept separate from
+the instructions themselves.
+
+## Working on this repository
+
+```
+py -3 scripts/validate.py     structure, manifests, links
+py -3 scripts/package.py      build dist/*.plugin  (validates first)
+py -3 scripts/catalog.py      regenerate the catalogue above
+```
+
+Stdlib only — nothing to install. CI runs all three on every push.
+
+A skill ships when a plugin's `skills` array names it, and only then. A
+skill present in the tree but absent from the array is unreleased, which is
+where work in progress lives. Nothing ships by existing.
+
+[`CONTEXT.md`](CONTEXT.md) defines the terms used here — skill, plugin,
+release, surface, ship — and is worth reading before making changes.
 
 ## License
 
 MIT — see [LICENSE](LICENSE). Use, modify, and redistribute freely.
-
-## More
-
-Writing on AI agent design and applied engineering at
-[www.ericwurth.com](https://www.ericwurth.com).

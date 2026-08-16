@@ -1,7 +1,7 @@
 {
   "name": "framework-forge",
   "version": "1.0.0",
-  "description": "Use when someone has a framework thesis drawn from their own experience that they want researched, hardened, and built into a mature publishable document, or says \"forge this framework\" / \"harden...",
+  "description": "Hardens a framework thesis into a publishable document: verify the author's claims, ground them, draft, adversarial review, remediate, land.",
   "author": {
     "name": "Eric Wurth",
     "url": "https://www.ericwurth.com"

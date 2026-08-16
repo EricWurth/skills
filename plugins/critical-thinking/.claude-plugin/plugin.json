@@ -1,7 +1,7 @@
 {
   "name": "critical-thinking",
   "version": "1.0.0",
-  "description": "Rigorous problem-solving method for backward-chaining from a goal to a task breakdown, with disciplined assumption-handling and an optimist default. Use whenever solving a problem, designing a system...",
+  "description": "Backward-chaining problem analysis with disciplined assumption-handling, for plans, designs, and recommendations.",
   "author": {
     "name": "Eric Wurth",
     "url": "https://www.ericwurth.com"

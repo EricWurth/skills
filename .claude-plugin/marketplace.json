@@ -9,7 +9,7 @@
     {
       "name": "critical-thinking",
       "source": "./plugins/critical-thinking",
-      "description": "Rigorous problem-solving method for backward-chaining from a goal to a task breakdown, with disciplined assumption-handling and an optimist default. Use whenever solving a problem, designing a system...",
+      "description": "Backward-chaining problem analysis with disciplined assumption-handling, for plans, designs, and recommendations.",
       "category": "productivity",
       "keywords": [
         "reasoning",
@@ -20,7 +20,7 @@
     {
       "name": "document-forge",
       "source": "./plugins/document-forge",
-      "description": "Run a disciplined, staged production pipeline for a business document (memo, proposal, strategy doc, brief, report) that mirrors how coding agent pipelines get reliability: isolated task scoping per...",
+      "description": "A staged production pipeline for business documents — isolated scoping and explicit acceptance criteria per stage, not one-shot drafting.",
       "category": "productivity",
       "keywords": [
         "writing",
@@ -31,7 +31,7 @@
     {
       "name": "framework-forge",
       "source": "./plugins/framework-forge",
-      "description": "Use when someone has a framework thesis drawn from their own experience that they want researched, hardened, and built into a mature publishable document, or says \"forge this framework\" / \"harden...",
+      "description": "Hardens a framework thesis into a publishable document: verify the author's claims, ground them, draft, adversarial review, remediate, land.",
       "category": "productivity",
       "keywords": [
         "writing",
@@ -42,7 +42,7 @@
     {
       "name": "problem-hunt",
       "source": "./plugins/problem-hunt",
-      "description": "Hunt for a real, unsolved-in-practice problem in AI, then brainstorm a solution collaboratively with the user. Runs a 5-phase pipeline - scan practitioner pain, adversarially try to kill each...",
+      "description": "Finds a real, unsolved-in-practice problem in AI, adversarially kills the weak candidates, then co-brainstorms a solution.",
       "category": "productivity",
       "keywords": [
         "research",
@@ -53,7 +53,7 @@
     {
       "name": "storm-research",
       "source": "./plugins/storm-research",
-      "description": "Use when someone asks to run Storm Research, use the storm-research skill, run the STORM method on a topic, says \"storm research this\" / \"storm report on X\" / \"give me a STORM briefing on X\", or...",
+      "description": "Turns a topic into a verified multi-perspective research briefing: five expert lenses, a contradiction map, then adversarial fact-checking.",
       "category": "productivity",
       "keywords": [
         "research",
@@ -64,7 +64,7 @@
     {
       "name": "skill-evolution",
       "source": "./plugins/skill-evolution",
-      "description": "Run a disciplined evolution sweep against one or more of your installed skills: refresh the technique library with current research, identify real candidate techniques against each skill's...",
+      "description": "Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off.",
       "category": "engineering",
       "keywords": [
         "skills",

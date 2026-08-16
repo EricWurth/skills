@@ -1,6 +1,7 @@
 ---
 name: skill-evolution-sweep
-description: Weekly scheduled sweep - run the skill-evolution skill across every installed skill that carries a genome/intent.md, refresh the technique library, and report findings. Never auto-promote; every promotion still waits for explicit sign-off.
+description: Run the weekly skill-evolution sweep across every installed skill.
+disable-model-invocation: true
 ---
 
 Run the `skill-evolution` skill as a recurring maintenance pass.

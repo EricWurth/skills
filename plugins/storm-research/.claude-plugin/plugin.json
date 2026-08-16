@@ -1,7 +1,7 @@
 {
   "name": "storm-research",
   "version": "1.0.0",
-  "description": "Use when someone asks to run Storm Research, use the storm-research skill, run the STORM method on a topic, says \"storm research this\" / \"storm report on X\" / \"give me a STORM briefing on X\", or...",
+  "description": "Turns a topic into a verified multi-perspective research briefing: five expert lenses, a contradiction map, then adversarial fact-checking.",
   "author": {
     "name": "Eric Wurth",
     "url": "https://www.ericwurth.com"

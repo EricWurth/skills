@@ -47,9 +47,10 @@ notes/
 *.local.md
 *.draft.md
 
-# On trial. A digest of published git practice, kept local until it has been
-# used against real work long enough to know which parts earn their place.
-references/git-practice.md
+# On trial. A digest of published practice for commits, comments, READMEs,
+# changelogs, and docs, kept local until it has been used against real work
+# long enough to know which parts earn their place.
+references/writing.md
 
 # --- secrets -----------------------------------------------------------
 .env
