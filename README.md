@@ -158,13 +158,19 @@ the instructions themselves.
 ## Working on this repository
 
 ```
-py -3 scripts/validate.py     structure, manifests, links
+py -3 scripts/validate.py     structure, manifests, links, evals
 py -3 scripts/package.py      build dist/*.plugin  (validates first)
 py -3 scripts/catalog.py      regenerate the catalogue above
 ```
 
 Stdlib only — nothing to install. CI runs all of these on every
 push, plus a check that each built archive opens on Linux.
+
+Every skill also has a trigger-accuracy test at
+[`evals/cases/<skill-name>.json`](evals/cases) — realistic prompts
+checking the skill fires when it should and stays quiet when it
+shouldn't, centralized outside `skills/` and `plugins/` on purpose. See
+[`CONTEXT.md`](CONTEXT.md) for why.
 
 Standalone skills under `skills/` are published by being there — they are
 copied, not installed, so there is nothing to declare. `skills/in-progress/`

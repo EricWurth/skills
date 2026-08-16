@@ -106,6 +106,20 @@ class Skill:
     def has_provenance(self) -> bool:
         return (self.path / "PROVENANCE.md").is_file()
 
+    @property
+    def evals_path(self) -> Path:
+        # Centralized, not co-located: evals/cases/<name>.json at the repo
+        # root, never inside the skill's own directory. Skill names are
+        # already globally unique (validate.py errors on a duplicate), so
+        # flat naming can't collide, and living outside every skill and
+        # plugin folder means the packager never has to know evals exist --
+        # it only ever walks what a skill or plugin actually declares.
+        return self.root / "evals" / "cases" / f"{self.dirname}.json"
+
+    @property
+    def has_evals(self) -> bool:
+        return self.evals_path.is_file()
+
 
 def find_skills(root: Path) -> list[Skill]:
     """Every directory containing a SKILL.md, anywhere under root."""

@@ -67,6 +67,8 @@ it will not catch an unattributed one.
 
 ## Maintaining this skill
 
-`evals/evals.json` is a reviewer's test suite — representative prompts and
-expected behaviour, run to check the skill still works after a change. It
-is never read by the skill itself at runtime, the same as this README.
+`evals/cases/document-forge.json`, at the repo root, is a reviewer's test
+suite — representative prompts and expected behaviour, run to check the
+skill still works after a change. It is never read by the skill itself at
+runtime, the same as this README. Every skill in this repo has one; see
+`CONTEXT.md` for why it lives outside the skill's own folder.

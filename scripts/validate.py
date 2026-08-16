@@ -22,6 +22,12 @@ Checks, in rough order of how badly they bite:
  10. Relative links inside every README.md resolve on disk -- not just
      SKILL.md. The root catalogue is checked separately against the
      manifests; this catches everything else, including the prose around it.
+ 11. Every skill carries evals/cases/<name>.json: correct skill_name, an
+     `invocation` that matches the skill's actual disable-model-invocation
+     state, and enough should_trigger / should_not_trigger / ambiguous
+     (model-invoked) or explicit_invocation / should_not_auto_trigger
+     (user-invoked) cases to have actually tested triggering, not just
+     asserted a file exists.
 
 Exit code is 1 if any error fired, 0 otherwise. Warnings never fail the run.
 
@@ -270,7 +276,7 @@ KNOWN_SUBDIRS = ("references", "scripts", "agents", "templates", "examples")
 # Plugin-root only. hooks/ is wired through hooks.json, which the hook
 # engine reads directly -- like agents/, it is discovered by declaration
 # and placement, not by being named in a SKILL.md, so it gets no content
-# scan at all, the same treatment as evals/.
+# scan at all.
 PLUGIN_ONLY_SUBDIRS = ("hooks",)
 
 
@@ -313,18 +319,20 @@ def check_organization(root: Path, skills) -> None:
     warnings, not errors: a loose or undocumented file is a smell, not a
     break.
     """
-    # evals/ holds a reviewer's test suite, never read by the skill at
-    # runtime -- same category as README.md. Legitimate plugin-root
-    # scripts can be the same way (a build tool that regenerates a
-    # template, say) as long as a human reader can find out why it's
-    # there, so plugin-level checks accept the README as that place;
-    # skill-level checks don't, because those files need to be reachable
-    # by the *model*, not just documented for a maintainer.
-    unreferenced_ok = {"evals"}
+    # Evals used to live at skill_dir/evals/, exempted here as a reviewer's
+    # test suite never read at runtime. They're centralized now (see
+    # check_evals), specifically so a stray evals/ folder reappearing
+    # inside a skill is a real regression to the old pattern -- flagged
+    # like any other misplaced folder, not exempted.
+    #
+    # scripts/ can legitimately be maintainer-only (a build tool that
+    # regenerates a template, say) as long as a human reader can find out
+    # why it's there, so plugin-level reference-checks accept the README
+    # as that place; skill-level checks don't, because those files need to
+    # be reachable by the *model*, not just documented for a maintainer.
 
     def scan_dir(base: Path, label: str, reference_text: str, *, is_plugin: bool):
-        recognised = (*KNOWN_SUBDIRS, *unreferenced_ok,
-                      *(PLUGIN_ONLY_SUBDIRS if is_plugin else ()))
+        recognised = (*KNOWN_SUBDIRS, *(PLUGIN_ONLY_SUBDIRS if is_plugin else ()))
         for item in sorted(base.iterdir()):
             if item.name in ("SKILL.md", "README.md", "genome", "skills",
                               ".claude-plugin"):
@@ -340,7 +348,7 @@ def check_organization(root: Path, skills) -> None:
 
         for sub in (*KNOWN_SUBDIRS, *(PLUGIN_ONLY_SUBDIRS if is_plugin else ())):
             d = base / sub
-            if not d.is_dir() or sub in unreferenced_ok or sub in PLUGIN_ONLY_SUBDIRS:
+            if not d.is_dir() or sub in PLUGIN_ONLY_SUBDIRS:
                 continue
             for f in sorted(p for p in d.rglob("*") if p.is_file()):
                 if sub == "agents":
@@ -368,6 +376,100 @@ def check_organization(root: Path, skills) -> None:
         scan_dir(plugin_dir, label, reference_text, is_plugin=True)
 
 
+MODEL_INVOKED_CATEGORIES = ("should_trigger", "should_not_trigger", "ambiguous")
+USER_INVOKED_CATEGORIES = ("explicit_invocation", "should_not_auto_trigger")
+# document-forge's original three evals predate trigger-testing and check
+# pipeline execution correctness instead -- a real, different purpose, not
+# forced into a category that doesn't fit. Allowed on any skill, but never
+# counted toward the minimum bar below; a file of nothing but "behavior"
+# entries has not actually tested triggering.
+EXTRA_CATEGORIES = ("behavior",)
+# The floor every skill actually cleared when this file set was first
+# written. Anthropic's enterprise checklist asks for "3-5 representative
+# queries... covering trigger, no-trigger, and ambiguous cases" before
+# production; addyosmani's repo enforces "3 positive, 2 negative, 1
+# behavioral" in CI. This is our version of that bar, sized to what
+# TRIGGER_MIN / USER_MIN already require by category.
+TRIGGER_MIN = {"should_trigger": 2, "should_not_trigger": 2, "ambiguous": 1}
+USER_MIN = {"explicit_invocation": 2, "should_not_auto_trigger": 1}
+
+
+def check_evals(root: Path, skills) -> None:
+    """Anthropic's own enterprise deployment checklist requires 3-5
+    representative queries per skill, covering should-trigger,
+    should-not-trigger, and ambiguous cases, before production. Nothing in
+    this repo tested that until evals/cases/ existed -- genome's golden
+    examples check regeneration fidelity, not whether a description
+    actually causes correct invocation.
+
+    Centralized at evals/cases/<skill-name>.json rather than inside each
+    skill's own directory, following the one real enforced precedent found
+    for this (addyosmani/agent-skills' evals/cases/, CI-gated on a minimum
+    query count per skill). Skill names are already globally unique --
+    check_skills errors on a duplicate -- so flat naming can't collide.
+    Living outside every skill and plugin directory means the packager
+    never has to know evals exist: it only ever walks what a skill or
+    plugin actually declares, so nothing here can leak into a shipped
+    plugin archive by accident.
+    """
+    for s in skills:
+        if not s.has_evals:
+            err(f"{s.rel}: no evals/cases/{s.dirname}.json -- every skill "
+                "needs a documented trigger-accuracy test, even a thin one")
+            continue
+
+        data, parse_err = load_json(s.evals_path)
+        eval_rel = s.evals_path.relative_to(root).as_posix()
+        if parse_err:
+            err(f"{eval_rel}: malformed JSON -- {parse_err}")
+            continue
+
+        if data.get("skill_name") != s.dirname:
+            err(f"{eval_rel}: skill_name '{data.get('skill_name')}' != "
+                f"directory '{s.dirname}'")
+
+        want_invocation = "user-invoked" if s.user_invoked else "model-invoked"
+        got_invocation = data.get("invocation")
+        if got_invocation != want_invocation:
+            # This is the check that keeps the file from going stale: if a
+            # skill's disable-model-invocation flag ever changes, its eval
+            # file's declared invocation mode is now provably wrong rather
+            # than silently out of date.
+            err(f"{eval_rel}: invocation '{got_invocation}' does not match "
+                f"the skill's actual state ('{want_invocation}')")
+
+        evals = data.get("evals")
+        if not isinstance(evals, list) or not evals:
+            err(f"{eval_rel}: `evals` must be a non-empty array")
+            continue
+
+        valid_categories = (*MODEL_INVOKED_CATEGORIES, *USER_INVOKED_CATEGORIES,
+                             *EXTRA_CATEGORIES)
+        counts: dict[str, int] = {}
+        seen_ids = set()
+        for e in evals:
+            missing = {"id", "category", "prompt", "expected_behavior"} - e.keys()
+            if missing:
+                err(f"{eval_rel}: eval entry missing {sorted(missing)}")
+                continue
+            if e["id"] in seen_ids:
+                err(f"{eval_rel}: duplicate eval id {e['id']}")
+            seen_ids.add(e["id"])
+            if e["category"] not in valid_categories:
+                err(f"{eval_rel}: unknown category '{e['category']}' -- "
+                    f"expected one of {valid_categories}")
+            if not e["prompt"].strip() or not e["expected_behavior"].strip():
+                err(f"{eval_rel}: eval {e['id']} has an empty prompt or "
+                    "expected_behavior")
+            counts[e["category"]] = counts.get(e["category"], 0) + 1
+
+        required = USER_MIN if want_invocation == "user-invoked" else TRIGGER_MIN
+        for cat, minimum in required.items():
+            if counts.get(cat, 0) < minimum:
+                err(f"{eval_rel}: needs at least {minimum} '{cat}' eval(s), "
+                    f"has {counts.get(cat, 0)}")
+
+
 def check_catalog(root: Path) -> None:
     """The README restates the manifests, so assert the two agree."""
     rc = subprocess.run(
@@ -388,6 +490,7 @@ def main() -> int:
     check_marketplace(root)
     check_unpublished(root)
     check_organization(root, skills)
+    check_evals(root, skills)
     check_catalog(root)
     check_readmes(root)
 

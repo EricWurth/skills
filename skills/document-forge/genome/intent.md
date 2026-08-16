@@ -99,7 +99,7 @@ G-3: Same-context "ambiguity pass".
 - Mechanically checkable: review-notes.md exists and grows through
   stages 5/5.6/6/6.5; lint ran before stage 6; gate verdict names a
   criterion; no PASS with open non-CONFIRMED verdicts unresolved;
-  `evals/evals.json` fixtures pass.
+  `evals/cases/document-forge.json` fixtures pass.
 - Human-judged: whether acceptance criteria were genuinely testable;
   whether design calls were surfaced rather than silently decided.
 - Known failure history: the brevity-vs-completeness incident recorded

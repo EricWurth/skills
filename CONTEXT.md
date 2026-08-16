@@ -111,6 +111,31 @@ registered and was never meant to be. `scripts/validate.py`'s
 `check_agent_file` accepts either shape (frontmatter, or named in a
 sibling `SKILL.md`) and only flags a file satisfying neither.
 
+## Evals
+
+Every skill has `evals/cases/<skill-name>.json` at the repo root —
+**centralized, not inside the skill's own folder**, the one deliberate
+exception to "everything about a skill lives together." A handful of
+realistic prompts testing whether the skill actually triggers (or
+doesn't) the way its `description` claims: `should_trigger` /
+`should_not_trigger` / `ambiguous` for model-invoked skills,
+`explicit_invocation` / `should_not_auto_trigger` for user-invoked ones.
+
+Centralized on purpose, following the one real precedent found for this —
+addyosmani/agent-skills keeps evals outside `skills/` too, CI-gated on a
+minimum query count per skill. Living outside every skill and plugin
+directory means the packager never has to know evals exist: it only ever
+walks what a skill or plugin's own manifest declares, so nothing here can
+leak into a shipped plugin archive by accident. That used to require a
+manual check; now it's structural.
+
+These are authored test cases, not run results — nothing executes them
+automatically. `scripts/validate.py`'s `check_evals` verifies the file
+exists, the `invocation` field matches the skill's actual
+`disable-model-invocation` state (so it can't quietly go stale if that
+changes), and the category counts clear a real minimum — not just that a
+file is present.
+
 ## Bundle
 
 **Avoid.** It previously named a hand-curated collection of skills packaged
