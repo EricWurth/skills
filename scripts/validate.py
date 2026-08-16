@@ -266,6 +266,50 @@ def check_unpublished(root: Path) -> None:
             print(f"  unpublished: {rel}")
 
 
+def check_organization(root: Path, skills) -> None:
+    """Two hygiene checks a link-checker can't catch, since a misplaced or
+    orphaned file is never a broken path -- it resolves fine, it's just in
+    the wrong place or never pointed at.
+
+    Found by hand once already: report-template.html sat loose at
+    storm-research's root instead of in references/, and
+    skill-evolution-sweep/example.md was both loose and genuinely orphaned
+    -- nothing in SKILL.md ever named it, so the model had no way to find
+    it. Both are warnings, not errors: a loose file is a smell, not a
+    break, and the exclusions below (evals/, genome/) are deliberately not
+    referenced from SKILL.md and shouldn't be flagged as if they were.
+    """
+    # evals/ holds test fixtures a reviewer runs, never something the
+    # skill reads while executing -- same category as README.md.
+    unreferenced_ok = {"evals"}
+
+    for s in skills:
+        skill_text = s.text
+        for item in sorted(s.path.iterdir()):
+            if item.name in ("SKILL.md", "README.md", "genome"):
+                continue
+            if item.is_dir():
+                if item.name not in ("references", "scripts", "agents",
+                                      "templates", "examples", *unreferenced_ok):
+                    warn(f"{s.rel}: unrecognised top-level folder '{item.name}/' "
+                         "-- references/, scripts/, agents/, templates/, "
+                         "and examples/ are the established names")
+                continue
+            # A loose file at skill root, sibling to SKILL.md itself.
+            warn(f"{s.rel}: '{item.name}' sits loose at skill root -- move it "
+                 "into references/ (or scripts/, agents/, templates/) rather "
+                 "than leaving it beside SKILL.md")
+
+        for sub in ("references", "scripts", "agents", "templates", "examples"):
+            d = s.path / sub
+            if not d.is_dir() or sub in unreferenced_ok:
+                continue
+            for f in sorted(p for p in d.rglob("*") if p.is_file()):
+                if f.name not in skill_text:
+                    warn(f"{s.rel}: {sub}/{f.name} is never named in "
+                         "SKILL.md -- the model has no way to find it")
+
+
 def check_catalog(root: Path) -> None:
     """The README restates the manifests, so assert the two agree."""
     rc = subprocess.run(
@@ -285,6 +329,7 @@ def main() -> int:
     check_provenance(root, skills)
     check_marketplace(root)
     check_unpublished(root)
+    check_organization(root, skills)
     check_catalog(root)
     check_readmes(root)
 

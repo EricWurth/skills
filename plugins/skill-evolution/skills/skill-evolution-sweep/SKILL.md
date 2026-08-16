@@ -50,3 +50,6 @@ scheduling mechanism your environment provides -- a native scheduled-task
 feature, a cron entry that invokes your agent CLI, or an equivalent. The
 cadence itself is a free choice (see `genome/intent.md` in the parent
 skill) -- weekly is a reasonable default, not a requirement.
+
+See `references/example.md` for a real, filled-in scheduled-sweep prompt
+with notes on why it's shaped that way.

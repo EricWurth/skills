@@ -1,7 +1,7 @@
 # Intent Spec: storm-research
 
 Spec version: 1.0
-Current phenotype: SKILL.md (as published), bundled report-template.html
+Current phenotype: SKILL.md (as published), bundled references/report-template.html
 Owner: the skill's user
 Replayable: partially -- the pipeline structure and template are fixed and
 deterministic; the actual research content is not (live web sources), so

@@ -41,7 +41,7 @@ and file `Write` (e.g. Claude Code), it spawns the lenses and verifiers
 as parallel agents and writes the report to disk; without those (e.g.
 claude.ai chat), it runs the same phases sequentially inline and delivers
 the report as an HTML artifact instead. Either path needs only built-in
-tooling (web search/fetch) plus the bundled `report-template.html`. No
+tooling (web search/fetch) plus the bundled `references/report-template.html`. No
 external services, no paid APIs, no other skills required.
 
 ## Use
@@ -53,7 +53,7 @@ lookup would.
 
 ## Design notes
 
-- `report-template.html` must stay verbatim -- the CSS is part of the
+- `references/report-template.html` must stay verbatim -- the CSS is part of the
   spec, not a starting point to restyle.
 - `genome/intent.md` is the intent spec (purpose, invariants, free choices,
   golden examples) kept separate from `SKILL.md`'s phenotype instructions.

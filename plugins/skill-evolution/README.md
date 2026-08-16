@@ -105,8 +105,9 @@ definition for running this as a weekly maintenance pass on whichever
 scheduling mechanism your environment provides. It never auto-promotes: a
 scheduled run still stops at the gate and reports what needs a human
 decision, exactly like an interactive run would.
-`skill-evolution-sweep/example.md` is a real, filled-in instance of that
-template, included so the pattern isn't just theoretical.
+`skill-evolution-sweep/references/example.md` is a real, filled-in
+instance of that template, included so the pattern isn't just
+theoretical.
 
 ## Contents
 
@@ -120,5 +121,5 @@ template, included so the pattern isn't just theoretical.
 - `skill-evolution-sweep/SKILL.md` -- the sibling, user-invoked skill: an
   adaptable definition for running this as a recurring weekly sweep
   instead of only on demand.
-- `skill-evolution-sweep/example.md` -- a real, filled-in instance of that
-  template.
+- `skill-evolution-sweep/references/example.md` -- a real, filled-in
+  instance of that template.

@@ -67,7 +67,7 @@ This map is not a separate deliverable. It is the raw material for the report's 
 
 ## Phase 3: Synthesize the HTML report
 
-1. Read `report-template.html` in this skill folder. Clone it; do not rebuild the CSS. Keep the `<style>` block verbatim: clean white and professional (Montserrat / Roboto Mono, blue accent). Do not swap in a different visual style.
+1. Read `references/report-template.html`. Clone it; do not rebuild the CSS. Keep the `<style>` block verbatim: clean white and professional (Montserrat / Roboto Mono, blue accent). Do not swap in a different visual style.
 2. Fill every section. Mapping from the phases:
    - **60-second summary** — decision-maker-grade, nuance not headline. Lead with the settled fact, then the contested interpretation.
    - **5 key findings, ranked by reliability** — most important things now known, highest reliability first. Each carries a 1-10 confidence score (set in Phase 4) and Supported-by / Challenged-by chips drawn from the contradiction map.
