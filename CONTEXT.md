@@ -89,6 +89,28 @@ phenotype from the genome rather than patching a stale file. `skill-evolution`
 discovers eligible targets by looking for a genome, and treats anything
 marked `[INVARIANT]` as off-limits.
 
+## agents/ — two different mechanisms sharing one folder name
+
+A plugin-root `agents/` file (`delegate/agents/delegate.md`,
+`resumebot/agents/career-coach.md`) is a **registered subagent**: real
+YAML frontmatter (`name`, `description`), discovered by directory
+placement, dispatched by Claude Code itself. Nothing needs to name it
+anywhere — that's the whole point, it's found automatically.
+
+A skill-level `agents/` file (`document-forge/agents/ambiguity-reader.md`)
+can instead be **raw prompt text**: no frontmatter, never auto-discovered,
+read by the model and handed to the `Agent` tool as that subagent's full
+instructions. `document-forge/SKILL.md` says exactly this — "dispatch a
+separate subagent using `agents/ambiguity-reader.md` as its full
+instructions." For this pattern, being *named in SKILL.md* is what makes
+it findable, since nothing else will.
+
+Same folder name, opposite discovery mechanism. Don't add frontmatter to
+the second kind expecting it to start behaving like the first — it isn't
+registered and was never meant to be. `scripts/validate.py`'s
+`check_agent_file` accepts either shape (frontmatter, or named in a
+sibling `SKILL.md`) and only flags a file satisfying neither.
+
 ## Bundle
 
 **Avoid.** It previously named a hand-curated collection of skills packaged

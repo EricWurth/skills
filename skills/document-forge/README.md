@@ -64,3 +64,9 @@ The mechanical linter catches what can be pattern-matched and nothing else;
 everything past that depends on the reviewing stages doing real work. The
 ground truth check only fires when the document names an outside framework —
 it will not catch an unattributed one.
+
+## Maintaining this skill
+
+`evals/evals.json` is a reviewer's test suite — representative prompts and
+expected behaviour, run to check the skill still works after a change. It
+is never read by the skill itself at runtime, the same as this README.

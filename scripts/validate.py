@@ -266,48 +266,106 @@ def check_unpublished(root: Path) -> None:
             print(f"  unpublished: {rel}")
 
 
+KNOWN_SUBDIRS = ("references", "scripts", "agents", "templates", "examples")
+# Plugin-root only. hooks/ is wired through hooks.json, which the hook
+# engine reads directly -- like agents/, it is discovered by declaration
+# and placement, not by being named in a SKILL.md, so it gets no content
+# scan at all, the same treatment as evals/.
+PLUGIN_ONLY_SUBDIRS = ("hooks",)
+
+
+def check_agent_file(path: Path, context_text: str, label: str) -> None:
+    """An agents/ file is discovered one of two genuinely different ways,
+    found by reading all four that exist in this repo rather than assuming:
+    delegate.md, career-coach.md, and resume-writer.md are real registered
+    subagents (frontmatter with name + description required, auto-
+    discovered by directory placement -- Claude Code invokes them, nothing
+    needs to name them anywhere). document-forge's ambiguity-reader.md is
+    the other pattern: raw prompt text SKILL.md tells the model to dispatch
+    as a subagent's *instructions*, never auto-registered, so it correctly
+    carries no frontmatter -- but SKILL.md must name it, since that's its
+    only path to being found. Checking for "no frontmatter" alone would
+    have flagged the second pattern as broken when it is working as
+    designed; checking for "not named in SKILL.md" alone would have missed
+    a registered subagent with malformed frontmatter. A file must satisfy
+    at least one of the two to be doing its job.
+    """
+    text = path.read_text(encoding="utf-8", errors="replace")
+    has_frontmatter = text.startswith("---") and "\nname:" in text.split("\n---", 1)[0]
+    is_referenced = path.name in context_text
+    if not has_frontmatter and not is_referenced:
+        err(f"{label}: no frontmatter (name/description) and never named "
+            "in a SKILL.md -- not discoverable as a registered subagent, "
+            "and not usable as dispatched prompt text either")
+
+
 def check_organization(root: Path, skills) -> None:
-    """Two hygiene checks a link-checker can't catch, since a misplaced or
+    """Hygiene checks a link-checker can't catch, since a misplaced or
     orphaned file is never a broken path -- it resolves fine, it's just in
     the wrong place or never pointed at.
 
-    Found by hand once already: report-template.html sat loose at
-    storm-research's root instead of in references/, and
-    skill-evolution-sweep/example.md was both loose and genuinely orphaned
-    -- nothing in SKILL.md ever named it, so the model had no way to find
-    it. Both are warnings, not errors: a loose file is a smell, not a
-    break, and the exclusions below (evals/, genome/) are deliberately not
-    referenced from SKILL.md and shouldn't be flagged as if they were.
+    Runs at two levels. Per-skill, checked once already: report-template.html
+    sat loose at storm-research's root instead of in references/, and
+    skill-evolution-sweep/example.md was both loose and genuinely orphaned.
+    Per-plugin, checked once already: agents/, scripts/, templates/, and
+    examples/ can sit beside skills/ at a plugin's own root -- shared across
+    every skill in that plugin -- and nothing had ever scanned those. All
+    warnings, not errors: a loose or undocumented file is a smell, not a
+    break.
     """
-    # evals/ holds test fixtures a reviewer runs, never something the
-    # skill reads while executing -- same category as README.md.
+    # evals/ holds a reviewer's test suite, never read by the skill at
+    # runtime -- same category as README.md. Legitimate plugin-root
+    # scripts can be the same way (a build tool that regenerates a
+    # template, say) as long as a human reader can find out why it's
+    # there, so plugin-level checks accept the README as that place;
+    # skill-level checks don't, because those files need to be reachable
+    # by the *model*, not just documented for a maintainer.
     unreferenced_ok = {"evals"}
 
-    for s in skills:
-        skill_text = s.text
-        for item in sorted(s.path.iterdir()):
-            if item.name in ("SKILL.md", "README.md", "genome"):
+    def scan_dir(base: Path, label: str, reference_text: str, *, is_plugin: bool):
+        recognised = (*KNOWN_SUBDIRS, *unreferenced_ok,
+                      *(PLUGIN_ONLY_SUBDIRS if is_plugin else ()))
+        for item in sorted(base.iterdir()):
+            if item.name in ("SKILL.md", "README.md", "genome", "skills",
+                              ".claude-plugin"):
                 continue
             if item.is_dir():
-                if item.name not in ("references", "scripts", "agents",
-                                      "templates", "examples", *unreferenced_ok):
-                    warn(f"{s.rel}: unrecognised top-level folder '{item.name}/' "
-                         "-- references/, scripts/, agents/, templates/, "
-                         "and examples/ are the established names")
+                if item.name not in recognised:
+                    warn(f"{label}: unrecognised folder '{item.name}/' -- "
+                         f"{', '.join(KNOWN_SUBDIRS)} are the established names")
                 continue
-            # A loose file at skill root, sibling to SKILL.md itself.
-            warn(f"{s.rel}: '{item.name}' sits loose at skill root -- move it "
-                 "into references/ (or scripts/, agents/, templates/) rather "
-                 "than leaving it beside SKILL.md")
+            warn(f"{label}: '{item.name}' sits loose at its root -- move it "
+                 "into references/ (or scripts/, agents/, templates/) "
+                 "instead of leaving it beside SKILL.md/README.md")
 
-        for sub in ("references", "scripts", "agents", "templates", "examples"):
-            d = s.path / sub
-            if not d.is_dir() or sub in unreferenced_ok:
+        for sub in (*KNOWN_SUBDIRS, *(PLUGIN_ONLY_SUBDIRS if is_plugin else ())):
+            d = base / sub
+            if not d.is_dir() or sub in unreferenced_ok or sub in PLUGIN_ONLY_SUBDIRS:
                 continue
             for f in sorted(p for p in d.rglob("*") if p.is_file()):
-                if f.name not in skill_text:
-                    warn(f"{s.rel}: {sub}/{f.name} is never named in "
-                         "SKILL.md -- the model has no way to find it")
+                if sub == "agents":
+                    check_agent_file(f, reference_text, f"{label}/{sub}/{f.name}")
+                    continue
+                if f.name not in reference_text:
+                    warn(f"{label}: {sub}/{f.name} is never named anywhere "
+                         "it would need to be to be reachable")
+
+    for s in skills:
+        scan_dir(s.path, s.rel, s.text, is_plugin=False)
+
+    for man in sorted(root.glob("plugins/*/.claude-plugin/plugin.json")):
+        plugin_dir = man.parent.parent
+        label = plugin_dir.relative_to(root).as_posix()
+        skill_texts = "\n".join(
+            p.read_text(encoding="utf-8", errors="replace")
+            for p in plugin_dir.glob("skills/*/SKILL.md")
+        )
+        readme = plugin_dir / "README.md"
+        reference_text = skill_texts + (
+            readme.read_text(encoding="utf-8", errors="replace")
+            if readme.is_file() else ""
+        )
+        scan_dir(plugin_dir, label, reference_text, is_plugin=True)
 
 
 def check_catalog(root: Path) -> None:

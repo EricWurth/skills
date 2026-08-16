@@ -75,6 +75,13 @@ corresponding skill, so logic never forks between the schedule and the skill.
 - Python with `openpyxl` and `python-docx` (for tracker I/O and resume generation)
 - An email connector (e.g. Gmail) if you want `email-sync`
 
+## Maintaining this plugin
+
+`scripts/make_tracker_template.py` regenerates
+`templates/JobSearchTracker_Template.xlsx` from scratch. No skill invokes
+it — `setup` copies the already-built file into a new workspace. Rerun it
+by hand after a schema change; never hand-edit the shipped `.xlsx`.
+
 ## License
 
 MIT — see [LICENSE](../../LICENSE).
