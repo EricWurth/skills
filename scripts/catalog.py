@@ -90,6 +90,12 @@ def runs_in_chat(path: Path) -> bool:
     an MCP server needs a host to run it, and bundled subagent definitions
     need a harness that can dispatch them.
 
+    Subagents are the other half: Claude Code only, and unavailable to
+    every other surface. A skill cannot spawn one -- it tells the main
+    agent to use the Agent tool -- so a skill whose method depends on
+    parallel agents fails in chat with no agents/ directory to give it
+    away. Hence the text check.
+
     One caveat this cannot express: on claude.ai network access varies by
     user and admin settings, so anything doing live web research may work
     for one reader and not another.
@@ -98,7 +104,16 @@ def runs_in_chat(path: Path) -> bool:
     for d in harness_only:
         if any(c.is_dir() and c.name == d for c in [path / d, *path.rglob(d)]):
             return False
-    return not (path / ".mcp.json").is_file()
+    if (path / ".mcp.json").is_file():
+        return False
+    # Subagents are Claude Code only, and a skill cannot create one -- it
+    # instructs the main agent to use the Agent tool, which exists in no
+    # other surface. So instructions depending on parallel agents fail in
+    # chat even when the skill bundles no agents/ directory of its own.
+    for skill_md in path.rglob("SKILL.md"):
+        if NEEDS_AGENTS.search(skill_md.read_text(encoding="utf-8", errors="replace")):
+            return False
+    return True
 
 
 def tick(value: bool) -> str:

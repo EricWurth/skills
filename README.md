@@ -67,9 +67,9 @@ Self-contained folders. Copy one into `.claude/skills/`, or upload it on claude.
 | | Chat | What it does |
 |---|:--:|---|
 | [`/document-forge`](skills/document-forge) | — | A staged production pipeline for business documents — isolated scoping and explicit acceptance criteria per stage, not one-shot drafting |
-| [`/framework-forge`](skills/framework-forge) | ✅ | Hardens a framework thesis into a publishable document |
+| [`/framework-forge`](skills/framework-forge) | — | Hardens a framework thesis into a publishable document |
 | [`/problem-hunt`](skills/problem-hunt) | ✅ | Hunt for a real, unsolved-in-practice problem in AI, then co-brainstorm a solution |
-| [`/storm-research`](skills/storm-research) | ✅ | Turns one topic into a verified multi-perspective research briefing — five expert lenses, a contradiction map, then adversarial fact-checking |
+| [`/storm-research`](skills/storm-research) | — | Turns one topic into a verified multi-perspective research briefing — five expert lenses, a contradiction map, then adversarial fact-checking |
 
 **Model-invoked**
 
