@@ -13,8 +13,9 @@ compliance, not exact output.
 Evolve a target skill by finding a real technique gap specific to that
 skill, proving fitness and measurable gain, testing regression +
 discrimination in a sandbox, and gating -- never adopting the first
-plausible technique found, and never promoting without an explicit human
-decision.
+plausible technique found, and never promoting without the automated eval
+gate (regression + discrimination, executed in CI, not narratively judged)
+passing clean.
 
 ## Inputs [INVARIANT]
 
@@ -47,10 +48,15 @@ decision.
 6. Both regression (the target's existing golden examples still pass) and
    discrimination (a new adversarial fixture proves the specific gap the
    candidate claims to close) are required before any gate decision.
-7. Promotion into a target skill's live/production files requires explicit
-   human sign-off, every time. Every other step -- refresh, identify,
-   evaluate, prioritize, test -- runs autonomously with no pause for
-   confirmation in between.
+7. Promotion into a target skill's live/production files happens
+   automatically once the automated eval gate -- regression and
+   discrimination, both executed in CI against the sandboxed candidate, not
+   asserted from a narrative walkthrough -- passes clean. No synchronous
+   human step is required, in scheduled sweeps or interactive runs alike.
+   Every promotion regenerates the phenotype from the updated genome (never
+   a hand-patch), lands as its own commit with a version bump and changelog
+   entry, and is tagged, so a later quality regression is a `git revert` or
+   a re-pin to the prior tag -- not an emergency.
 8. Rejecting or shelving a candidate is a valid, logged outcome, not a
    failure requiring escalation -- most sweeps should find nothing worth
    promoting.

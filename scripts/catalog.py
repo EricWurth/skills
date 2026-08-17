@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
-from skillmodel import parse_frontmatter  # noqa: E402
+from skillmodel import load_json, parse_frontmatter  # noqa: E402
 
 NEEDS_AGENTS = re.compile(
     r"\b(Agent tool|subagents?|sub-agents?|parallel agents)\b", re.I)
@@ -44,15 +44,20 @@ def read_skill(path: Path):
 
 
 def collect(repo: Path):
-    market = json.loads(
-        (repo / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8")
-    )
+    # load_json, not a raw json.loads() -- validate.py and package.py both
+    # already fail cleanly on a malformed manifest instead of a raw
+    # traceback. A second, differently-behaved way to read the same file
+    # is exactly the duplication DRY means to catch: not the six lines
+    # saved, but the second place a fix has to be remembered.
+    market, err = load_json(repo / ".claude-plugin" / "marketplace.json")
+    if err:
+        sys.exit(f"marketplace.json: {err}")
     out = []
     for entry in market["plugins"]:
         source = repo / entry["source"]
-        man = json.loads(
-            (source / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8")
-        )
+        man, err = load_json(source / ".claude-plugin" / "plugin.json")
+        if err:
+            sys.exit(f"{entry['source']}/.claude-plugin/plugin.json: {err}")
         skills = [read_skill(source / rel / "SKILL.md") for rel in man["skills"]]
         out.append({
             "chat": runs_in_chat(source),

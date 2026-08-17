@@ -2,6 +2,15 @@
 name: skill-evolution-sweep
 description: Run the weekly skill-evolution sweep across every installed skill.
 disable-model-invocation: true
+version: 2.0.0
+changelog: >
+  2.0.0: promotion during scheduled runs is now allowed, gated on the same
+  automated eval gate (regression + discrimination, executed in CI) as an
+  interactive run -- the human-sign-off restriction this skill used to
+  enforce moved to skill-evolution's genome, where it was replaced by that
+  gate, so it no longer applies here either.
+  1.0.0: first version. Scheduled sweep that stopped short of promotion,
+  pending an explicit synchronous human decision.
 ---
 
 Run the `skill-evolution` skill as a recurring maintenance pass.
@@ -14,12 +23,16 @@ Run the `skill-evolution` skill as a recurring maintenance pass.
    choices and failure history, evaluate for fitness, prioritize (allowing
    layering), and sandbox-test exactly one candidate against regression and
    discrimination.
-3. Do **not** promote anything to a skill's live files during this
-   scheduled run. Promotion always requires an explicit, synchronous
-   human decision -- a scheduled task is the wrong place for that gate.
+3. Promote exactly as an interactive run would: on a clean pass through the
+   automated eval gate (regression + discrimination actually executed in
+   CI, not asserted), promote -- regenerate the phenotype from the updated
+   genome, version-bump, changelog, commit, tag. A scheduled run is not a
+   lighter-weight gate than an interactive one; it's the same gate, just
+   unattended. A candidate that fails the gate is shelved, exactly as it
+   would be interactively -- not escalated to wait on a human.
 4. At the end, report: which skills were swept, what candidates were found
-   (if any), what was tested, and what -- if anything -- is waiting on a
-   human decision before it can be promoted. A sweep that finds nothing
+   (if any), what was tested, what was promoted (with its new version and
+   commit/tag), and what was shelved and why. A sweep that finds nothing
    worth promoting is a normal, healthy result; say so plainly rather than
    padding the report.
 
@@ -27,18 +40,19 @@ Run the `skill-evolution` skill as a recurring maintenance pass.
 
 | Rationalization | Reality |
 |---|---|
-| "Nobody's watching, and the sandbox result is clean -- just ship it" | This is the exact failure this skill exists to prevent. Step 3 and the genome are explicit: promotion always requires an explicit, synchronous human decision, and "a scheduled task is the wrong place for that gate" -- an unattended context is not implicit approval. |
-| "It's a scheduled run, so a lighter pass through the steps is fine" | Unattended changes what happens at the gate, not what happens before it. Every per-target step -- refresh, identify, evaluate, prioritize, sandbox-test -- still runs in full. |
+| "Nobody's watching, so a lighter pass through the steps is fine" | Unattended changes nothing about rigor. Every per-target step -- refresh, identify, evaluate, prioritize, sandbox-test, and the eval gate itself -- still runs in full, exactly as an interactive run would. |
+| "The sandbox looked clean, that's basically the gate" | The gate is CI actually executing regression and discrimination against the candidate, not a narrative judgment that it would probably pass. Promoting on an asserted-not-executed result is the exact shortcut the automated gate exists to remove. |
 | "This skill has no genome/intent.md, that's a problem I should flag" | A skill without a genome is simply out of scope for this sweep, not an error condition -- it should be silently excluded, not logged as a failure. |
 | "Nothing passed the gates this sweep, I should find something to report" | An all-clear sweep is a normal, healthy result. Padding the report to look like more happened is worse than plainly stating nothing was found worth promoting. |
 
 ## Red Flags
 
-- Writing to any target skill's live/production files during a scheduled sweep run, regardless of how clean the sandbox result looks
-- Treating "this is an unattended run" as a reason to skip or shortcut refresh, identify, evaluate, prioritize, or sandbox-test for any target
+- Promoting on an asserted-clean sandbox result instead of one CI actually executed
+- Treating "this is an unattended run" as a reason to skip or shortcut refresh, identify, evaluate, prioritize, sandbox-test, or the eval gate for any target
 - Logging a genome-less skill as an error or failure instead of simply excluding it from the sweep
-- An end-of-sweep report that omits, for any target, what was found, what was tested, or what's waiting on human sign-off
+- An end-of-sweep report that omits, for any target, what was found, what was tested, or what was promoted vs. shelved
 - Manufacturing a marginal candidate to make an all-clear sweep look more productive than it was
+- Promoting without the version bump / changelog / commit / tag trail that makes a later rollback a revert instead of a scramble
 
 ## Setting this up
 

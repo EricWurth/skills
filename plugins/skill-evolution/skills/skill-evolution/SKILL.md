@@ -11,9 +11,16 @@ description: >
   the last sweep. Distinct from maintenance (content tuning within the
   current format) -- evolution is specifically about adopting a new
   technique.
-version: 1.0.0
+version: 2.0.0
 spec: genome/intent.md
 changelog: >
+  2.0.0: replaces the synchronous human sign-off gate with the automated
+  eval gate (regression + discrimination, executed in CI against the
+  sandboxed candidate) as the sole promotion checkpoint -- promotion is now
+  automatic on a clean pass, in scheduled sweeps and interactive runs
+  alike. Every promotion regenerates the phenotype from the updated genome,
+  version-bumps, and tags, so a later quality regression is a revert, not
+  an emergency.
   1.0.0: first version. Adds the mandatory identify -> evaluate ->
   prioritize -> test discipline and the self-refreshing research step, in
   place of an earlier ad hoc pattern that reached for a known technique
@@ -28,17 +35,22 @@ mind.
 
 ## Run mode
 
-Steps 1-5 run straight through, autonomously, no pausing for confirmation
-between them -- refresh, identify, evaluate, prioritize, and sandbox-test
-are all reversible work happening in scratch/sandbox space. Report the
-result at the end, not a check-in at each step.
+All six steps run straight through, autonomously, no pausing for
+confirmation -- refresh, identify, evaluate, prioritize, sandbox-test, and
+gate. Report the result at the end, not a check-in at each step. This is
+true whether the run is interactive or a scheduled sweep; there is no
+lighter unattended mode.
 
-Step 6 (gate) is the one checkpoint that stays: writing into a skill's
-live/production directory. That's not caution for its own sake -- it's a
-specific boundary worth holding deliberately: mutation/optimizer agents
-write to branches or sandbox only; promotion into production is a human
-decision. Everything up to that point needs no sign-off. Only the actual
-write to the live path does.
+Step 6 (gate) is still the one real checkpoint, but the checkpoint is the
+automated eval gate, not a person. Regression and discrimination must both
+actually execute in CI against the sandboxed candidate -- a narrative
+"this looks like it would pass" is not a passed gate. A clean CI result is
+what makes the write to the target skill's live/production files happen;
+mutation/optimizer work still stays in branches or sandbox until that gate
+clears, but nothing pauses for a synchronous decision once it does. The
+safety net that replaces the old sign-off step is version control: every
+promotion is its own commit, version-bumped and tagged, so a quality
+regression discovered later is a revert, not an emergency.
 
 ## Steps
 
@@ -122,25 +134,27 @@ write to the live path does.
    discrimination is rejected and logged as rejected -- that is a valid,
    useful outcome, not a failed run.
 
-6. **Gate and report.** Present the sandboxed diff, the regression result,
-   and the discrimination result to the user, with a clear recommendation.
-   Promotion into the target skill's live/production files happens only on
-   explicit human sign-off -- every time, no exceptions for how confident
-   the sandbox result looks. If approved, apply the same change to the
-   live skill directory and record the promotion (what changed, why, and
+6. **Gate, promote, and report.** Push the sandboxed candidate through the
+   automated eval gate: regression and discrimination both executed in CI,
+   not asserted from a walkthrough. On a clean pass, promote automatically
+   -- update the target skill's `genome/intent.md` free-choice entry the
+   candidate maps to, regenerate `SKILL.md` from the updated genome
+   (regenerate, don't hand-patch), bump the version, append a changelog
+   entry, commit, and tag. Record the promotion (what changed, why, and
    the fixture that proves it) in the target skill's own history so the
-   next sweep can see it. If the user declines, shelve the candidate:
-   log it as evaluated-and-rejected in `references/technique-library.md`'s
-   free-choice mapping notes, not as if it were never considered. Most
-   sweeps should end with nothing promoted -- that is expected, not a
-   shortfall. See `references/review-checklist.md` for the condensed
-   end-of-sweep report format.
+   next sweep can see it. On a failed or inconclusive gate, shelve the
+   candidate: log it as evaluated-and-rejected in
+   `references/technique-library.md`'s free-choice mapping notes, not as
+   if it were never considered. Most sweeps should end with nothing
+   promoted -- that is expected, not a shortfall. See
+   `references/review-checklist.md` for the condensed end-of-sweep report
+   format.
 
 ## Common Rationalizations
 
 | Rationalization | Reality |
 |---|---|
-| "It passed regression and discrimination cleanly, that's basically sign-off" | A clean sandbox result is what makes promotion *eligible*, not what makes it *approved*. Step 6 requires explicit human sign-off "every time, no exceptions for how confident the sandbox result looks." |
+| "The sandbox result looks clean, that's basically the gate" | A gate you asserted passed is not a gate that passed. Step 6 requires regression and discrimination to actually *execute in CI* against the candidate -- a narrative judgment that it "would pass" is exactly the shortcut the automated gate exists to remove. |
 | "This change is small/obviously safe, I can skip straight to applying it" | Step 5 exists precisely to stop the "technique I already know" shortcut -- the genome names this as "the specific failure this skill exists to prevent," from a past run that did exactly this and had to be corrected. |
 | "The technique is well-regarded in the literature, that's enough to sandbox it" | Fitness is skill-specific, not generic. Step 3 requires a documented problem *for this skill*, traced to its own eval notes -- general reputation fails fitness "full stop, regardless of how well-regarded." |
 | "Regression passed, so the change is proven" | Regression only shows nothing broke. Discrimination -- a new adversarial fixture the unmodified skill would have passed incorrectly -- is what proves the gain is real, per Step 5. |
@@ -148,12 +162,14 @@ write to the live path does.
 
 ## Red Flags
 
-- Applying a technique to the live/production skill directory before the user has explicitly signed off, no matter how clean the sandbox looked
+- Promoting a candidate whose regression/discrimination gate was self-asserted rather than actually executed in CI
 - Sandboxing a candidate that has no documented, skill-specific failure in that skill's own eval notes or history
 - Skipping the library refresh (Step 1) and going straight to a technique already top of mind
 - Treating a regression pass alone as sufficient proof, with no discrimination fixture constructed
 - Promoting more than one untested candidate in a single gate decision
 - Rewriting an existing technique-library.md entry's substance in place instead of appending a dated note or new entry
+- Hand-patching `SKILL.md` on promotion instead of regenerating it from the updated genome
+- Promoting without a version bump, changelog entry, commit, and tag -- that trail is what makes a later rollback a revert instead of a scramble
 
 ## Genome (intent spec)
 
