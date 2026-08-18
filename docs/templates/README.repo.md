@@ -51,8 +51,8 @@ that decides what ships. Then a pointer to CONTEXT.md for vocabulary.>
 
 ---
 
-**Why this order.** Documentation serves four separate needs — learning a
-thing, doing a task, looking something up, and understanding why — and
+**Why this order.** Documentation serves four separate needs (learning a
+thing, doing a task, looking something up, and understanding why), and
 mixing them in one document degrades all four. Install is a task, the
 catalogue is reference, and layout is explanation. Interleaving them is
 what makes a README feel long when the real problem is that it is four

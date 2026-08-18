@@ -2,7 +2,7 @@
 
 Makes project rules bind instead of decay.
 
-Prose rules in CLAUDE.md influence an agent; they do not bind it. Compliance decays with context depth because rules are tokens competing in attention against the task. rulegate converts rules into architecture: every rule shape gets exactly one binding moment, and the executor carries a single gateable rule — stay in scope.
+Prose rules in CLAUDE.md influence an agent; they do not bind it. Compliance decays with context depth because rules are tokens competing in attention against the task. rulegate converts rules into architecture: every rule shape gets exactly one binding moment, and the executor carries a single gateable rule: stay in scope.
 
 ## The loop
 
@@ -18,7 +18,7 @@ Discovered work re-enters through the front gate as a normal message. The conver
 
 ## Setup
 
-Say "set up rulegate". The setup skill scaffolds `.rulegate/`, reads your existing CLAUDE.md, and walks you through classifying each rule into SEQUENCING / SCOPE / CLAIMS / STYLE / JUDGMENT — with your correction as the human gate, because misclassified rules bind at the wrong moment.
+Say "set up rulegate". The setup skill scaffolds `.rulegate/`, reads your existing CLAUDE.md, and walks you through classifying each rule into SEQUENCING / SCOPE / CLAIMS / STYLE / JUDGMENT, with your correction as the human gate, because misclassified rules bind at the wrong moment.
 
 ## Honest limits (v0.1)
 
@@ -27,11 +27,11 @@ Say "set up rulegate". The setup skill scaffolds `.rulegate/`, reads your existi
 - The claims check is keyword-based on both sides. It catches the documented false-green pattern, not adversarial phrasing.
 - The planner can miscompile. Enforcement is then perfect against a wrong plan; the plan file is deliberately short so review is cheap. Use "review the plan" to re-derive from scratch.
 - Works only where a hook engine exists (Claude Code / Cowork). Chat has no checkpoints; do not expect parity.
-- `.rulegate/RULES.md` is read into the front gate's and the judge's own prompts as trusted instruction material. That is inherent to a prompt-based hook reading a project file, not a bug — but it means a compromised or attacker-influenced RULES.md (shared repo, malicious PR) could steer the compiled plan or the judge's annotations. Treat RULES.md with the same trust you'd give CLAUDE.md itself.
+- `.rulegate/RULES.md` is read into the front gate's and the judge's own prompts as trusted instruction material. That is inherent to a prompt-based hook reading a project file, not a bug, but it means a compromised or attacker-influenced RULES.md (shared repo, malicious PR) could steer the compiled plan or the judge's annotations. Treat RULES.md with the same trust you'd give CLAUDE.md itself.
 
 ## Rules audit (v0.2)
 
-Rules must sit at requirement, acceptance-criterion, or process-instruction level to bind. The `rules-audit` skill (mandatory first step of setup, runnable standalone via "audit my rules") checks each rule for atomicity, observability, vague quantifiers, unresolvable references, dead weight, and contradictions — then proposes requirement-level rewrites for vague-but-fixable rules, with every rewrite behind your approval. Taste rules stay honestly advisory; they are never dressed up as requirements.
+Rules must sit at requirement, acceptance-criterion, or process-instruction level to bind. The `rules-audit` skill (mandatory first step of setup, runnable standalone via "audit my rules") checks each rule for atomicity, observability, vague quantifiers, unresolvable references, dead weight, and contradictions, then proposes requirement-level rewrites for vague-but-fixable rules, with every rewrite behind your approval. Taste rules stay honestly advisory; they are never dressed up as requirements.
 
 ## Estimates (v0.3)
 

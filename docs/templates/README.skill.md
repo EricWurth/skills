@@ -15,30 +15,31 @@ at most.>
 <The mechanism, in enough detail that a reader can predict what will happen
 when the skill runs. Numbered steps if it is a pipeline; bold-led paragraphs
 if it is a set of rules. This is the section a reader cannot get anywhere
-else — SKILL.md is written for the model, not for them.
+else; SKILL.md is written for the model, not for them.
 
 State the parts that are load-bearing and non-obvious. If the skill refuses
 to do something, say so here.>
 
 ## Requirements
 
-<The test is narrow: remove this and does the skill stop working? Not
-"does the skill mention it" — a skill's instructions can describe an ideal
-world without depending on it. Only list what is actually load-bearing:
+<The test is narrow: remove this and does the skill stop working? Whether
+the skill mentions it is a different question; a skill's instructions can
+describe an ideal world without depending on it. Only list what is
+actually load-bearing:
 
 - tools it calls that it cannot do without (subagents, web search, a shell)
 - files it expects to find or write
 - other skills it cannot run without
 - services, MCP servers, or private systems it cannot substitute
 
-Write "None." when that is true — the absence is worth stating, because it
+Write "None." when that is true. The absence is worth stating, because it
 is what makes a skill portable to chat. "None" is also the default: most
 skills are instructions plus judgment, and nothing about them is
 load-bearing infrastructure.
 
-Something the skill's instructions reference but does not need — a
-companion skill that makes it better, a system its text assumes is present
-— belongs in a separate "What extends it" section, not here. Confusing the
+Something the skill's instructions reference but does not need (a
+companion skill that makes it better, a system its text assumes is
+present) belongs in a separate "What extends it" section. Confusing the
 two is the single worst README defect: it tells a reader the skill will not
 work when it will, or hides a real gap behind a sentence written in the
 present tense as if the dependency were already satisfied.>
@@ -57,7 +58,7 @@ claude.ai, say to zip the folder and upload it under Settings.>
 <How it is invoked. If model-invoked, describe the situations that trigger
 it. If user-invoked, show the command: `/<skill-name>`.
 
-Say plainly when it is the wrong tool — "overkill for a simple lookup" is
+Say plainly when it is the wrong tool. "Overkill for a simple lookup" is
 more useful than another sentence about what it does well.>
 
 ## Limits

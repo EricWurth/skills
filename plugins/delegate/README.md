@@ -2,7 +2,7 @@
 
 An agent that owns an assigned problem end-to-end and reports as a decision queue.
 
-Hand it work — "take this, you own it" — and it builds a model of the system
+Hand it work ("take this, you own it") and it builds a model of the system
 before committing to anything, charters the work, then executes inside that
 charter without checking in on every fork.
 
@@ -19,24 +19,24 @@ spots, and model-building on an incomplete cast feels identical from the
 inside to model-building on a complete one. So the check is explicit rather
 than felt.
 
-**The charter defines an authority envelope** with four terms — scope,
+**The charter defines an authority envelope** with four terms: scope,
 timeline, cost, outcome. Every fork inside it is the agent's to decide and
 log. A fork that would move any of the four comes to you as a change request
 **with a recommendation**, never a bare question.
 
 **Stuck-detection runs continuously**, on two triggers: actuals roughly an
 order of magnitude past estimate (2x slip is normal), or the frontier
-stopping — the same wall surviving a genuinely different approach. Three
-attempts is the diagnostic, not the definition: three different failures at
-different points is progress.
+stopping, meaning the same wall survives a genuinely different approach.
+Three attempts is the diagnostic, not the definition: three different
+failures at different points is progress.
 
 **Dissent is settled once.** State a position with reasoning; when you
 decide, that decision is logged as an assumption the work rests on and the
 objection persists as an opinion. Zero re-raises. If evidence later
 contradicts the assumption, resurfacing is mandatory.
 
-`delegate-status` reports in three sections — needs your call, approaching
-your threshold, decided since — and an empty queue is a valid report.
+`delegate-status` reports in three sections (needs your call, approaching
+your threshold, decided since), and an empty queue is a valid report.
 
 ## Requirements
 
@@ -54,9 +54,9 @@ Rulegate is what turns those promises into something external: the scope
 gate blocks an out-of-scope write, the ledger records what actually ran,
 the output gate blocks a completion claim the ledger does not support.
 Without it the promises still hold as instructions, and nothing verifies
-them — which matters because a run where the agent overclaimed and a run
-where it did not look identical from outside. That is the specific failure
-rulegate was built for.
+them. That matters because a run where the agent overclaimed and a run
+where it did not look identical from outside, and that is the specific
+failure rulegate was built for.
 
 The pairing runs both ways: rulegate's plan steps carry a mandatory
 `estimate:` line specifically so stuck-detection has a baseline to measure
@@ -66,7 +66,7 @@ actuals against.
 resurfacing a contradicted assumption by naming "what is downstream of it,
 by graph traversal", and `delegate-status` citing a node id per decision so
 "walk me through why" is a traversal rather than a reconstruction. Both
-want addressable nodes and edges, which rules out a file-based store —
+want addressable nodes and edges, which rules out a file-based store:
 markdown with frontmatter has nothing to traverse. Any MCP-backed graph
 memory does; the agent never names a particular one.
 
@@ -84,6 +84,6 @@ context. It works; it just does not keep your context clean.
 
 It identifies as Rick, signs reports as Rick, and answers to "Rick, take
 this." That is deliberate, not a leftover. If you would rather it did not,
-edit `agents/delegate.md` — the name appears ten times, spread across the
-frontmatter description, its examples, and the opening paragraph, and
+edit `agents/delegate.md`. The name appears ten times there, spread across
+the frontmatter description, its examples, and the opening paragraph, and
 nothing outside that file depends on it.

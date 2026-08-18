@@ -1,6 +1,6 @@
 # ai-fit-discovery
 
-Interview one person about their real work, then find where AI fits -- an inventory, a classification, and three to five options.
+Interview one person about their real work, then find where AI fits: an inventory, a classification, and three to five options.
 
 ## Why this exists
 
@@ -10,8 +10,8 @@ is just nobody's. It was written before anyone asked what the person
 actually does, what they wish they had time for, or which parts of the
 job are the job.
 
-This skill inverts the order. It learns the work first -- including the
-work that is wanted and not done -- writes it down so it can be referred
+This skill inverts the order. It learns the work first (including the
+work that is wanted and not done), writes it down so it can be referred
 to later, and only then reasons about fit. It treats "leave that alone" as
 a real answer, and it never names a product.
 
@@ -23,7 +23,7 @@ a real answer, and it never names a product.
    recurring work, workflows at the computer (yesterday, not a typical
    day), the inverse (what they'd rather be doing), and friction. Listens
    for decisions under the tasks. Stops at saturation, not a count.
-3. **Inventory.** A referenceable document -- every item with frequency,
+3. **Inventory.** A referenceable document: every item with frequency,
    tools, inputs and outputs, judgment versus procedure, pain, and what
    they'd rather be doing; the inverse as its own section. The person
    confirms it before anything is scored.

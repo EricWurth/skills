@@ -9,9 +9,9 @@ description in `.claude-plugin/plugin.json` and the marketplace entry.>
 
 ## How it works
 
-<The mechanism. For a plugin this usually means how the parts fit together,
-not a restatement of each skill — a table of moments and mechanisms often
-does more than prose. Name the load-bearing behaviour and anything that
+<The mechanism. For a plugin this usually means how the parts fit together
+rather than a restatement of each skill; a table of moments and mechanisms
+often does more than prose. Name the load-bearing behaviour and anything that
 would surprise a reader.>
 
 ## What's in it
@@ -21,7 +21,7 @@ would surprise a reader.>
 | `<skill>` | you type / automatic | <one line> |
 
 <Mark user-invoked skills with a leading slash: `/vault-init`. The
-distinction is what a reader needs to know before installing — it tells
+distinction is what a reader needs to know before installing; it tells
 them what will fire on its own.
 
 List anything beyond skills too: agents, hooks, commands, scripts,
@@ -30,11 +30,11 @@ skills, so they belong in the README.>
 
 ## Requirements
 
-<The test is narrow: remove this and does the plugin stop working? Not
-"does the plugin mention it" — an agent's own text can assert a pairing in
-the present tense ("you work under X") without X being installed, and that
-assertion is not evidence the pairing is required. Only list what is
-actually load-bearing:
+<The test is narrow: remove this and does the plugin stop working? Whether
+the plugin mentions it is a different question; an agent's own text can
+assert a pairing in the present tense ("you work under X") without X being
+installed, and that assertion is not evidence the pairing is required.
+Only list what is actually load-bearing:
 
 - services, MCP servers, databases, or private systems it cannot run without
 - files or folders it expects
@@ -44,13 +44,13 @@ Write "None." when that is true.
 
 ## What extends it
 
-<Other plugins or systems that make this better without being required —
-this is where a companion plugin belongs if the method still runs alone.
+<Other plugins or systems that make this better without being required.
+This is where a companion plugin belongs if the method still runs alone.
 State plainly what is gained and what is lost without each one; "installed
 alone it still follows the method, but nothing enforces it" is the shape.
-An undeclared real requirement is the single worst README defect — the
+An undeclared real requirement is the single worst README defect: the
 reader installs, it half works, and nothing says why. A requirement claimed
-that turns out to be optional is the second worst — it stops someone
+that turns out to be optional is the second worst; it stops someone
 installing something that would have worked fine.>
 
 ## Setup
@@ -60,7 +60,7 @@ installing something that would have worked fine.>
 /plugin install <plugin-name>@ericwurth
 ```
 
-<Then whatever first-run step exists — usually a user-invoked setup skill.
+<Then whatever first-run step exists, usually a user-invoked setup skill.
 Show the command.>
 
 ## Limits

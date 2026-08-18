@@ -1,7 +1,7 @@
 {
   "name": "skill-evolution",
   "version": "1.0.0",
-  "description": "Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off.",
+  "description": "Evolves your other skills on a schedule: finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off.",
   "author": {
     "name": "Eric Wurth",
     "url": "https://www.ericwurth.com"

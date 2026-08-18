@@ -1,12 +1,12 @@
 # Skills
 
-Disciplined methods for Claude — reasoning, research, writing, agent memory,
+Disciplined methods for Claude: reasoning, research, writing, agent memory,
 delegation, rule enforcement, and job search.
 
 Two kinds of thing live here, and they are used differently. A **skill** is
 instructions: a folder you copy or upload. A **plugin** is an installable
-package that carries skills plus whatever else they need — agents, hooks,
-scripts, templates — and it installs through the marketplace.
+package that carries skills plus whatever else they need (agents, hooks,
+scripts, templates), and it installs through the marketplace.
 
 Built and maintained by [Eric Wurth](https://www.ericwurth.com). MIT licensed.
 
@@ -43,7 +43,7 @@ take effect without publishing:
 /plugin marketplace add ./path/to/skills
 ```
 
-Skills need no equivalent — copy them, or symlink the folder if you want
+Skills need no equivalent. Copy them, or symlink the folder if you want
 edits to apply live.
 
 </details>
@@ -54,9 +54,9 @@ edits to apply live.
 
 5 standalone skills and 5 plugins (19 skills). Skills are copied; plugins are installed.
 
-They split on one axis: who can invoke them. **User-invoked** skills are reachable only when you type them — they orchestrate. **Model-invoked** skills can be typed *or* reached for automatically when the task fits — they hold the reusable discipline. A user-invoked skill may call a model-invoked one, never another user-invoked one.
+They split on one axis: who can invoke them. **User-invoked** skills are reachable only when you type them, and they do the orchestrating. **Model-invoked** skills can be typed *or* reached for automatically when the task fits; they hold the reusable discipline. A user-invoked skill may call a model-invoked one, never another user-invoked one.
 
-*Chat* marks what works outside a coding harness. Skills get a filesystem and bash everywhere, and anything calling for parallel agents simply runs in sequence instead — only hooks, slash commands, and MCP servers have no counterpart. On claude.ai network access varies by account, so a skill doing live web research may not work for every reader.
+*Chat* marks what works outside a coding harness. Skills get a filesystem and bash everywhere, and anything calling for parallel agents simply runs in sequence instead. Only hooks, slash commands, and MCP servers have no counterpart. On claude.ai network access varies by account, so a skill doing live web research may not work for every reader.
 
 ### Skills
 
@@ -66,10 +66,10 @@ Self-contained folders. Copy one into `.claude/skills/`, or upload it on claude.
 
 | | Chat | What it does |
 |---|:--:|---|
-| [`/document-forge`](skills/document-forge) | ✅ | A staged production pipeline for business documents — isolated scoping and explicit acceptance criteria per stage, not one-shot drafting |
+| [`/document-forge`](skills/document-forge) | ✅ | A staged production pipeline for business documents, with isolated scoping and explicit acceptance criteria per stage instead of one-shot drafting |
 | [`/framework-forge`](skills/framework-forge) | ✅ | Hardens a framework thesis into a publishable document |
 | [`/problem-hunt`](skills/problem-hunt) | ✅ | Hunt for a real, unsolved-in-practice problem in AI, then co-brainstorm a solution |
-| [`/storm-research`](skills/storm-research) | ✅ | Turns one topic into a verified multi-perspective research briefing — five expert lenses, a contradiction map, then adversarial fact-checking |
+| [`/storm-research`](skills/storm-research) | ✅ | Turns one topic into a verified multi-perspective research briefing: five expert lenses, a contradiction map, then adversarial fact-checking |
 
 **Model-invoked**
 
@@ -79,35 +79,35 @@ Self-contained folders. Copy one into `.claude/skills/`, or upload it on claude.
 
 ### Plugins
 
-Installed through the marketplace. Each carries more than instructions — extra skills, agents, hooks, or scripts.
+Installed through the marketplace. Each carries more than instructions: extra skills, agents, hooks, or scripts.
 
 | Plugin | Chat | What it does |
 |---|:--:|---|
-| [`skill-evolution`](plugins/skill-evolution) | ✅ | Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
+| [`skill-evolution`](plugins/skill-evolution) | ✅ | Evolves your other skills on a schedule: finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
 | [`memory-vault`](plugins/memory-vault) | ✅ | A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance |
-| [`rulegate`](plugins/rulegate) | — | Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
+| [`rulegate`](plugins/rulegate) | — | Makes project rules bind instead of decay: compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
 | [`resumebot`](plugins/resumebot) | ✅ | A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, and interview prep |
 | [`delegate`](plugins/delegate) | ✅ | A senior-resource agent that owns problems end-to-end and reports in decision-queue format |
 
 **skill-evolution**
 
-- *You type* — `/skill-evolution-sweep`
-- *Automatic* — `skill-evolution`
+- *You type*: `/skill-evolution-sweep`
+- *Automatic*: `skill-evolution`
 
 **memory-vault**
 
-- *You type* — `/vault-init`, `/vault-review`
-- *Automatic* — `vault-capture`, `vault-conventions`
+- *You type*: `/vault-init`, `/vault-review`
+- *Automatic*: `vault-capture`, `vault-conventions`
 
 **rulegate**
 
-- *You type* — `/rulegate-setup`
-- *Automatic* — `rule-compiler`, `rules-audit`
+- *You type*: `/rulegate-setup`
+- *Automatic*: `rule-compiler`, `rules-audit`
 
 **resumebot**
 
-- *You type* — `/setup`
-- *Automatic* — `apply-tabs`, `build-packets`, `email-sync`, `interview-prep`, `job-profile`, `job-scan`, `master-resume`, `tracker`
+- *You type*: `/setup`
+- *Automatic*: `apply-tabs`, `build-packets`, `email-sync`, `interview-prep`, `job-profile`, `job-scan`, `master-resume`, `tracker`
 
 <!-- catalog:end -->
 
@@ -132,14 +132,14 @@ plugins/rulegate/                a plugin: carries more than instructions
 ```
 
 Some skills add more: `document-forge` also carries `references/`, `scripts/`,
-`agents/`, and `evals/`. None of that is required — the two files above are
+`agents/`, and `evals/`. None of that is required; the two files above are
 the whole contract.
 
 A skill that is only instructions stays in `skills/`, where it can be
 copied or uploaded directly. Wrapping it in a plugin would add a manifest
 and two directory levels and buy nothing.
 
-**Genome and phenotype.** `SKILL.md` is the phenotype — the instructions
+**Genome and phenotype.** `SKILL.md` is the phenotype, the instructions
 that run. `genome/intent.md` is the spec: purpose, success criteria,
 behavioural invariants, the choices deliberately left free, and test
 examples. It is edited by hand only.
@@ -163,20 +163,20 @@ py -3 scripts/package.py      build dist/*.plugin  (validates first)
 py -3 scripts/catalog.py      regenerate the catalogue above
 ```
 
-Stdlib only — nothing to install. CI runs all of these on every
+Stdlib only, nothing to install. CI runs all of these on every
 push, plus a check that each built archive opens on Linux.
 
 Every skill also has a trigger-accuracy test at
-[`evals/cases/<skill-name>.json`](evals/cases) — realistic prompts
+[`evals/cases/<skill-name>.json`](evals/cases): realistic prompts
 checking the skill fires when it should and stays quiet when it
 shouldn't, centralized outside `skills/` and `plugins/` on purpose. See
 [`CONTEXT.md`](CONTEXT.md) for why.
 
-Standalone skills under `skills/` are published by being there — they are
-copied, not installed, so there is nothing to declare. `skills/in-progress/`
-is the one exception: anything staged there is unfinished, excluded from the
-catalogue above, and not ready to copy — see its own README before taking
-anything from it.
+Standalone skills under `skills/` are published by being there. They are
+copied rather than installed, so there is nothing to declare.
+`skills/in-progress/` is the one exception: anything staged there is
+unfinished, excluded from the catalogue above, and not ready to copy. See
+its own README before taking anything from it.
 
 Inside a plugin it is the opposite: a skill ships only when that plugin's
 `skills` array names it. One present in the plugin but absent from the array
@@ -184,9 +184,9 @@ is unreleased, which is where work in progress lives. The validator reports
 those two states separately, so an unreleased skill never hides among the
 standalone ones.
 
-[`CONTEXT.md`](CONTEXT.md) defines the terms used here — skill, plugin,
-release, surface, ship — and is worth reading before making changes.
+[`CONTEXT.md`](CONTEXT.md) defines the terms used here (skill, plugin,
+release, surface, ship) and is worth reading before making changes.
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Use, modify, and redistribute freely.
+MIT. See [LICENSE](LICENSE). Use, modify, and redistribute freely.

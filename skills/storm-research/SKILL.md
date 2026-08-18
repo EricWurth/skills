@@ -1,6 +1,6 @@
 ---
 name: storm-research
-summary: Turns one topic into a verified multi-perspective research briefing — five expert lenses, a contradiction map, then adversarial fact-checking
+summary: Turns one topic into a verified multi-perspective research briefing: five expert lenses, a contradiction map, then adversarial fact-checking
 description: Turn one topic into a verified multi-perspective research briefing.
 disable-model-invocation: true
 ---

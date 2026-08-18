@@ -9,7 +9,7 @@
     {
       "name": "skill-evolution",
       "source": "./plugins/skill-evolution",
-      "description": "Evolves your other skills on a schedule — finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off.",
+      "description": "Evolves your other skills on a schedule: finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off.",
       "category": "engineering",
       "keywords": [
         "skills",
@@ -31,7 +31,7 @@
     {
       "name": "rulegate",
       "source": "./plugins/rulegate",
-      "description": "Makes project rules bind instead of decay — compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger.",
+      "description": "Makes project rules bind instead of decay: compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger.",
       "category": "engineering",
       "keywords": [
         "enforcement",

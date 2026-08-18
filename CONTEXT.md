@@ -1,7 +1,7 @@
 # Vocabulary
 
 Shared terms for this repository. The point is that a human and an agent
-mean the same thing by the same word — most of the entries below exist
+mean the same thing by the same word. Most of the entries below exist
 because a specific misunderstanding cost real work.
 
 ## Skill
@@ -18,7 +18,7 @@ also carry `agents/`, `commands/`, `hooks/`, `scripts/`, `templates/`, and
 `examples/`.
 
 Every plugin in this repository lives under `plugins/` as a peer. The root
-is **not** a plugin — see *Marketplace*.
+is **not** a plugin; see *Marketplace*.
 
 ## Marketplace
 
@@ -44,8 +44,8 @@ exists, and the only way to hold work back is to not have written it.
 
 ## Release
 
-**The discipline of deciding what ships and when** — not a synonym for
-"plugin", and not the act of publishing.
+**The discipline of deciding what ships and when.** It is neither a
+synonym for "plugin" nor the act of publishing.
 
 This one caused a genuine misfire: "only publish plugins as a release" was
 read as *the plugin is the atomic unit of distribution*, which produced an
@@ -56,8 +56,8 @@ inference was never intended. When the packaging question comes up, say
 ## Surface
 
 Where a skill runs: **Claude Code**, **Cowork**, or **claude.ai chat**.
-Surfaces differ in capability — chat has no filesystem, no shell, no
-subagents, no hooks — so a skill that shells out cannot run in all three.
+Surfaces differ in capability (chat has no filesystem, no shell, no
+subagents, no hooks), so a skill that shells out cannot run in all three.
 
 Surface is a property of what a skill *does*, derived rather than declared.
 It is deliberately not the directory structure: capability changes would
@@ -69,7 +69,7 @@ otherwise become directory moves.
 matches what is happening. Descriptions should be rich and carry trigger
 phrasing.
 
-**User-invoked** means `disable-model-invocation: true` — reachable only
+**User-invoked** means `disable-model-invocation: true`: reachable only
 when the human types its name. Descriptions should be one plain line with
 *no* trigger language, since nothing is matching against them.
 
@@ -79,8 +79,8 @@ skill. Tell the user to run it instead.
 
 ## Genome and phenotype
 
-`SKILL.md` is the **phenotype** — what the model reads and executes.
-`genome/intent.md` is the **genome** — purpose, success criteria,
+`SKILL.md` is the **phenotype**: what the model reads and executes.
+`genome/intent.md` is the **genome**: purpose, success criteria,
 behavioural invariants, the choices left free to vary, and golden examples.
 Changed by hand only.
 
@@ -89,39 +89,39 @@ phenotype from the genome rather than patching a stale file. `skill-evolution`
 discovers eligible targets by looking for a genome, and treats anything
 marked `[INVARIANT]` as off-limits.
 
-## agents/ — two different mechanisms sharing one folder name
+## agents/: two different mechanisms sharing one folder name
 
 A plugin-root `agents/` file (`delegate/agents/delegate.md`,
 `resumebot/agents/career-coach.md`) is a **registered subagent**: real
 YAML frontmatter (`name`, `description`), discovered by directory
 placement, dispatched by Claude Code itself. Nothing needs to name it
-anywhere — that's the whole point, it's found automatically.
+anywhere; that's the whole point, it's found automatically.
 
 A skill-level `agents/` file (`document-forge/agents/ambiguity-reader.md`)
 can instead be **raw prompt text**: no frontmatter, never auto-discovered,
 read by the model and handed to the `Agent` tool as that subagent's full
-instructions. `document-forge/SKILL.md` says exactly this — "dispatch a
+instructions. `document-forge/SKILL.md` says exactly this: "dispatch a
 separate subagent using `agents/ambiguity-reader.md` as its full
 instructions." For this pattern, being *named in SKILL.md* is what makes
 it findable, since nothing else will.
 
 Same folder name, opposite discovery mechanism. Don't add frontmatter to
-the second kind expecting it to start behaving like the first — it isn't
+the second kind expecting it to start behaving like the first. It isn't
 registered and was never meant to be. `scripts/validate.py`'s
 `check_agent_file` accepts either shape (frontmatter, or named in a
 sibling `SKILL.md`) and only flags a file satisfying neither.
 
 ## Evals
 
-Every skill has `evals/cases/<skill-name>.json` at the repo root —
-**centralized, not inside the skill's own folder**, the one deliberate
+Every skill has `evals/cases/<skill-name>.json` at the repo root,
+**centralized rather than inside the skill's own folder**, the one deliberate
 exception to "everything about a skill lives together." A handful of
 realistic prompts testing whether the skill actually triggers (or
 doesn't) the way its `description` claims: `should_trigger` /
 `should_not_trigger` / `ambiguous` for model-invoked skills,
 `explicit_invocation` / `should_not_auto_trigger` for user-invoked ones.
 
-Centralized on purpose, following the one real precedent found for this —
+Centralized on purpose, following the one real precedent found for this:
 addyosmani/agent-skills keeps evals outside `skills/` too, CI-gated on a
 minimum query count per skill. Living outside every skill and plugin
 directory means the packager never has to know evals exist: it only ever
@@ -129,12 +129,12 @@ walks what a skill or plugin's own manifest declares, so nothing here can
 leak into a shipped plugin archive by accident. That used to require a
 manual check; now it's structural.
 
-These are authored test cases, not run results — nothing executes them
+These are authored test cases, not run results; nothing executes them
 automatically. `scripts/validate.py`'s `check_evals` verifies the file
 exists, the `invocation` field matches the skill's actual
 `disable-model-invocation` state (so it can't quietly go stale if that
-changes), and the category counts clear a real minimum — not just that a
-file is present.
+changes), and the category counts clear a real minimum, so a file merely
+being present does not pass.
 
 ## Bundle
 
@@ -146,5 +146,5 @@ contents come from its manifest, never from a directory walk.
 ## Library skill
 
 A skill under a plugin's `skills/` that the manifest does *not* name. It is
-present, validated, and unreleased. This is where work in progress lives —
+present, validated, and unreleased. This is where work in progress lives;
 there is no separate staging directory, and none is wanted.

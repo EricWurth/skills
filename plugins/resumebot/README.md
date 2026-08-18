@@ -1,11 +1,11 @@
 # resumebot
 
 A job-search operating system for [Claude Code](https://claude.com/claude-code).
-It turns a battle-tested manual process — one real search, hundreds of tracked
-roles, dozens of applications — into a plugin anyone can run: build a master
+It turns a battle-tested manual process (one real search, hundreds of tracked
+roles, dozens of applications) into a plugin anyone can run: build a master
 resume, define what a good job looks like for *you*, then let scheduled scans,
-packet builds, and email sync keep the pipeline moving while you spend your time
-on the only part that needs you — applying and interviewing.
+packet builds, and email sync keep the pipeline moving. You spend your time on
+the only part that needs you, applying and interviewing.
 
 **Privacy note:** every example in this repo uses a fictional persona ("Jordan
 Okafor"). Your real data lives only in your local workspace, never in the plugin.
@@ -17,7 +17,7 @@ Okafor"). Your real data lives only in your local workspace, never in the plugin
 /plugin install resumebot@ericwurth
 ```
 
-Then say: **"set up resumebot"** — the guided setup scaffolds your workspace and
+Then say **"set up resumebot"**. The guided setup scaffolds your workspace and
 walks you through everything below in one sitting.
 
 ## What you get
@@ -27,7 +27,7 @@ walks you through everything below in one sitting.
 | `setup` skill | Scaffolds the workspace, copies templates, offers to schedule the automations |
 | `master-resume` skill + `resume-writer` agent | Interview-driven master resume; line-level language coaching with hard content rules (delivered work only, no AI tells, no manufactured metrics) |
 | `job-profile` skill + `career-coach` agent | A coaching conversation that produces your match profile: broad search terms, four hard gates (staleness, fit, location, comp floor), bonuses, exclusions |
-| `tracker` skill + Excel template | One xlsx as the single source of truth — 23-column schema, status lifecycle, dedupe key, live dashboard, backup-before-write discipline |
+| `tracker` skill + Excel template | One xlsx as the single source of truth: 23-column schema, status lifecycle, dedupe key, live dashboard, backup-before-write discipline |
 | `job-scan` skill | Scans boards/employer pages against your profile, scores finds, appends to the tracker. Never applies to anything |
 | `build-packets` skill | Batch-builds tailored resumes from your standing variants, lint-gated, and flips roles to "ready" only when the file actually exists |
 | `apply-tabs` skill | Opens your ready queue as browser tabs in priority order with a per-role checklist. You submit every application |
@@ -52,7 +52,7 @@ JobSearch/
 - **One source of truth per thing.** State lives in the tracker xlsx; policy lives
   in Profile/*.md; resume truth lives in the master. Forked copies always drift.
 - **"Ready" means a packet exists.** A great fit score with no built resume is not
-  ready to apply — the status flips only when the file is on disk.
+  ready to apply. The status flips only when the file is on disk.
 - **Automation finds and prepares; the human applies.** No skill in this plugin
   fills or submits an application, ever.
 - **Append-only automation with backups.** Every automated tracker write backs the
@@ -79,9 +79,9 @@ corresponding skill, so logic never forks between the schedule and the skill.
 
 `scripts/make_tracker_template.py` regenerates
 `templates/JobSearchTracker_Template.xlsx` from scratch. No skill invokes
-it — `setup` copies the already-built file into a new workspace. Rerun it
+it; `setup` copies the already-built file into a new workspace. Rerun it
 by hand after a schema change; never hand-edit the shipped `.xlsx`.
 
 ## License
 
-MIT — see [LICENSE](../../LICENSE).
+MIT. See [LICENSE](../../LICENSE).

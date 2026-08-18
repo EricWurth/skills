@@ -134,15 +134,15 @@ def render(plugins, standalone) -> str:
     lines.append("")
     lines.append("They split on one axis: who can invoke them. "
                  "**User-invoked** skills are reachable only when you type "
-                 "them — they orchestrate. **Model-invoked** skills can be "
-                 "typed *or* reached for automatically when the task fits — "
-                 "they hold the reusable discipline. A user-invoked skill "
-                 "may call a model-invoked one, never another user-invoked "
-                 "one.")
+                 "them, and they do the orchestrating. **Model-invoked** "
+                 "skills can be typed *or* reached for automatically when "
+                 "the task fits; they hold the reusable discipline. A "
+                 "user-invoked skill may call a model-invoked one, never "
+                 "another user-invoked one.")
     lines.append("")
     lines.append("*Chat* marks what works outside a coding harness. Skills "
                  "get a filesystem and bash everywhere, and anything calling "
-                 "for parallel agents simply runs in sequence instead — only "
+                 "for parallel agents simply runs in sequence instead. Only "
                  "hooks, slash commands, and MCP servers have no counterpart. "
                  "On claude.ai network access varies by account, so a skill "
                  "doing live web research may not work for every reader.")
@@ -165,7 +165,7 @@ def render(plugins, standalone) -> str:
           for s in standalone if not s["user_invoked"]]),
         ("Plugins",
          "Installed through the marketplace. Each carries more than "
-         "instructions — extra skills, agents, hooks, or scripts.",
+         "instructions: extra skills, agents, hooks, or scripts.",
          [], []),
     ):
         lines.append(f"### {heading}")
@@ -193,7 +193,7 @@ def render(plugins, standalone) -> str:
                     joined = ", ".join(
                         f"`{'/' if group == 'user' else ''}{s['name']}`"
                         for s in members)
-                    lines.append(f"- *{label}* — {joined}")
+                    lines.append(f"- *{label}*: {joined}")
                 lines.append("")
             continue
         for label, rows in (("User-invoked", rows_user),

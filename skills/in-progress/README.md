@@ -3,13 +3,13 @@
 Standalone skills that are not finished, and not published.
 
 This folder exists to close one specific gap. A skill inside a plugin is
-held back by leaving it out of that plugin's `skills` array — the manifest
+held back by leaving it out of that plugin's `skills` array; the manifest
 is the gate. A standalone skill under `skills/` has no manifest, so it is
 published simply by being there. Without somewhere to put unfinished work,
 the only way to hold a standalone skill back is to not write it.
 
-Everything here is validated like any other skill — names, links, and
-frontmatter are all checked — but nothing here appears in the README
+Everything here is validated like any other skill (names, links, and
+frontmatter are all checked), but nothing here appears in the README
 catalogue, and nothing here is packaged.
 
 ## Moving one out

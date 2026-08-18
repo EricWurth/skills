@@ -1,6 +1,6 @@
 ---
 name: document-forge
-summary: A staged production pipeline for business documents — isolated scoping and explicit acceptance criteria per stage, not one-shot drafting
+summary: A staged production pipeline for business documents, with isolated scoping and explicit acceptance criteria per stage instead of one-shot drafting
 description: Run a staged production pipeline for a business document.
 spec: genome/intent.md
 disable-model-invocation: true

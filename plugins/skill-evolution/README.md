@@ -46,14 +46,14 @@ exactly that shortcut, by forcing four things in order:
 2. **Ground fitness in the target skill's own history.** A technique only
    qualifies if it maps to a free choice the target skill has declared, and
    only counts as "fit" if that skill has a *documented, concrete* problem
-   the technique addresses -- not because the technique is well-regarded in
+   the technique addresses, not because the technique is well-regarded in
    general.
 3. **Prove it, don't assert it.** Every candidate needs a constructed test
    case that fails today and measurably improves with the change.
-4. **Sandbox, then gate.** Test in scratch space against two bars --
+4. **Sandbox, then gate.** Test in scratch space against two bars:
    regression (existing behavior still holds) and discrimination (a new
-   adversarial fixture proves the specific gap closed) -- and promote to
-   the live skill only on explicit human sign-off.
+   adversarial fixture proves the specific gap closed). Promote to the live
+   skill only on explicit human sign-off.
 
 Most sweeps should find nothing worth promoting. That's treated as a valid,
 expected outcome, not a failure to search harder.
@@ -62,9 +62,9 @@ expected outcome, not a failure to search harder.
 
 Every skill this system manages carries two files:
 
-- **`SKILL.md`** (the phenotype) -- what the model actually reads and
-  executes at runtime.
-- **`genome/intent.md`** (the spec) -- purpose, success criteria, behavioral
+- `SKILL.md` (the phenotype): what the model actually reads and executes
+  at runtime.
+- `genome/intent.md` (the spec): purpose, success criteria, behavioral
   invariants, free choices, and golden examples, written and changed by
   hand only.
 
@@ -73,14 +73,14 @@ packaging format changes, rather than being hand-patched out of sync with
 its own spec. `skill-evolution` uses this split directly: it auto-discovers
 target skills by scanning for a `genome/intent.md`, reads that skill's free
 choices and invariants to know what it's allowed to touch, and never
-proposes a change to anything marked `[INVARIANT]` -- that's a spec
+proposes a change to anything marked `[INVARIANT]`. That is a spec
 conversation with a human, not something this skill decides on its own.
 
 ## Install
 
 Drop the `skill-evolution/` folder into your `.claude/skills/` directory.
 It reads and appends to its own `references/technique-library.md` over
-time -- treat that file as a living catalog, not a static reference.
+time; treat that file as a living catalog rather than a static reference.
 
 To make a skill eligible as an evolution *target*, give it a
 `genome/intent.md` alongside its `SKILL.md`, following the shape in
@@ -92,15 +92,15 @@ convention).
 
 Say "run evolution," "evolve this skill," or "check for new techniques."
 Steps 1-5 (refresh, identify, evaluate, prioritize, sandbox-test) run
-autonomously with no pause for confirmation -- they're reversible work in
-scratch space. Step 6 (gate) always stops for an explicit decision before
-anything touches a skill's live files. `references/review-checklist.md`
+autonomously with no pause for confirmation, since they're reversible work
+in scratch space. Step 6 (gate) always stops for an explicit decision
+before anything touches a skill's live files. `references/review-checklist.md`
 has the condensed end-of-sweep report format.
 
 ## Running it on a schedule
 
-Cadence -- manual invocation vs. a recurring sweep -- is a free choice, not
-a requirement. `skill-evolution-sweep/SKILL.md` is a ready-to-adapt
+Cadence (manual invocation vs. a recurring sweep) is a free choice, not a
+requirement. `skill-evolution-sweep/SKILL.md` is a ready-to-adapt
 definition for running this as a weekly maintenance pass on whichever
 scheduling mechanism your environment provides. It never auto-promotes: a
 scheduled run still stops at the gate and reports what needs a human
@@ -111,15 +111,15 @@ theoretical.
 
 ## Contents
 
-- `skill-evolution/SKILL.md` -- the phenotype: what the model reads and
+- `skill-evolution/SKILL.md`: the phenotype, what the model reads and
   executes.
-- `skill-evolution/genome/intent.md` -- the intent spec.
-- `skill-evolution/references/technique-library.md` -- the living
+- `skill-evolution/genome/intent.md`: the intent spec.
+- `skill-evolution/references/technique-library.md`: the living
   technique catalog, refreshed and appended to on every run.
-- `skill-evolution/references/review-checklist.md` -- the condensed
+- `skill-evolution/references/review-checklist.md`: the condensed
   end-of-sweep report format.
-- `skill-evolution-sweep/SKILL.md` -- the sibling, user-invoked skill: an
+- `skill-evolution-sweep/SKILL.md`: the sibling, user-invoked skill, an
   adaptable definition for running this as a recurring weekly sweep
   instead of only on demand.
-- `skill-evolution-sweep/references/example.md` -- a real, filled-in
+- `skill-evolution-sweep/references/example.md`: a real, filled-in
   instance of that template.

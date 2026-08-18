@@ -1,6 +1,6 @@
 ---
 name: framework-forge
-summary: Hardens a framework thesis into a publishable document — verifies the author's claims, grounds them in the territory, then runs a five-persona adversarial review
+summary: Hardens a framework thesis into a publishable document. Verifies the author's claims, grounds them in the territory, then runs a five-persona adversarial review
 description: Harden a framework thesis into a publishable document.
 spec: genome/intent.md
 disable-model-invocation: true

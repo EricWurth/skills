@@ -37,4 +37,4 @@ Every documented failure of file-based agent memory is a failure of files withou
 File-based agent memory fails the same way regardless of implementation: it
 degrades into stale, uncurated notes once nothing is reading and pruning it.
 The gate exists to be the thing that keeps reading and pruning. Remove it and
-this system fails the same way, not a different one.
+this system fails the same way.
