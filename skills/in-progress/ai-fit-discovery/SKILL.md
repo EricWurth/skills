@@ -147,16 +147,28 @@ treat them as one. Where three or more share a root that lives with other
 people, that is a pattern for the brief, not a tool.
 
 5. **The system view.** Before writing options, step back from the
-   classified list and ask what the items have in common underneath.
-   Documents that share a voice and a standard; notes, RAID, and status
-   that are one flow of information; "which version is current?" showing
-   up in three places. Name the two or three components a system would
-   need -- typically something that *knows* (voice, standards,
-   instructional text), something that *checks* (a quality gate),
-   something that *keeps* (a register, a log, a memory) -- and how they
-   feed each other. Every option in the brief is then an increment of
-   that system, not a standalone fix. If no system emerges, say so; a
-   list of unrelated one-offs is a legitimate result, but it must be a
+   classified list and think like an AI architect, not a helper. Answer
+   these in order; the components fall out of the answers:
+   - **Where can each capability live?** Given the constraints from
+     Phase 0 -- which machine, which tool, what data may go where. Often
+     the constraint *is* the architecture: design in one place, run in
+     another, and let only design cross the boundary.
+   - **What is the source of truth, and what flows from it?** Which
+     artifacts are the record and which are views of it. Align fields
+     and identifiers so one thing can become the next without re-keying.
+   - **What crosses, and how?** The deployment channel -- files, saved
+     instructions, prompt cards, a shared folder -- and what must never
+     cross.
+   - **How is it tested?** Against what, before it touches real data or
+     a real audience. Synthetic inputs count.
+   - **How does it get better?** The loop that carries friction from
+     use back to design, and on what cadence.
+   Then name the two or three components -- typically something that
+   *knows* (voice, standards, instructional text), something that
+   *checks* (a quality gate), something that *keeps* (a register, a log,
+   a memory) -- and how they feed each other. Every option in the brief
+   is an increment of that system. If no system emerges, say so; a list
+   of unrelated one-offs is a legitimate result, but it must be a
    finding, not a default.
 
 ## Phase 4 -- Brief

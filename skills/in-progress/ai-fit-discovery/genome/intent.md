@@ -67,10 +67,13 @@ that they do not understand.
    buy or build. Every "Automate" is justified against reversibility and
    consequence of error; every high-value item that lands in "Leave
    alone" says why.
-5. Phase 3 ends with a system view: what the classified items share
-   underneath, named as two or three components (what knows, what
-   checks, what keeps) and how they feed each other. "No shared system"
-   is an acceptable finding only when stated and argued.
+5. Phase 3 ends with a system view, reasoned as an architect: where each
+   capability can live given the constraints; what the source of truth
+   is and what flows from it; what crosses boundaries and how; how it is
+   tested before it touches real data; how friction from use feeds back
+   into design. Then two or three components (what knows, what checks,
+   what keeps) and how they feed each other. "No shared system" is an
+   acceptable finding only when stated and argued.
 6. Phase 4 (brief) leads with the system, then presents three to five
    "start here" options, each an increment of it, each traced to
    inventory items in the person's words, each naming the reusable asset
