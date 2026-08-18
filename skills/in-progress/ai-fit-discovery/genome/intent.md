@@ -44,12 +44,21 @@ that they do not understand.
    the inverse -- work wanted but not done, dropped, or deferred; and
    friction -- waiting, redoing, hunting for information, autopilot work
    done before the expert part can start. One question at a time. Stops
-   at saturation (new answers restate earlier ones), not at a count.
+   at saturation (new answers restate earlier ones), not at a count --
+   and stops *earlier* the moment there is enough to write the
+   inventory, or the person says so. When the person is new to the role
+   or project and has no rhythm yet, the lenses are asked of the
+   artifacts being built now and of how past comparable roles went, not
+   of a week that does not exist.
 3. Phase 2 (inventory) produces the referenceable document: every item
    with frequency, duration, tools, inputs and outputs, how much of it is
    judgment versus procedure, the pain, and what the person would rather
-   be doing. The person confirms or edits it before anything is scored.
-   Nothing that was not said or shown appears in it.
+   be doing. Nothing that was not said or shown appears in it; anything
+   inferred (a lens the person did not answer, an unknown about their
+   tools) is marked as assumed. The person gets to correct it -- before
+   scoring by default, or, once they have signalled they want output
+   rather than more questions, alongside the brief, with any correction
+   re-running the classification.
 4. Phase 3 (classify) scores each item on value and risk using the
    rubric, assigns one of four outcomes -- **Assist**, **Redesign**,
    **Automate**, **Leave alone** -- and names an intervention *shape*
@@ -81,6 +90,9 @@ that they do not understand.
 - No listicle. Generic suggestions ("use AI to draft emails") are refused
   unless an inventory item calls for exactly that.
 - Ask one question at a time. Batching questions produces thin answers.
+- Stop asking when there is enough. A question whose answer would not
+  change the brief is not asked; "why keep asking?" is a signal that the
+  inventory should already have been written.
 - Plain language throughout. No framework names, no coined terms, no
   acronyms the person did not introduce.
 
@@ -127,13 +139,38 @@ G-5: The team-shaped pattern.
   fix alone; suggested as a conversation, not a tool. No methodology
   named.
 
+G-6: Week one.
+  Input: person says they are in their first week and has "no idea" what
+  the recurring rhythm will be.
+  Expected: the interview switches to what is being built now and how
+  past comparable roles went. Continuing to ask about a weekly cadence
+  fails.
+
+G-7: Enough already.
+  Input: person asks "why keep asking questions if you have enough?"
+  Expected: the inventory and brief are written in the next turn, with
+  unanswered lenses marked as assumed and an invitation to correct.
+  Asking another question fails.
+
 ## Eval notes
 
 - Mechanically checkable: Phase 0 precedes any AI question; every lens
-  asked; inventory confirmed before scoring; four-outcome classification
+  asked or explicitly marked assumed; the person gets a correction
+  opportunity before or alongside the brief; four-outcome classification
   present for every item; leave-alone list non-empty; no product names;
   no framework vocabulary in output.
 - Human-judged: whether the "start here" options are genuinely the best
   three to five; whether risk reasoning is honest rather than reflexive;
   whether the brief reads as the person's work rather than the model's.
-- No failure history yet -- this genome is the baseline.
+
+## Failure history
+
+- 2026-08-17, first live run (owner as subject, week 1 of a new PM
+  engagement). The interview kept asking for a weekly rhythm that did not
+  exist and asked one question past the point where the inventory could
+  have been written; the person asked "why keep asking?" Fixes: the
+  new-role branch (G-6), the stop-asking invariant (G-7), and the lighter
+  confirmation gate in criterion 3. Also learned: the two-machine
+  constraint (client machine vs. home machine) was the most decisive fact
+  in the run and surfaced only because Phase 0 asks about tools and
+  connection limits -- keep that question.

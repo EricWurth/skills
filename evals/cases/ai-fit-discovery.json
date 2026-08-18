@@ -21,6 +21,12 @@
       "expected_behavior": "Invokes the skill. The ask is upstream of building -- discovering what is worth building. Runs discovery and classification; the brief's 'start here' options with shapes (reusable instruction, agent, workflow) become the input to whatever gets built next. Does not start building."
     },
     {
+      "id": 8,
+      "category": "should_trigger",
+      "prompt": "I just started as a PM on a new rollout this week -- still building the schedule and RAID templates and reading old docs. Where would AI actually help me on this?",
+      "expected_behavior": "Invokes the skill and takes the new-role branch: asks about the artifacts being built now, what the reading is hunting for, and how past comparable roles went, rather than asking for a weekly rhythm that doesn't exist yet. Marks any future cadence as expected, not observed."
+    },
+    {
       "id": 4,
       "category": "should_not_trigger",
       "prompt": "Should I use Notion AI or the Gemini add-on for summarising my meeting notes? Which one is better?",

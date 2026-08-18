@@ -65,11 +65,23 @@ might act differently. Ask how they decide, what they look at, and what
 happens if the call is wrong. Record decisions explicitly; they are what
 gets protected later.
 
+**New role or new project.** If the person is in their first weeks and
+has no rhythm yet, do not ask for one. Ask the same four lenses of what
+exists: the artifacts they are building right now (templates, plans,
+registers), what they are reading and hunting for to get oriented, and
+how past comparable roles went once they settled -- what took over the
+week, what fell off. Mark anything about the future cadence as expected,
+not observed.
+
 Do not suggest AI applications during this phase, even obvious ones. Note
 them privately. Do not fill gaps from what the role "usually" involves.
 
-Stop at saturation: the last few answers restate items already captured.
-Then say the inventory back in outline and ask what is missing.
+Stop at saturation -- the last few answers restate items already captured
+-- or earlier, the moment you could write the inventory. Before each
+question ask yourself whether the answer would change the brief; if not,
+do not ask it. If the person asks why you are still asking, you have
+already gone one question too far: write the inventory now. Then say it
+back and ask what is missing.
 
 ## Phase 2 -- Inventory
 
@@ -80,10 +92,18 @@ what they would rather be doing; the inverse as its own section; loose
 friction at the end. Their words wherever a quote will do. Nothing that
 was not said or shown.
 
-Hand it back: "Is this your week? What's missing, what's wrong?" Do not
-score anything until they have confirmed or corrected it. Offer to save it
+Anything you inferred rather than heard -- a lens they did not answer, an
+unknown about their tools -- is marked *assumed*, in the document, not
+silently filled.
+
+Hand it back: "Is this your week? What's missing, what's wrong?" By
+default, score nothing until they have confirmed or corrected it. But if
+they have already signalled they want output rather than more questions
+("just write it", "you have enough"), do not make them approve an
+intermediate document: deliver inventory and brief together, assumptions
+marked, and re-run the classification on whatever they correct. Save it
 somewhere they will find it again (a file, their own workspace) -- it is
-meant to be referenced, not just read once.
+meant to be referenced, not read once.
 
 ## Phase 3 -- Classify
 
@@ -151,12 +171,17 @@ ask, hand off cleanly with the brief as the spec.
 | "Everything scored well; nothing needs leaving alone." | Then something is misclassified. The expertise item is always there. |
 | "They asked for a product name; refusing is unhelpful." | Naming one collapses the shape into a purchase. Describe the shape and what they own that fits. |
 | "The role usually involves X, I'll add it." | The person is the source. If they did not say it, it is not theirs. |
+| "One more question will make the inventory tighter." | If the answer would not change the brief, it is not worth their turn. Write it and let them correct it. |
+| "They're new, but I'll ask about the weekly rhythm anyway." | There isn't one. Ask about what they are building now and how past roles went. |
+| "The gate says confirm the inventory before scoring." | The gate protects them from being scored on things they didn't say. Marking assumptions and delivering both together protects the same thing without a second approval round. |
 
 ## Red flags
 
 - An AI suggestion before Phase 0 is complete
 - Three questions in one message
-- An inventory item with no quote behind it
+- A question after the person has asked why you are still asking
+- Asking a first-week person about their weekly rhythm
+- An inventory item with no quote behind it, and no "assumed" mark
 - An "Automate" without a reversibility argument
 - A brief with an empty leave-alone list or an empty "makes room for"
 - A product, vendor, framework, or acronym the person did not introduce

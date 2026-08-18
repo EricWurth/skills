@@ -64,6 +64,25 @@ Ask this every time. Do not skip it because the tasks feel complete.
 - What do you do on autopilot -- correctly, but without thinking?
 - What would you hand off tomorrow if someone reliable offered?
 
+### Branch: new role or new project
+
+Use instead of Lens A/B when the person has no rhythm yet ("I'm in week
+1", "I have no idea, I just started"). Same four lenses, different
+objects:
+
+- What are you building right now to get set up -- templates, plans,
+  registers, a first document? Which ones will you keep touching after
+  setup?
+- What are you reading or hunting through to get oriented, and what are
+  you trying to pull out of it?
+- Last time you did a role like this: once it settled, what took over
+  the week? What fell off the plate first?
+- What do you already know you'll be doing every week, even if you don't
+  know how much yet?
+
+Record future cadence as *expected*, not observed. Do not ask "how often"
+about anything that has not happened yet.
+
 ## Probing for decisions
 
 Under any answer, listen for a decision point: a place where two
@@ -80,8 +99,11 @@ Decisions are the items most worth protecting and the ones that make
 ## Stop rule
 
 Saturation: the last two or three answers restated items already
-captured. Then say back the inventory in outline and ask what's missing.
-Do not stop because the list looks long enough.
+captured. Or earlier: before each question, ask whether the answer would
+change the brief -- if not, skip it. If the person asks why you're still
+asking, you've gone one too far; write the inventory now. Then say it back
+in outline and ask what's missing. Do not stop because the list looks
+long enough; do not continue because the bank still has questions in it.
 
 ## Things not to do
 
