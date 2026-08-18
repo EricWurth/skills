@@ -51,6 +51,9 @@
   .step dt { color: var(--muted); font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; padding-top: .15rem; }
   .step dd { margin: 0; }
+  .step .unverified { grid-column: 1 / -1; margin-top: .5rem; padding: .55rem .75rem;
+    border-radius: 6px; background: var(--accent-soft); font-size: .88rem; }
+  .step .unverified strong { color: var(--tag-fix); }
   @media (max-width: 480px) { .step dl { grid-template-columns: 1fr; } .step dt { padding-top: .5rem; } }
   blockquote.try { background: var(--accent-soft); border-left: 4px solid var(--accent);
     margin: 0 0 .75rem; padding: .85rem 1rem; border-radius: 0 8px 8px 0;
@@ -113,15 +116,17 @@
       <dt>First 30 minutes</dt><dd>{{STEP_1_START}} <!-- include the mechanics: where you type, how the result gets into the file you use --></dd>
       <dt>Watch out for</dt><dd>{{STEP_1_RISK}} <!-- the one way this goes wrong, and the check --></dd>
       <dt>You'll know it worked</dt><dd>{{STEP_1_SIGN}}</dd>
+      <!-- Only when the idea leans on something unverified (a tool capability, a permission).
+           Delete the block otherwise. -->
+      <div class="unverified"><strong>Not verified:</strong> {{STEP_1_UNVERIFIED}} <em>Two-minute check:</em> {{STEP_1_CHECK}} <em>If not:</em> {{STEP_1_FALLBACK}}</div>
     </dl>
-    <!-- If the idea depends on something unverified (a tool capability, a permission),
-         say so inside the card and give the two-minute check plus the fallback. -->
   </div>
   <!-- ideas 2 and 3 -->
 
   <h2>Try it now</h2>
   <blockquote class="try">{{TRY_PROMPT}}</blockquote>
   <p>{{TRY_RESULT}} <!-- what comes back, how to get it into their file, and what to check before trusting it --></p>
+  <p class="refnote">{{TRY_FALLBACK}} <!-- only if the example leans on an unverified capability: "If it can't take attachments, paste the column headers instead." Delete otherwise. --></p>
 
   <h2>Keep doing yourself</h2>
   <ul class="keep">

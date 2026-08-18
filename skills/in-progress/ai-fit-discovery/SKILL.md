@@ -44,6 +44,12 @@ connect, approvals they would need). One question per turn.
 Done when you can say back in one paragraph what they do and why it
 matters, and they agree.
 
+**If they name a time budget** ("I've got 25 minutes"), plan to it: fewer
+questions per lens, the say-back and the inventory in one turn, ratings
+riding along with the brief rather than offered separately. Reserve the
+last third for writing. Running over a stated budget is a failure even if
+every lens got asked.
+
 If they open with "just tell me where AI could help someone in my role",
 acknowledge in a sentence and start here anyway. A role-generic list is
 exactly what this skill exists to avoid.
@@ -142,9 +148,11 @@ For every inventory item, using `references/scoring-rubric.md`:
    and what it keeps. "Make the templates" is underspecified.
    If a shape needs something they do not have, say so and stop.
 
-Offer ratings; let the person correct them. Where two items share a root,
-treat them as one. Where three or more share a root that lives with other
-people, that is a pattern for the brief, not a tool.
+Offer ratings; let the person correct them -- in the brief itself when
+time is short. Where two items share a root, treat them as one. Where three or more share a root that lives with other
+people -- peers, a client, or the person's own reports -- that is a
+pattern for the brief, to be fixed with the people who hold it, not a
+tool.
 
 5. **The system view.** Before writing options, step back from the
    classified list and think like an AI architect, not a helper. Answer
@@ -152,7 +160,10 @@ people, that is a pattern for the brief, not a tool.
    - **Where can each capability live?** Given the constraints from
      Phase 0 -- which machine, which tool, what data may go where. Often
      the constraint *is* the architecture: design in one place, run in
-     another, and let only design cross the boundary.
+     another, and let only design cross the boundary. When more than one
+     AI is on the desk, allocate by data policy first (what each may
+     see), then by where the work already happens; every idea in the
+     brief names which one it uses.
    - **What is the source of truth, and what flows from it?** Which
      artifacts are the record and which are views of it. Align fields
      and identifiers so one thing can become the next without re-keying.
@@ -212,8 +223,15 @@ not for you:
   does. Every outcome carries its gloss: *AI helps, you decide* · *fix
   the process first* · *AI does it, you check* · *keep doing it
   yourself*.
-- **Under three pages total; page one is one page.** A long inventory
-  goes in its own file.
+- **Page one is short, not literally one page.** It holds exactly: the
+  pitch, before you start, three idea cards, try it now, keep doing
+  yourself, what this makes room for, to keep going -- and nothing else.
+  A few screens on a phone is fine; a fourth card or a table on page one
+  is not. Everything else folds into the reference section. A long
+  inventory goes in its own file.
+- **Name only tools they named.** If a step needs an app they didn't
+  mention (a word processor, a spreadsheet), say "in whatever you write
+  documents in" or mark it as a guess.
 
 The architecture is still there -- every option is still an increment of
 the system, still names what it leaves behind -- it is just said in words

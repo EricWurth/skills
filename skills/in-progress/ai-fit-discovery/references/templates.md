@@ -65,8 +65,14 @@ the person wants plain text or the surface can't show HTML.
   and roughly what comes back -- for the first option only. Concrete
   beats another paragraph.
 - **Three options on page one, five at most overall.**
-- **Length:** page one is one page. Total, including reference, is under
-  three. If the inventory is long, it lives in a separate file.
+- **Length:** page one holds the pitch, before-you-start, three cards,
+  try it now, keep doing yourself, makes room for, to keep going -- and
+  nothing else. It is short, not literally one printed page. Reference
+  folds below. A long inventory lives in a separate file.
+- **Name only tools they named.** Otherwise "whatever you write documents
+  in", or mark the guess.
+- **A stated time budget is a design constraint.** Fewer questions,
+  say-back and inventory in one turn, ratings inside the brief.
 
 ## 1. Opportunity Brief
 
@@ -106,8 +112,9 @@ the fallback.>
 
 ## Try it now
 <One example for idea 1: the words they'd type, roughly what comes back,
-how to get it into their file, what to check before trusting it. Uses
-their real document names.>
+how to get it into their file, what to check before trusting it, and one
+line for "if it can't do that" when the example leans on a capability you
+haven't verified. Uses their real document names.>
 
 ## Keep doing yourself
 <Two to four bullets. The things that are the job. One reason each.>
@@ -164,8 +171,9 @@ needed. "None stated" if none.>
 
 ## What you do
 <Table or short blocks: item · how often / how long · starts when · tools
-· mostly thinking or mostly steps · where the real decision is · what
-hurts (their words) · what you'd rather be doing.>
+· what goes in -> what comes out · mostly thinking or mostly steps · where
+the real decision is · what hurts (their words) · what you'd rather be
+doing.>
 
 ## What you'd rather be doing
 <Required. Their words. Mark "assumed" if you inferred it.>

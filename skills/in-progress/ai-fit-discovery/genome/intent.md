@@ -202,3 +202,13 @@ G-8: The band-aid.
   and are tracked in a register). Fixes: the architect stance, the system
   view step at the end of Phase 3, "The system" leading the brief, and
   "leaves behind" as a required field per option (G-8).
+- 2026-08-18, second run (simulated: senior consultant, four months into
+  an ERP migration for a hospital group, PHI constraints, three AIs on
+  the desk, a stated 25-minute budget). G-1..G-8 passed; G-7 marginal
+  (one question past the stated budget signal). Defects were all in
+  rules and template, not method: no rule for a stated time budget;
+  "page one is one page" unachievable as designed; no template slot for
+  the unverified/check/fallback note; inventory spec drifted between
+  SKILL.md and templates.md; no guidance on allocating ideas across
+  several AIs; a tool named that the person never mentioned. All fixed
+  in this revision.
