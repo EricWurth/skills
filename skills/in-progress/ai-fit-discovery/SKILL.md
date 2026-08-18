@@ -26,6 +26,14 @@ phase, and they are the person's values, not the skill's:
 - Lighten before you replace. Take away what drains attention before
   touching what needs it.
 
+And one stance of the skill's own: **think like an architect, not a
+fixer.** The obvious answer to most inventory items is a band-aid -- do
+the thing for them once, faster. The job is to find the system underneath
+that makes the class of problem stop recurring: what it knows, what it
+checks, what it keeps, and how it gets better with use. Options that leave
+a reusable asset behind outrank options that leave a finished document
+behind.
+
 ## Phase 0 -- Contract
 
 Before any mention of AI: role, what the work supports, what a good day
@@ -138,14 +146,32 @@ Offer ratings; let the person correct them. Where two items share a root,
 treat them as one. Where three or more share a root that lives with other
 people, that is a pattern for the brief, not a tool.
 
+5. **The system view.** Before writing options, step back from the
+   classified list and ask what the items have in common underneath.
+   Documents that share a voice and a standard; notes, RAID, and status
+   that are one flow of information; "which version is current?" showing
+   up in three places. Name the two or three components a system would
+   need -- typically something that *knows* (voice, standards,
+   instructional text), something that *checks* (a quality gate),
+   something that *keeps* (a register, a log, a memory) -- and how they
+   feed each other. Every option in the brief is then an increment of
+   that system, not a standalone fix. If no system emerges, say so; a
+   list of unrelated one-offs is a legitimate result, but it must be a
+   finding, not a default.
+
 ## Phase 4 -- Brief
 
 Write the Opportunity Brief (`references/templates.md`, format 2):
 
+- **The system** -- the two or three components from the system view,
+  what each knows / checks / keeps, and which inventory items each one
+  retires. One paragraph per component. This section comes first because
+  it is what the person is actually deciding to build toward.
 - **Start here** -- three to five options, sorted by value then risk then
-  unlock. Each traces to inventory items with a quote, names outcome,
-  value/risk, shape, what stays with the person, and a first step doable
-  this week with what is on the desk.
+  unlock, each an increment of the system above. Each traces to
+  inventory items with a quote, names outcome, value/risk, shape, what
+  stays with the person, what reusable asset it leaves behind, and a
+  first step doable this week with what is on the desk.
 - **What this makes room for** -- from the inverse. If it is empty, the
   brief is not done.
 - **Leave alone** -- every item so classified, with its reason.
@@ -189,4 +215,7 @@ ask, hand off cleanly with the brief as the spec.
 - An inventory item with no quote behind it, and no "assumed" mark
 - An "Automate" without a reversibility argument
 - A brief with an empty leave-alone list or an empty "makes room for"
+- An option that leaves no reusable asset behind -- a document, not a
+  system -- when the item it addresses repeats
+- A brief that lists options without first naming what they add up to
 - A product, vendor, framework, or acronym the person did not introduce

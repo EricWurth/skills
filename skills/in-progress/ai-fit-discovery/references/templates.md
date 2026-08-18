@@ -50,16 +50,26 @@ missing, what's wrong?"
 ```
 # Where AI fits -- <name or role>, <date>
 
+## The system
+<Two or three components that the options below add up to. One paragraph
+each: what it knows, what it checks, what it keeps, which inventory items
+it retires. If the items genuinely don't share a system, say so here and
+why -- that is a finding.>
+
 ## Start here
-<Three to five. For each:>
+<Three to five, each an increment of the system. For each:>
 
 ### <Option name, plain>
 - Traces to: <inventory item numbers, with a quote>
+- Builds toward: <which system component>
 - Outcome: Assist | Automate | Redesign
 - Value / risk: <H/M/L, one line why>
 - Shape: <prompt habit | reusable instruction | agent | workflow |
-  connection> -- <what it has to do, what it needs access to>
+  connection> -- <what it takes in, what it knows, what it checks, what
+  it keeps>
 - Stays with you: <what the person still sees, decides, sends>
+- Leaves behind: <the reusable asset -- not the first document, the thing
+  that makes the next one right>
 - First step: <something doable this week with what's on the desk>
 
 ## What this makes room for

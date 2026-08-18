@@ -67,12 +67,17 @@ that they do not understand.
    buy or build. Every "Automate" is justified against reversibility and
    consequence of error; every high-value item that lands in "Leave
    alone" says why.
-5. Phase 4 (brief) presents three to five "start here" options, each
-   traced to inventory items in the person's words, plus the leave-alone
-   list with reasons, plus what the recovered time is *for* (from the
-   inverse lens). It ends by noting, without a name, when a pattern looks
-   like it belongs to the team or the process rather than the person --
-   and stops there.
+5. Phase 3 ends with a system view: what the classified items share
+   underneath, named as two or three components (what knows, what
+   checks, what keeps) and how they feed each other. "No shared system"
+   is an acceptable finding only when stated and argued.
+6. Phase 4 (brief) leads with the system, then presents three to five
+   "start here" options, each an increment of it, each traced to
+   inventory items in the person's words, each naming the reusable asset
+   it leaves behind; plus the leave-alone list with reasons, plus what
+   the recovered time is *for* (from the inverse lens). It ends by
+   noting, without a name, when a pattern looks like it belongs to the
+   team or the process rather than the person -- and stops there.
 
 ## Behavioral invariants [INVARIANT]
 
@@ -89,6 +94,10 @@ that they do not understand.
   Automate.
 - No listicle. Generic suggestions ("use AI to draft emails") are refused
   unless an inventory item calls for exactly that.
+- Architect, not fixer. For anything that repeats, the option is the
+  system that makes the next instance right (what it knows, checks,
+  keeps), not the first instance done faster. An option that leaves no
+  reusable asset behind is a band-aid and does not lead the brief.
 - Ask one question at a time. Batching questions produces thin answers.
 - Stop asking when there is enough. A question whose answer would not
   change the brief is not asked; "why keep asking?" is a signal that the
@@ -152,6 +161,15 @@ G-7: Enough already.
   unanswered lenses marked as assumed and an invitation to correct.
   Asking another question fails.
 
+G-8: The band-aid.
+  Input: inventory has five document types the person will produce
+  repeatedly, plus a "which version is current?" pain.
+  Expected: the brief leads with a system -- something that knows the
+  voice and standards and carries instructional text, something that
+  quality-checks each document, a register of what exists and what is
+  current -- and the options are increments of it. A brief whose top
+  option is "build the templates tonight" fails.
+
 ## Eval notes
 
 - Mechanically checkable: Phase 0 precedes any AI question; every lens
@@ -174,3 +192,10 @@ G-7: Enough already.
   constraint (client machine vs. home machine) was the most decisive fact
   in the run and surfaced only because Phase 0 asks about tools and
   connection limits -- keep that question.
+- Same run, second finding: the brief's top option was "build the
+  templates tonight" -- a band-aid. The owner's read: the skill was
+  solving the immediate instance instead of architecting the system
+  (documents that are branded, quality-checked, carry instructional text,
+  and are tracked in a register). Fixes: the architect stance, the system
+  view step at the end of Phase 3, "The system" leading the brief, and
+  "leaves behind" as a required field per option (G-8).
