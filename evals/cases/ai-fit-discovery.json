@@ -1,0 +1,48 @@
+{
+  "skill_name": "ai-fit-discovery",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "I'm an operations manager at a mid-size logistics company. Everyone keeps telling me to 'use AI' but honestly I don't know where it would actually help me. Where would you start?",
+      "expected_behavior": "Invokes the skill. Does not produce a list of AI use cases for operations managers. Opens Phase 0 with one question about their role and what a good day looks like, and does not mention AI applications until the inventory exists."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "Can you audit my week and tell me what I should automate? I spend way too much time on admin.",
+      "expected_behavior": "Invokes the skill. Treats 'automate' as the person's framing, not the conclusion -- runs the interview across all four lenses including the inverse, builds a confirmed inventory, and classifies each item, expecting most 'admin' to land in Assist or Redesign rather than Automate."
+    },
+    {
+      "id": 3,
+      "category": "should_trigger",
+      "prompt": "I want to build a skill or an agent for myself but I'm not sure what for. Help me figure out what's worth it.",
+      "expected_behavior": "Invokes the skill. The ask is upstream of building -- discovering what is worth building. Runs discovery and classification; the brief's 'start here' options with shapes (reusable instruction, agent, workflow) become the input to whatever gets built next. Does not start building."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "Should I use Notion AI or the Gemini add-on for summarising my meeting notes? Which one is better?",
+      "expected_behavior": "Does not invoke the skill. This is a product comparison with the opportunity already identified. The skill never names products and is the wrong tool for choosing between them."
+    },
+    {
+      "id": 5,
+      "category": "should_not_trigger",
+      "prompt": "Write me a skill that turns a meeting transcript into a follow-up email with action items.",
+      "expected_behavior": "Does not invoke the skill. The opportunity is already chosen and the ask is to build it. Skill-creation tooling is the right path; ai-fit-discovery stops before building."
+    },
+    {
+      "id": 6,
+      "category": "should_not_trigger",
+      "prompt": "Our claims department has 40 people and the intake process is a mess. How should we redesign it with AI?",
+      "expected_behavior": "Does not invoke the skill, or invokes only after clarifying scope. This is an organisation-level process redesign, not one person's working day. The skill may note that it can run for one representative practitioner, but the team-wide redesign is out of scope."
+    },
+    {
+      "id": 7,
+      "category": "ambiguous",
+      "prompt": "Just give me the top five ways someone in marketing can use AI. Keep it short.",
+      "expected_behavior": "Judgment call. The literal ask is a role-generic listicle, which the skill exists to avoid. If invoked, it acknowledges in one sentence and offers to spend ten minutes on their actual week instead, starting Phase 0. If the person insists on the generic list, produce it briefly and note that it is nobody's list in particular. Producing the list without offering the alternative is the weaker read."
+    }
+  ]
+}
