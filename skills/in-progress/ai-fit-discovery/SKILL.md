@@ -232,6 +232,10 @@ not for you:
 - **Name only tools they named.** If a step needs an app they didn't
   mention (a word processor, a spreadsheet), say "in whatever you write
   documents in" or mark it as a guess.
+- **Word budgets are hard limits** (in `references/templates.md`): page
+  one under 750 words, pitch 90-120, one sentence per card field. Count
+  before you ship. A reader new to AI stops at the first paragraph that
+  looks like work.
 
 The architecture is still there -- every option is still an increment of
 the system, still names what it leaves behind -- it is just said in words

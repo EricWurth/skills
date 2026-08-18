@@ -67,8 +67,15 @@ the person wants plain text or the surface can't show HTML.
 - **Three options on page one, five at most overall.**
 - **Length:** page one holds the pitch, before-you-start, three cards,
   try it now, keep doing yourself, makes room for, to keep going -- and
-  nothing else. It is short, not literally one printed page. Reference
-  folds below. A long inventory lives in a separate file.
+  nothing else. Reference folds below. A long inventory lives in a
+  separate file.
+- **Word budgets, hard.** Page one under 750 words. Pitch 90-120. Each
+  before-you-start line under 25. Per card: what it does one sentence;
+  you still own under 15 words; first 30 minutes under 40; watch out for
+  under 25; you'll know it worked under 15; not-verified block under 40.
+  Try-it-now prompt under 60, result under 40. Keep-doing bullets under
+  15 each. One idea per sentence; cut every second clause. If a card
+  needs more, the idea isn't clear yet.
 - **Name only tools they named.** Otherwise "whatever you write documents
   in", or mark the guess.
 - **A stated time budget is a design constraint.** Fewer questions,
