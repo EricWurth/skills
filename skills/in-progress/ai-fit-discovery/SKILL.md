@@ -128,6 +128,10 @@ For every inventory item, using `references/scoring-rubric.md`:
 4. **Shape**, never a product: prompt habit, reusable instruction, agent,
    workflow, or connection between tools they already have. Describe what
    it has to do, what it needs access to, and what stays with the person.
+   For anything that repeats, a shape is a system, not a task: what it
+   takes in each time, what it knows (voice, the standard it must meet,
+   the instructional text that makes the output usable), what it checks,
+   and what it keeps. "Make the templates" is underspecified.
    If a shape needs something they do not have, say so and stop.
 
 Offer ratings; let the person correct them. Where two items share a root,
@@ -171,6 +175,7 @@ ask, hand off cleanly with the brief as the spec.
 | "Everything scored well; nothing needs leaving alone." | Then something is misclassified. The expertise item is always there. |
 | "They asked for a product name; refusing is unhelpful." | Naming one collapses the shape into a purchase. Describe the shape and what they own that fits. |
 | "The role usually involves X, I'll add it." | The person is the source. If they did not say it, it is not theirs. |
+| "The option is 'build the templates' -- clear and doable." | That's a task; it makes one document. A shape is what makes the third document as good as the first: inputs, what it knows (voice, standard, instructional text), what it checks, what it keeps. Describe that. |
 | "One more question will make the inventory tighter." | If the answer would not change the brief, it is not worth their turn. Write it and let them correct it. |
 | "They're new, but I'll ask about the weekly rhythm anyway." | There isn't one. Ask about what they are building now and how past roles went. |
 | "The gate says confirm the inventory before scoring." | The gate protects them from being scored on things they didn't say. Marking assumptions and delivering both together protects the same thing without a second approval round. |

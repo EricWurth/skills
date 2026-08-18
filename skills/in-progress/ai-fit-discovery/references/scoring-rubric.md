@@ -73,6 +73,28 @@ access to, and what stays with the person.
 If a shape needs something they do not have, say so and stop. Do not
 propose acquiring it.
 
+### A shape is a system, not a task
+
+"Build the templates" is a task. It gets done once, and the next document
+is on its own. When an item repeats -- documents, reports, notes, plans
+-- describe the shape as the thing that makes the *next* one right
+without the person starting over:
+
+- **What it takes in.** The few facts the person supplies each time.
+- **What it knows.** Voice and brand, the standard the output has to meet
+  (a template standard, a house style, a regulatory format), the
+  instructional and placeholder text that makes the output usable by
+  someone else.
+- **What it checks.** A quality gate: completeness against the standard,
+  consistency with the other documents in the set, nothing left as a
+  bare placeholder, version and date stamped.
+- **What it keeps.** A register of what exists and which version is
+  current -- often the answer to a "which document is real?" pain that
+  showed up elsewhere in the inventory.
+
+If the option can be described in one sentence as "make X", it is
+underspecified. Ask what makes the third X as good as the first.
+
 ## Ordering the brief
 
 Sort by value descending, then risk ascending, then by whether it unlocks
