@@ -185,8 +185,9 @@ not for you:
   and short, one idea in bold. You are selling them on trying it. If the
   pitch would fit anyone in their role, it isn't theirs.
 - **Page one is the whole story.** The pitch · before you start (three
-  lines, always: it can be confidently wrong so read everything; what
-  never to type in; what rule to check first -- then which AI is which)
+  lines, always: it can be confidently wrong so read everything; only
+  share what you'd be comfortable having remembered forever, with one
+  tailored clause; what rule to check first -- then which AI is which)
   · some initial ideas, worth discussing? (three, framed as a
   conversation not orders; each with what it does, what they still own,
   the first 30 minutes including the mechanics, watch out for, how
@@ -256,8 +257,8 @@ the spec.
 - An option that leaves no reusable asset behind -- a document, not a
   system -- when the item it addresses repeats
 - A brief that lists options without first naming what they add up to
-- A brief that never says the AI can be wrong, or never says what not to
-  type in
+- A brief that never says the AI can be wrong, or never gives the
+  sharing rule
 - An idea that depends on a capability the brief elsewhere marks unknown,
   without the check and the fallback
 - "Runs itself", "handles it for you", or any promise the person can't

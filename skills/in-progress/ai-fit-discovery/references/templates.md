@@ -29,8 +29,9 @@ the person wants plain text or the surface can't show HTML.
   makes.
 - **"Before you start" is always there**, three lines, right under the
   pitch: it can be confidently wrong, read everything before you use it;
-  what never to type in (tailored -- names, client, unpublished, NDA);
-  what rule to check first (tailored -- moving files, outside tools).
+  only share what you'd be comfortable having remembered forever (plus
+  one tailored clause saying what that means here); what rule to check
+  first (tailored -- moving files, outside tools).
   Then one sentence naming the tools: which AI is which.
 - **Ideas, not orders.** The heading is collaborative -- "Some initial
   ideas -- worth discussing?" -- with a lede that says none of it is
@@ -80,7 +81,8 @@ the person wants plain text or the surface can't show HTML.
 
 ## Before you start
 - It can be confidently wrong -- read everything before you use it.
-- Never type in: <tailored>
+- Only share what you'd be comfortable having remembered forever.
+  <one tailored clause: what that means here>
 - Check the rules first: <tailored>
 <One sentence naming which AI is which.>
 
