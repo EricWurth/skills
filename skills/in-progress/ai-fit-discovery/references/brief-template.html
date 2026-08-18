@@ -29,6 +29,13 @@
   .pitch { font-size: 1.15rem; line-height: 1.6; }
   .pitch p { margin: 0 0 1rem; }
   .pitch strong { color: var(--accent); }
+  .before { background: var(--card); border: 1px solid var(--rule); border-left: 4px solid var(--tag-fix);
+    border-radius: 10px; padding: .9rem 1.15rem 1rem; margin: 1.5rem 0 0; font-size: .95rem; }
+  .before h2 { margin: 0 0 .5rem; }
+  .before ul { margin: 0 0 .6rem; padding-left: 1.1rem; } .before li { margin-bottom: .35rem; }
+  .before .tools { margin: 0; color: var(--muted); font-size: .9rem; }
+  .lede { margin: -.25rem 0 1rem; color: var(--muted); }
+  .refnote { color: var(--muted); font-size: .9rem; margin: 0 0 1rem; }
   .step { background: var(--card); border: 1px solid var(--rule); border-radius: 10px;
     padding: 1rem 1.15rem; margin: 0 0 .9rem; }
   .step h3 { margin: 0 0 .5rem; font-size: 1.1rem; display: flex; gap: .6rem;
@@ -80,24 +87,41 @@
     <p>{{PITCH_PAIN}}</p>
     <p>{{PITCH_SHIFT}}</p>
     <p>{{PITCH_SOLUTION}}</p>
+    <!-- No overclaims. "Runs itself" / "handles it for you" are out;
+         say what actually goes away (the typing, the re-keying, the hunting). -->
   </section>
 
-  <h2>Start here</h2>
-  <!-- Three steps. Repeat the block. tag class: help | fix | auto | keep -->
+  <aside class="before">
+    <h2>Before you start</h2>
+    <!-- Three lines, always. Name the tools once. -->
+    <ul>
+      <li><strong>It can be confidently wrong.</strong> Read everything that comes back before you use it. It will sometimes invent a detail that sounds right.</li>
+      <li><strong>Never type in:</strong> {{NEVER_TYPE}} <!-- names of people, client names, unpublished data, anything covered by an NDA -- tailored to their situation --></li>
+      <li><strong>Check the rules first:</strong> {{POLICY_CHECK}} <!-- e.g. moving files between machines, using outside AI tools -- one line, tailored --></li>
+    </ul>
+    <p class="tools">{{TOOLS_ONCE}} <!-- "Claude is the AI you use at home; Copilot is the one built into your work computer." --></p>
+  </aside>
+
+  <h2>Some initial ideas — worth discussing?</h2>
+  <p class="lede">These are where I'd start, based on what you told me. None of it is decided; tell me which sound useful and which don't fit, and we'll adjust.</p>
+  <!-- Three ideas. Repeat the block. tag class: help | fix | auto | keep -->
   <div class="step">
     <h3><span class="n">1</span> {{STEP_1_NAME}} <span class="tag help">AI helps, you decide</span></h3>
     <dl>
       <dt>What it does</dt><dd>{{STEP_1_WHAT}}</dd>
       <dt>You still own</dt><dd>{{STEP_1_OWN}}</dd>
-      <dt>First 30 minutes</dt><dd>{{STEP_1_START}}</dd>
+      <dt>First 30 minutes</dt><dd>{{STEP_1_START}} <!-- include the mechanics: where you type, how the result gets into the file you use --></dd>
+      <dt>Watch out for</dt><dd>{{STEP_1_RISK}} <!-- the one way this goes wrong, and the check --></dd>
       <dt>You'll know it worked</dt><dd>{{STEP_1_SIGN}}</dd>
     </dl>
+    <!-- If the idea depends on something unverified (a tool capability, a permission),
+         say so inside the card and give the two-minute check plus the fallback. -->
   </div>
-  <!-- steps 2 and 3 -->
+  <!-- ideas 2 and 3 -->
 
   <h2>Try it now</h2>
   <blockquote class="try">{{TRY_PROMPT}}</blockquote>
-  <p>{{TRY_RESULT}}</p>
+  <p>{{TRY_RESULT}} <!-- what comes back, how to get it into their file, and what to check before trusting it --></p>
 
   <h2>Keep doing yourself</h2>
   <ul class="keep">
@@ -108,11 +132,15 @@
   <h2>What this makes room for</h2>
   <p class="room">{{ROOM}}</p>
 
+  <h2>To keep going</h2>
+  <p>{{KEEP_GOING}} <!-- how to continue: reply with what fits and what doesn't; ask for help with any one idea; come back when the cadence exists for the later ones. Name where this conversation lives. --></p>
+
   <!-- ===== REFERENCE ===== -->
   <hr class="break">
+  <p class="refnote">Below is the reference material — more ideas for later, the full list of what I looked at, and your own words. Open any section.</p>
 
   <details>
-    <summary>More to do later</summary>
+    <summary>More ideas for later</summary>
     <!-- options 4 and 5, shorter -->
   </details>
 

@@ -184,11 +184,21 @@ not for you:
   what changes for them and what it makes room for; the solution, plain
   and short, one idea in bold. You are selling them on trying it. If the
   pitch would fit anyone in their role, it isn't theirs.
-- **Page one is the whole story.** The pitch · start here (three
-  options, each with what it does, what they still own, the first 30
-  minutes, how they'll know it worked) · try it now (one worked example
-  for option 1 -- what they'd type, what comes back) · keep doing
-  yourself · what this makes room for.
+- **Page one is the whole story.** The pitch · before you start (three
+  lines, always: it can be confidently wrong so read everything; what
+  never to type in; what rule to check first -- then which AI is which)
+  · some initial ideas, worth discussing? (three, framed as a
+  conversation not orders; each with what it does, what they still own,
+  the first 30 minutes including the mechanics, watch out for, how
+  they'll know it worked) · try it now (one worked example for idea 1 --
+  what they'd type, what comes back, what to check) · keep doing
+  yourself · what this makes room for · to keep going.
+- **No overclaims, no unverified promises.** Say what actually goes
+  away, not "runs itself". If an idea depends on something you marked
+  unknown (what their work AI can see, whether it saves instructions),
+  the card says so and gives the two-minute check and the fallback. A
+  reader new to AI trusts the page less for every promise it makes and
+  more for every downside it names.
 - **Reference sits behind it.** Options four and five, anything worth
   raising with the team (a conversation, not a tool), the table of
   everything you looked at with the outcome for each, and -- last --
@@ -246,4 +256,10 @@ the spec.
 - An option that leaves no reusable asset behind -- a document, not a
   system -- when the item it addresses repeats
 - A brief that lists options without first naming what they add up to
+- A brief that never says the AI can be wrong, or never says what not to
+  type in
+- An idea that depends on a capability the brief elsewhere marks unknown,
+  without the check and the fallback
+- "Runs itself", "handles it for you", or any promise the person can't
+  verify
 - A product, vendor, framework, or acronym the person did not introduce

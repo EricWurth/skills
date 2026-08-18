@@ -23,6 +23,30 @@ the person wants plain text or the surface can't show HTML.
   they'd want to be true; (3) the solution -- plain, short, one bolded
   idea to remember. You are selling them on trying it. If the pitch would
   work for anyone in their role, it isn't theirs; rewrite it.
+- **No overclaims.** "Runs itself", "handles it for you", "saves hours"
+  are out. Say what actually goes away: the typing, the re-keying, the
+  hunting. A reader new to AI trusts the doc less for every promise it
+  makes.
+- **"Before you start" is always there**, three lines, right under the
+  pitch: it can be confidently wrong, read everything before you use it;
+  what never to type in (tailored -- names, client, unpublished, NDA);
+  what rule to check first (tailored -- moving files, outside tools).
+  Then one sentence naming the tools: which AI is which.
+- **Ideas, not orders.** The heading is collaborative -- "Some initial
+  ideas -- worth discussing?" -- with a lede that says none of it is
+  decided and asks which fit. The person is choosing, not being told.
+- **Every idea has a "watch out for"** -- the one way it goes wrong and
+  the check. A page with no downsides reads as advertising.
+- **Say the mechanics.** Where they type, how the result gets into the
+  file they actually use (copy, paste, save), where an instruction is
+  saved. Small gaps here are the difference between tonight and never.
+- **Unverified means say so.** If an idea depends on a capability or
+  permission you haven't confirmed (what their work AI can see, whether
+  it saves instructions), the card says so, gives the two-minute check,
+  and names the fallback. Never recommend on an assumption you've marked
+  unknown elsewhere.
+- **"To keep going" closes page one** -- how they reply, what to say
+  (which fit, which don't), and where the conversation lives.
 - **Page one is the brief.** If they read nothing else, they know what
   the idea is, what to do first, and what they keep. Everything after
   page one is reference.
@@ -54,22 +78,34 @@ the person wants plain text or the surface can't show HTML.
  3. The solution in two or three plain sentences, one idea in bold.
  Written so they could repeat it to a colleague and want to.>
 
-## Start here
-<Three, in order. Each is a few lines:>
+## Before you start
+- It can be confidently wrong -- read everything before you use it.
+- Never type in: <tailored>
+- Check the rules first: <tailored>
+<One sentence naming which AI is which.>
+
+## Some initial ideas -- worth discussing?
+<Lede: none of this is decided; tell me which sound useful and which
+don't fit. Then three, in order:>
 
 **1. <Plain name>** -- *<outcome gloss>*
 What it does: <one sentence>
 You still own: <the decision or judgment that stays theirs>
-First 30 minutes: <exactly what to do, with what they have>
+First 30 minutes: <exactly what to do, with what they have -- including
+where they type and how the result gets into their file>
+Watch out for: <the one way it goes wrong, and the check>
 How you'll know it worked: <one observable sign>
+<If it depends on something unverified: say so, the two-minute check,
+the fallback.>
 
 **2. ...**
 
 **3. ...**
 
 ## Try it now
-<One example for option 1: the words they'd type, and roughly what comes
-back. Five to eight lines. Uses their real document names.>
+<One example for idea 1: the words they'd type, roughly what comes back,
+how to get it into their file, what to check before trusting it. Uses
+their real document names.>
 
 ## Keep doing yourself
 <Two to four bullets. The things that are the job. One reason each.>
@@ -77,11 +113,14 @@ back. Five to eight lines. Uses their real document names.>
 ## What this makes room for
 <One or two lines, from the inverse. Their words.>
 
+## To keep going
+<How to reply, what to say, where the conversation lives.>
+
 ------------------------------------------------------------ page break
 
 ## Reference
 
-### More to do later
+### More ideas for later
 <Options 4 and 5, same format as above, shorter.>
 
 ### Worth raising with your team
