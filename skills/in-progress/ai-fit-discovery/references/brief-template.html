@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where AI fits — {{NAME}}</title>
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1d1d1b; --muted: #5d5b55; --rule: #e4e0d6;
+    --accent: #2b5d8a; --accent-soft: #eaf1f8; --card: #ffffff;
+    --tag-help: #2f6f4e; --tag-fix: #9a5b12; --tag-auto: #5a3d9a; --tag-keep: #7a2e2e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15161a; --ink: #ecebe6; --muted: #a9a79f; --rule: #2c2e35;
+      --accent: #7fb0dc; --accent-soft: #1d2a38; --card: #1c1e24;
+      --tag-help: #7fcaa2; --tag-fix: #e2a860; --tag-auto: #b79ce8; --tag-keep: #e08e8e;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 17px/1.55 Georgia, "Iowan Old Style", "Times New Roman", serif; }
+  main { max-width: 42rem; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+  h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 .25rem; letter-spacing: -.01em; }
+  .sub { color: var(--muted); margin: 0 0 2rem; font-size: .95rem; }
+  h2 { font-size: 1.05rem; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--muted); margin: 2.25rem 0 .75rem; font-weight: 600;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .pitch { font-size: 1.15rem; line-height: 1.6; }
+  .pitch p { margin: 0 0 1rem; }
+  .pitch strong { color: var(--accent); }
+  .step { background: var(--card); border: 1px solid var(--rule); border-radius: 10px;
+    padding: 1rem 1.15rem; margin: 0 0 .9rem; }
+  .step h3 { margin: 0 0 .5rem; font-size: 1.1rem; display: flex; gap: .6rem;
+    align-items: baseline; flex-wrap: wrap; }
+  .step .n { color: var(--accent); font-weight: 700; }
+  .tag { font: 600 .72rem/1 system-ui, -apple-system, "Segoe UI", sans-serif;
+    text-transform: uppercase; letter-spacing: .06em; padding: .3rem .5rem;
+    border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+  .tag.help { color: var(--tag-help); } .tag.fix { color: var(--tag-fix); }
+  .tag.auto { color: var(--tag-auto); } .tag.keep { color: var(--tag-keep); }
+  .step dl { margin: 0; display: grid; grid-template-columns: 9.5rem 1fr; gap: .3rem 1rem;
+    font-size: .95rem; }
+  .step dt { color: var(--muted); font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; padding-top: .15rem; }
+  .step dd { margin: 0; }
+  @media (max-width: 480px) { .step dl { grid-template-columns: 1fr; } .step dt { padding-top: .5rem; } }
+  blockquote.try { background: var(--accent-soft); border-left: 4px solid var(--accent);
+    margin: 0 0 .75rem; padding: .85rem 1rem; border-radius: 0 8px 8px 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .9rem;
+    white-space: pre-wrap; }
+  ul.keep { padding-left: 1.2rem; } ul.keep li { margin-bottom: .4rem; }
+  .room { font-style: italic; }
+  hr.break { border: 0; border-top: 1px dashed var(--rule); margin: 3rem 0 1rem; }
+  details { margin: 0 0 1rem; }
+  summary { cursor: pointer; font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-weight: 600; color: var(--accent); }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; margin: .5rem 0 1rem; }
+  th, td { text-align: left; padding: .45rem .5rem; border-bottom: 1px solid var(--rule);
+    vertical-align: top; }
+  th { color: var(--muted); font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
+  .quotes li { margin-bottom: .5rem; color: var(--muted); }
+  .quotes li q { color: var(--ink); }
+  .wrap { overflow-x: auto; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Where AI fits</h1>
+  <p class="sub">{{NAME}} · {{DATE}}</p>
+
+  <!-- ===== PAGE ONE ===== -->
+
+  <section class="pitch">
+    <!-- The pitch. Three beats, four to six sentences total:
+         1. The pain, in their words, characterised -- not restated.
+         2. The shift: what changes for them, and what it makes room for.
+         3. The solution, plain and short. Bold the one idea to remember. -->
+    <p>{{PITCH_PAIN}}</p>
+    <p>{{PITCH_SHIFT}}</p>
+    <p>{{PITCH_SOLUTION}}</p>
+  </section>
+
+  <h2>Start here</h2>
+  <!-- Three steps. Repeat the block. tag class: help | fix | auto | keep -->
+  <div class="step">
+    <h3><span class="n">1</span> {{STEP_1_NAME}} <span class="tag help">AI helps, you decide</span></h3>
+    <dl>
+      <dt>What it does</dt><dd>{{STEP_1_WHAT}}</dd>
+      <dt>You still own</dt><dd>{{STEP_1_OWN}}</dd>
+      <dt>First 30 minutes</dt><dd>{{STEP_1_START}}</dd>
+      <dt>You'll know it worked</dt><dd>{{STEP_1_SIGN}}</dd>
+    </dl>
+  </div>
+  <!-- steps 2 and 3 -->
+
+  <h2>Try it now</h2>
+  <blockquote class="try">{{TRY_PROMPT}}</blockquote>
+  <p>{{TRY_RESULT}}</p>
+
+  <h2>Keep doing yourself</h2>
+  <ul class="keep">
+    <li>{{KEEP_1}}</li>
+    <!-- two to four -->
+  </ul>
+
+  <h2>What this makes room for</h2>
+  <p class="room">{{ROOM}}</p>
+
+  <!-- ===== REFERENCE ===== -->
+  <hr class="break">
+
+  <details>
+    <summary>More to do later</summary>
+    <!-- options 4 and 5, shorter -->
+  </details>
+
+  <details>
+    <summary>Worth raising with your team</summary>
+    <!-- only if present -->
+  </details>
+
+  <details>
+    <summary>Everything I looked at</summary>
+    <div class="wrap">
+    <table>
+      <thead><tr><th>What you do</th><th>How often</th><th>Suggest</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>{{ITEM}}</td><td>{{FREQ}}</td><td><span class="tag help">AI helps, you decide</span></td><td>{{WHY}}</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </details>
+
+  <details>
+    <summary>What you told me</summary>
+    <ul class="quotes">
+      <li><q>{{QUOTE}}</q></li>
+    </ul>
+  </details>
+</main>
+</body>
+</html>

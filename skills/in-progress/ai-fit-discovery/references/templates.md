@@ -4,8 +4,25 @@ Two documents. The brief is written for someone who may be new to AI: one
 page tells the whole story; the reference material sits behind it. Their
 own words wherever a quote will do.
 
+## Format: HTML by default
+
+The brief ships as a single self-contained HTML page built from
+`brief-template.html` -- fill the `{{...}}` slots, repeat the step block
+three times, drop the reference sections behind the dashed break. No
+external assets; it opens from a file, an artifact, or an email
+attachment. Where the surface can render it (Claude Code file, claude.ai
+artifact, Cowork), render it; also keep the markdown version below when
+the person wants plain text or the surface can't show HTML.
+
 ## Writing rules for the brief
 
+- **Open with a pitch, not a summary.** Three beats, four to six
+  sentences total: (1) the pain -- characterise it in natural language
+  from what they said, don't restate the task list; (2) the shift -- what
+  changes for them if this works, and what it makes room for; something
+  they'd want to be true; (3) the solution -- plain, short, one bolded
+  idea to remember. You are selling them on trying it. If the pitch would
+  work for anyone in their role, it isn't theirs; rewrite it.
 - **Page one is the brief.** If they read nothing else, they know what
   the idea is, what to do first, and what they keep. Everything after
   page one is reference.
@@ -31,12 +48,11 @@ own words wherever a quote will do.
 ```
 # Where AI fits -- <name or role>, <date>
 
-## The idea
-<One paragraph, no jargon. What the system is and why it fits their
-situation -- constraints included. Written so they could repeat it to a
-colleague. If a picture helps, a three-box sketch in words: "one place
-that knows how your documents should look -> a check before anything
-goes out -> a short list of what's current".>
+<The pitch. Three short paragraphs, no heading:
+ 1. The pain, characterised in natural language from what they said.
+ 2. The shift -- what changes for them, what it makes room for.
+ 3. The solution in two or three plain sentences, one idea in bold.
+ Written so they could repeat it to a colleague and want to.>
 
 ## Start here
 <Three, in order. Each is a few lines:>

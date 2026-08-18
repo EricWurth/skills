@@ -173,11 +173,18 @@ people, that is a pattern for the brief, not a tool.
 
 ## Phase 4 -- Brief
 
-Write the Opportunity Brief (`references/templates.md`, format 1). The
-reader may be new to AI, so the brief is built for them, not for you:
+Write the Opportunity Brief -- as a self-contained HTML page from
+`references/brief-template.html` by default (render it where the surface
+can; keep the markdown form in `references/templates.md` for plain-text
+surfaces). The reader may be new to AI, so the brief is built for them,
+not for you:
 
-- **Page one is the whole story.** The idea (the system, one plain
-  paragraph they could repeat to a colleague) · start here (three
+- **Open with a pitch.** Three beats, four to six sentences: the pain,
+  characterised in natural language from what they said; the shift --
+  what changes for them and what it makes room for; the solution, plain
+  and short, one idea in bold. You are selling them on trying it. If the
+  pitch would fit anyone in their role, it isn't theirs.
+- **Page one is the whole story.** The pitch · start here (three
   options, each with what it does, what they still own, the first 30
   minutes, how they'll know it worked) · try it now (one worked example
   for option 1 -- what they'd type, what comes back) · keep doing
