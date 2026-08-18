@@ -173,26 +173,35 @@ people, that is a pattern for the brief, not a tool.
 
 ## Phase 4 -- Brief
 
-Write the Opportunity Brief (`references/templates.md`, format 2):
+Write the Opportunity Brief (`references/templates.md`, format 1). The
+reader may be new to AI, so the brief is built for them, not for you:
 
-- **The system** -- the two or three components from the system view,
-  what each knows / checks / keeps, and which inventory items each one
-  retires. One paragraph per component. This section comes first because
-  it is what the person is actually deciding to build toward.
-- **Start here** -- three to five options, sorted by value then risk then
-  unlock, each an increment of the system above. Each traces to
-  inventory items with a quote, names outcome, value/risk, shape, what
-  stays with the person, what reusable asset it leaves behind, and a
-  first step doable this week with what is on the desk.
-- **What this makes room for** -- from the inverse. If it is empty, the
-  brief is not done.
-- **Leave alone** -- every item so classified, with its reason.
-- **Patterns that aren't yours to fix alone** -- when present. Suggest a
-  conversation, not a tool.
-- **Full classification** -- every item, one line each.
+- **Page one is the whole story.** The idea (the system, one plain
+  paragraph they could repeat to a colleague) · start here (three
+  options, each with what it does, what they still own, the first 30
+  minutes, how they'll know it worked) · try it now (one worked example
+  for option 1 -- what they'd type, what comes back) · keep doing
+  yourself · what this makes room for.
+- **Reference sits behind it.** Options four and five, anything worth
+  raising with the team (a conversation, not a tool), the table of
+  everything you looked at with the outcome for each, and -- last --
+  what they told you, as the quotes the options trace to. They already
+  know what they said; it's there so the reasoning is checkable, not to
+  be read first. The classification lives back here too; they don't have
+  to read it to act.
+- **Plain words.** The system-view vocabulary (source of truth,
+  design-time, information model) stays in your head. Say what the thing
+  does. Every outcome carries its gloss: *AI helps, you decide* · *fix
+  the process first* · *AI does it, you check* · *keep doing it
+  yourself*.
+- **Under three pages total; page one is one page.** A long inventory
+  goes in its own file.
 
-Then stop. Building the first option is a different piece of work; if they
-ask, hand off cleanly with the brief as the spec.
+The architecture is still there -- every option is still an increment of
+the system, still names what it leaves behind -- it is just said in words
+that don't need translating. Then stop. Building the first option is a
+different piece of work; if they ask, hand off cleanly with the brief as
+the spec.
 
 ## Refusals
 

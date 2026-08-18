@@ -1,96 +1,125 @@
 # Output templates
 
-Two documents. Both in the person's own words wherever a quote will do.
+Two documents. The brief is written for someone who may be new to AI: one
+page tells the whole story; the reference material sits behind it. Their
+own words wherever a quote will do.
 
-## 1. Work Inventory (end of Phase 2)
+## Writing rules for the brief
+
+- **Page one is the brief.** If they read nothing else, they know what
+  the idea is, what to do first, and what they keep. Everything after
+  page one is reference.
+- **Plain words.** No "information model", "source of truth",
+  "design-time", "prompt card", "pipeline". Say what the thing does:
+  "one place the facts live", "instructions you save and reuse", "a
+  short list of what's current". If a term is unavoidable, translate it
+  in the same sentence, once.
+- **Outcomes get a gloss every time they appear:** *AI helps, you
+  decide* (Assist) · *fix the process first* (Redesign) · *AI does it,
+  you check* (Automate) · *keep doing it yourself* (Leave alone).
+- **Every option starts in 30 minutes** with what is on the desk. If it
+  can't, it isn't an option yet; it's part of the idea.
+- **Show, once.** One worked example -- what they would actually type,
+  and roughly what comes back -- for the first option only. Concrete
+  beats another paragraph.
+- **Three options on page one, five at most overall.**
+- **Length:** page one is one page. Total, including reference, is under
+  three. If the inventory is long, it lives in a separate file.
+
+## 1. Opportunity Brief
+
+```
+# Where AI fits -- <name or role>, <date>
+
+## The idea
+<One paragraph, no jargon. What the system is and why it fits their
+situation -- constraints included. Written so they could repeat it to a
+colleague. If a picture helps, a three-box sketch in words: "one place
+that knows how your documents should look -> a check before anything
+goes out -> a short list of what's current".>
+
+## Start here
+<Three, in order. Each is a few lines:>
+
+**1. <Plain name>** -- *<outcome gloss>*
+What it does: <one sentence>
+You still own: <the decision or judgment that stays theirs>
+First 30 minutes: <exactly what to do, with what they have>
+How you'll know it worked: <one observable sign>
+
+**2. ...**
+
+**3. ...**
+
+## Try it now
+<One example for option 1: the words they'd type, and roughly what comes
+back. Five to eight lines. Uses their real document names.>
+
+## Keep doing yourself
+<Two to four bullets. The things that are the job. One reason each.>
+
+## What this makes room for
+<One or two lines, from the inverse. Their words.>
+
+------------------------------------------------------------ page break
+
+## Reference
+
+### More to do later
+<Options 4 and 5, same format as above, shorter.>
+
+### Worth raising with your team
+<Only if present. A pattern that isn't theirs to fix alone. Suggest the
+conversation, not a tool.>
+
+### Everything I looked at
+<Table: what you do · how often · what I'd suggest (outcome gloss) · why,
+one line. Every inventory item appears. This is where the classification
+lives; the person doesn't have to read it to act.>
+
+### What you told me
+<Their words, the quotes the options trace back to. Last, because they
+already know it -- it's here so the reasoning is checkable, not to be
+read first.>
+
+### Words I used
+<Only if any term slipped through. Term -> plain meaning.>
+```
+
+## 2. Work Inventory
+
+Reference document, kept separately when long. Same content as before;
+formatted for scanning.
 
 ```
 # Work Inventory -- <name or role>, <date>
 
 ## Context
-<One paragraph: role, what the work supports, what a good day looks like,
-what they are measured on. Their phrasing.>
+<One paragraph: role, what the work supports, what a good day looks like.
+Their phrasing.>
 
-## Toolbox
-<The tools already open most of the day. Names only.>
+## Tools you already have
+<Names only.>
 
-## Constraints
+## Limits
 <Data that can't be shared, systems that can't be connected, approvals
 needed. "None stated" if none.>
 
-## Items
+## What you do
+<Table or short blocks: item · how often / how long · starts when · tools
+· mostly thinking or mostly steps · where the real decision is · what
+hurts (their words) · what you'd rather be doing.>
 
-### <n>. <Item name, as they called it>
-- Frequency / duration:
-- Starts when:
-- Tools:
-- Inputs -> outputs:
-- Judgment vs procedure: <e.g. "mostly procedure; one real decision at
-  step 3 -- whether to escalate">
-- Decision points:
-- Pain: <their words>
-- Would rather be doing:
+## What you'd rather be doing
+<Required. Their words. Mark "assumed" if you inferred it.>
 
-<repeat>
-
-## The inverse
-<Work wanted but not done: what they meant to get to, would do more of,
-keep starting, used to do well. Their words. This section is required.>
-
-## Friction, unassigned
-<Waiting, redoing, hunting, autopilot -- anything that didn't attach to a
-single item.>
-```
-
-Confirm with the person before Phase 3: "Is this your week? What's
-missing, what's wrong?"
-
-## 2. Opportunity Brief (end of Phase 4)
-
-```
-# Where AI fits -- <name or role>, <date>
-
-## The system
-<Two or three components that the options below add up to. One paragraph
-each: what it knows, what it checks, what it keeps, which inventory items
-it retires. If the items genuinely don't share a system, say so here and
-why -- that is a finding.>
-
-## Start here
-<Three to five, each an increment of the system. For each:>
-
-### <Option name, plain>
-- Traces to: <inventory item numbers, with a quote>
-- Builds toward: <which system component>
-- Outcome: Assist | Automate | Redesign
-- Value / risk: <H/M/L, one line why>
-- Shape: <prompt habit | reusable instruction | agent | workflow |
-  connection> -- <what it takes in, what it knows, what it checks, what
-  it keeps>
-- Stays with you: <what the person still sees, decides, sends>
-- Leaves behind: <the reusable asset -- not the first document, the thing
-  that makes the next one right>
-- First step: <something doable this week with what's on the desk>
-
-## What this makes room for
-<From the inverse: what the recovered time is for. Their words. If it's
-empty, the brief isn't done.>
-
-## Leave alone
-<Every item classified Leave alone, each with its reason -- it's the
-expertise, the risk isn't worth the minutes, or you like it.>
-
-## Patterns that aren't yours to fix alone
-<Optional. Items whose root is upstream -- late inputs, missing
-information, unclear ownership. Suggest a conversation, not a tool.>
-
-## Full classification
-<Table: item, value, risk, outcome, one-line reason. Every inventory item
-appears.>
+## Friction that didn't fit one item
+<Waiting, redoing, hunting, autopilot.>
 ```
 
 Rules for both:
 
 - No product or vendor names.
 - No framework names or coined terms.
-- Nothing appears that the person did not say or show.
+- Nothing appears that the person did not say or show; anything inferred
+  is marked "assumed".
