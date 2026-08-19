@@ -1,0 +1,36 @@
+{
+  "skill_name": "survey-feedback-report",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "Here's the CSV export from our post-event survey. Pull the meaningful feedback out of columns F, G, and H, group the ideas, and make it pretty using our brand at example-con.org.",
+      "expected_behavior": "Invokes the skill. Columns, format, and brand are already specified, so it proceeds without re-asking, reads the full CSV, applies the skip rules with running counts, splits multi-idea responses before grouping, counts themes by distinct respondents, detects cross-column themes before writing, fetches example-con.org to derive a color/type token system, and runs the QA checklist against the source data before presenting the HTML report."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "Leadership wants a summary of what people actually asked for in the open-ended responses on this Google Sheet -- grouped, deduplicated, with real counts they can trust.",
+      "expected_behavior": "Invokes the skill. Asks once which columns hold the free-text (not stated), reads the sheet in full, and because the audience is leadership includes the priority panel sorted by urgency/cost. Every count chip means distinct respondents, cross-column themes lead the report, and the self-QA pass runs and is surfaced before delivery."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "What's the average satisfaction score in column C of this survey export? Just give me the mean and a quick histogram.",
+      "expected_behavior": "Does not invoke. This is quantitative spreadsheet work on a numeric column -- a compute-the-stat task, not free-text feedback analysis. The model just computes the answer (or uses a spreadsheet skill), without running skip rules, theme grouping, or building a branded HTML report."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "We're sending out a feedback survey after next month's event -- help me write good open-ended questions to ask attendees.",
+      "expected_behavior": "Does not invoke. This is survey design, not response analysis -- there is no response data to process. The model helps draft questions (discovery-questions territory) rather than starting the extraction/grouping/report pipeline."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "Can you take a look at the feedback we got and tell me what stands out?",
+      "expected_behavior": "Reasonable either way. If data is attached or reachable, invoking the skill is right but Step 0 applies -- ask once about columns and whether they want a quick inline read or the full report, rather than silently building a branded HTML deliverable for what may be a two-paragraph question. A brief inline summary that offers the full report as a follow-up is also acceptable."
+    }
+  ]
+}

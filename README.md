@@ -52,7 +52,7 @@ edits to apply live.
 
 <!-- catalog:start -->
 
-5 standalone skills and 5 plugins (19 skills). Skills are copied; plugins are installed.
+6 standalone skills and 5 plugins (19 skills). Skills are copied; plugins are installed.
 
 They split on one axis: who can invoke them. **User-invoked** skills are reachable only when you type them, and they do the orchestrating. **Model-invoked** skills can be typed *or* reached for automatically when the task fits; they hold the reusable discipline. A user-invoked skill may call a model-invoked one, never another user-invoked one.
 
@@ -76,6 +76,7 @@ Self-contained folders. Copy one into `.claude/skills/`, or upload it on claude.
 | | Chat | What it does |
 |---|:--:|---|
 | [`critical-thinking`](skills/critical-thinking) | ✅ | Rigorous problem-solving method for backward-chaining from a goal to a task breakdown, with disciplined assumption-handling and an optimist default |
+| [`survey-feedback-report`](skills/survey-feedback-report) | ✅ | Turn open-ended survey responses (a Google Sheet, CSV, or spreadsheet export) into a branded, data-driven HTML feedback report |
 
 ### Plugins
 
