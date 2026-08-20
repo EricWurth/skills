@@ -1,21 +1,31 @@
 # Intent Spec: interview-prep
 
-Spec version: 1.1
+Spec version: 1.2
 Current phenotype: SKILL.md (as packaged in the resumebot plugin)
 Owner: the skill's user
-Replayable: partially -- the report structure, gates, and red-team pass are
-deterministic in shape; the research content (role best practices, company
-context, current events) is live-web and varies by role. Golden examples
-test process compliance and gate behavior, not exact report text.
+Replayable: partially -- the report structure, gates, red-team pass, and
+mock-round shape are deterministic; the research content (role best
+practices, company context, comp data, current events) is live-web and
+varies by role, and mock answers vary by user. Golden examples test
+process compliance and gate behavior, not exact report or mock text.
+
+Changelog: 1.2 (2026-08-19) added the staples section (opener, why-here,
+why-looking, comp range), the Quick Sheet, mock interview mode as the
+default post-publish step, and post-interview thank-you drafting.
+Motivated by external research: interviews are lost on delivery
+(unrehearsed answers, fumbled openers, no comp number), not on missing
+information, and document-only prep leaves that uncovered.
 
 ## Purpose [INVARIANT]
 
 Walk the user into any interview knowing (1) the core need the hire exists
 to solve, (2) what good looks like for that function at that company, and
-(3) what they'll be asked and how they answer in their own voice -- with
-every claim about the user consistent with their standing rules and every
-time-sensitive fact verified fresh. Generalizes across all roles, levels,
-companies, and interview stages; never overfit to one function's domain.
+(3) what they'll be asked and how they answer in their own voice -- having
+(4) rehearsed those answers aloud in a live mock round before the real
+one -- with every claim about the user consistent with their standing
+rules and every time-sensitive fact verified fresh. Generalizes across
+all roles, levels, companies, and interview stages; never overfit to one
+function's domain.
 
 ## Inputs [INVARIANT]
 
@@ -60,6 +70,25 @@ companies, and interview stages; never overfit to one function's domain.
 9. The report publishes to Notion (Job Hunt > Interview Prep tree) when
    Notion is available, with a local copy in the company's Applications
    folder either way.
+10. A staples section exists in every report: the drafted opener ("tell
+    me about yourself", 60-90 seconds, landing on the core-need
+    sentence), why-this-company, why-looking (with any sensitive exit
+    scripted), and a comp range from a fresh dated market search --
+    never left to improvisation or an unresearched number.
+11. The report opens with a one-page Quick Sheet (logistics, core-need
+    sentence, opener, comp range, Tier 1 questions, question-to-story
+    map at one line each) whose every item also appears in full later.
+12. After publishing, a mock interview round is the default next step:
+    the user reads the report, then Claude runs the round in the stage-
+    appropriate interviewer persona -- one question at a time, mostly
+    from the report plus one or two cold questions, live follow-ups
+    before feedback, short per-answer feedback, closing debrief with
+    strongest/weakest answers. Skipping the mock requires the user's
+    explicit decline, never a silent omission. Gaps the mock surfaces
+    update the published report's Open Gaps.
+13. Post-interview, thank-you note drafting is offered (one personalized
+    note per interviewer, referencing actual conversation points from
+    the debrief; the user sends them).
 
 ## Behavioral invariants [INVARIANT]
 
@@ -78,6 +107,10 @@ companies, and interview stages; never overfit to one function's domain.
   interview centered on "how would you build our monitoring program";
   the prep led with framework recitation instead.)
 - Never force a story that doesn't exist; a gap goes in Open Gaps.
+- The consistency and recency gates bind mock-round coaching exactly as
+  they bind the written report: never suggest a "stronger" answer that
+  the master resume and standing rules do not support, and never state
+  a comp figure without a fresh dated search.
 
 ## Free choices [IMPLEMENTATION MAY VARY]
 
@@ -86,6 +119,10 @@ companies, and interview stages; never overfit to one function's domain.
 - How many anticipated questions (stage-appropriate judgment).
 - Which engagement each story draws from, provided spread is maintained.
 - Whether the debrief capture lands in a vault episode or chat memory.
+- Mock-round length, number of cold questions (within the one-or-two
+  guideline), and persona depth; whether a second drill pass runs.
+- Quick Sheet layout, provided every required item is present.
+- Thank-you note phrasing and length.
 
 ## Golden examples [MIGRATION TEST SET]
 
@@ -125,13 +162,29 @@ G-4: Story spread.
   stories across the user's other engagements. Failing shape: shipping
   four answers anchored to one project.
 
+G-5: Mock round is the default, and its feedback is gate-bound.
+  Input: report published; user says "looks good". In the mock, the
+  user's answer to a certification-adjacent question is weak, and a
+  "stronger" answer would claim an in-progress certification the
+  standing rules forbid.
+  Expected: the mock round starts after the user has read the report
+  (not skipped because the report "looks good" -- that is approval to
+  proceed, not a decline); it opens with "tell me about yourself";
+  weak-answer feedback reframes within what the master resume supports,
+  never coaching the forbidden claim; the closing debrief names the
+  weak answer for a second drill. Failing shape: ending the session at
+  publish, or coaching an answer the consistency gate would reject.
+
 ## Eval notes
 
-- Mechanically checkable: Open Gaps section present and first-or-second in
-  the report; a dated verification search occurred in-session for each
-  time-sensitive claim cited; no "candidate"/"certified" language absent
-  a registered credential; client confidentiality rules honored in every
-  story; one-story-per-question mapping; local copy always produced.
+- Mechanically checkable: Quick Sheet is the report's first page with all
+  six required items; Open Gaps section present and next after it; a
+  dated verification search occurred in-session for each time-sensitive
+  claim cited (comp range included); staples section present with all
+  four elements; no "candidate"/"certified" language absent a registered
+  credential; client confidentiality rules honored in every story;
+  one-story-per-question mapping; local copy always produced; mock round
+  offered/run after publish or an explicit user decline recorded.
 - Human-judged: whether the core-need sentence actually matches what the
   JD pays for; whether what-good-looks-like reflects the function's real
   best practices vs. generic filler; whether the problem-to-solve reads

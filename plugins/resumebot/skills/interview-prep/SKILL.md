@@ -1,18 +1,20 @@
 ---
 name: interview-prep
-description: Build a complete, research-backed interview prep report for a specific job interview and publish it to Notion. Use this whenever the user asks for interview prep, help getting ready for an interview or screen, "prep me for my call with X", research on a company they're interviewing with, or anticipated interview questions — for any role, any company, any interview stage. Also use when they mention an upcoming interview and ask what they should know, study, or expect.
+description: Build a complete, research-backed interview prep report for a specific job interview, publish it to Notion, then run a live mock interview round against it. Use this whenever the user asks for interview prep, help getting ready for an interview or screen, "prep me for my call with X", research on a company they're interviewing with, anticipated interview questions, or a mock/practice interview ("interview me", "run a mock", "let's practice my answers") — for any role, any company, any interview stage. Also use when they mention an upcoming interview and ask what they should know, study, or expect.
 spec: genome/intent.md
 ---
 
 # Interview Prep
 
-Produce one organized prep report for a specific interview. The goal is not a research dump — it is to walk the user into the room knowing (1) what problem this hire exists to solve, (2) what good looks like in this function at this company, and (3) what they'll be asked and how they'll answer, in their own voice.
+Produce one organized prep report for a specific interview, then rehearse it live. The goal is not a research dump — it is to walk the user into the room knowing (1) what problem this hire exists to solve, (2) what good looks like in this function at this company, and (3) what they'll be asked and how they'll answer, in their own voice — and (4) having said those answers out loud at least once before it counts. The report is study material; interviews are performed.
 
 ## Why this skill exists
 
 A real prep session failed in a specific way: the report was heavy on framework trivia (reciting NIST/ISO structure, regulatory news) and light on the thing the interview actually centered on — how to *build and run the program* the role exists to deliver. It also contained a claim about the candidate that contradicted their own standing rules, and a "current events" fact that had been superseded months earlier.
 
 A second failure, found later: the "questions to ask" section was consistently flat — either generic enough to ask any company, or so deep in the weeds it belonged to week two of the job. Every question in it helped the candidate *do* the job; none helped them decide whether to *take* it. Section 6 was rewritten around that. The framing: the goal is to learn whether this is a great place to work.
+
+A third set of gaps came from outside review rather than a lived failure. Research into how interviews are actually lost shows they're rarely lost on missing information — they're lost on delivery: fumbled "tell me about yourself" openers, vague stories that were never said aloud, no comp number ready when the recruiter asks. Mock-heavy prep cultures (consulting candidates run 20–40 live practice cases) far outperform document-only prep, yet most candidates never rehearse. That's why this skill now ends in a live mock round instead of at the published report, and why the staples and quick sheet exist.
 
 Every step below exists to prevent one of those failures. Don't skip the gates.
 
@@ -34,13 +36,20 @@ For this function, in this organization: what are the established frameworks, me
 ### 3. Stage and interviewer read
 What this round screens for. Recruiter screens gate on basic fit, comms, comp, motivation. Hiring managers probe depth, problem-solving, and would-I-want-you-on-my-team; they live with the hire, so expect "how would you actually do this." Panels test consistency and cross-functional fit. Execs test judgment and strategic framing. Tailor everything downstream to the stage, and to the interviewer's function (a compliance leader probes ethics-under-pressure; an engineering leader probes technical judgment).
 
-### 4. Anticipated questions with story assignments
+### 4. The staples — asked in every round, fumbled most often
+The questions that appear in every interview regardless of role or stage, drafted in the user's voice, never left to improvisation:
+- **The opener.** "Tell me about yourself" is the single most-fumbled question in interviewing, and every round opens with some version of it. Draft it: 60–90 seconds, present → relevant past → why this role, landing on the core-need sentence from step 1. Built from the user's own saved framings, not a template.
+- **Why this company / why this role.** One tier deeper than the website's About page — tied to something specific the research surfaced.
+- **Why are you looking / why did you leave.** Honest, short, forward-facing. If there's a sensitive exit anywhere in the history, script the one-sentence version now, not live.
+- **The comp answer.** Research the market range for this role, level, and metro fresh (recency gate applies — comp data goes stale). Give the user a researched range to state, and a walk-away floor for their own reference. Recruiter screens gate on this number; "what are you looking for?" answered with a stall reads as unprepared, answered with an unresearched number costs real money. For contract roles: rate, W2 vs. 1099, and benefits load-in belong here too.
+
+### 5. Anticipated questions with story assignments
 Research-backed where possible (search for common questions for this role type and stage). For each anticipated question, lead with the **method** (the "how" the interviewer is really asking for), then assign **one story** with a checkable result. Spread stories across engagements — hanging four answers on the same project sounds like a one-engagement career. Pull stories and STAR mechanics from the story bank if one exists (Notion or local), and use the user's own saved voice framings from memory before inventing generic formulas — their own framings beat textbook answers every time.
 
-### 5. The problem-to-solve (leadership and program-owning roles)
+### 6. The problem-to-solve (leadership and program-owning roles)
 For roles where the core need is building or running something: sketch the implementation approach the user would bring — the operational spine of standing up that program or process, derived from step 2's best practices. Frame it as **approach plus discovery questions**, never a finished prescription: "here's how I'd approach it, here's what I'd need to learn in the first 30 days to calibrate." Prescribing before diagnosing reads as arrogance; a framework held loosely reads as judgment. For IC roles, compress this to "how I'd run my first engagement."
 
-### 6. Questions to ask — diligence, not performance
+### 7. Questions to ask — diligence, not performance
 
 **The purpose of the user's questions is to find out whether this is a good place to work.** Not to demonstrate preparation. Questions that impress are a by-product; when they become the goal, the output turns to filler. Full method and per-round question bank: `Master/InterviewQuestionsByRound.html`. Apply it here rather than re-deriving it.
 
@@ -71,7 +80,7 @@ The right altitude is between them: how decisions actually get made, who holds a
 
 Keep at most one "informed outsider" question that shows research — and mark researched current-events references as **hold, don't volunteer** (offering unprompted reads as "look what I found").
 
-### 7. Open gaps — top of the report, not buried
+### 8. Open gaps — top of the report, not buried
 Anything only the user can answer: an unverified story claim, a missing example the stage will probably demand, a discrepancy between documents. Flag these prominently and early so they can close them before the call. Never paper over a gap with plausible-sounding filler — a forced story collapses under one follow-up.
 
 ## The two gates (run both before publishing)
@@ -86,11 +95,33 @@ Before publishing, re-read the whole report playing the interviewer: Does each s
 
 ## Publish
 
-Create the report as a child page under the company's page in Notion's Job Hunt > Interview Prep tree (create the company page if none exists), titled with the round and date — e.g. "Hiring Manager Round — [name] ([date])". Save a local copy in the company's folder under Resume/Applications/. Report order: Logistics → Open Gaps → Core Need → What Good Looks Like → Stage Read → Questions & Stories → Problem-to-Solve → Questions to Ask → Reference (frameworks/news, clearly marked hold-vs-lead).
+Create the report as a child page under the company's page in Notion's Job Hunt > Interview Prep tree (create the company page if none exists), titled with the round and date — e.g. "Hiring Manager Round — [name] ([date])". Save a local copy in the company's folder under Resume/Applications/.
+
+**Open the report with a one-page Quick Sheet** — the last-30-minutes view, readable in the parking lot: the logistics line (time, interviewer, join link), the core-need sentence, the opener, the comp range, the Tier 1 questions, and the question→story map at one line each. Everything on it appears in full later in the report; the sheet exists because a thorough report is unusable at T-minus-20.
+
+Report order: Quick Sheet → Open Gaps → Core Need → What Good Looks Like → Stage Read → Staples → Questions & Stories → Problem-to-Solve → Questions to Ask → Reference (frameworks/news, clearly marked hold-vs-lead).
+
+## Mock interview mode (the default next step, not an add-on)
+
+The report is study material; the interview is a performance, and the research is unambiguous about where interviews are lost — answers that were never said aloud. So the session doesn't end at publish. Hand the user the report, tell them to read it through, and say the mock starts whenever they're ready. Then run it.
+
+**Run it as the interviewer, not as a coach with a script:**
+- Adopt the persona of this round: the actual stage (recruiter / hiring manager / panel / exec) and, if known, the actual interviewer's function and background. A recruiter mock gates on staples and comp; a hiring-manager mock probes depth and "how would you actually do this."
+- Open exactly like the real round will: "So, tell me about yourself."
+- Ask one question at a time and wait for the answer. Draw mostly from the report's anticipated questions, but include one or two cold questions that are plausible for the round and *not* in the report — the real interviewer hasn't read it either.
+- When an answer invites the obvious follow-up ("how do you know it worked?", "what was your role specifically?"), ask it live before giving any feedback. Surviving the follow-up is the test; the first answer is just the setup.
+
+**Feedback, per answer, kept short:** what landed, what to tighten, and — only if the answer missed — a one-line reframe in the user's own voice. Score against the report's own bar: did the answer lead with method, did the story carry a checkable result, did it survive the follow-up. Never coach a claim the consistency gate would reject; the gates bind the mock as much as the report.
+
+**Close with a debrief:** the two or three strongest answers (leave them alone), the weakest (drill these again), and anything the mock surfaced that the report missed — a gap goes into Open Gaps and the published report gets updated, not just mentioned in chat. Offer a second pass on the weak answers if there's time before the interview.
 
 ## After the interview
 
-When the user next mentions how it went, offer a short debrief: what was actually asked vs. predicted, what landed, what was missing. Capture it (vault episode if the vault is in use, or memory) so the next prep's question-anticipation is sharper. If the interview surfaced a prep failure, name it plainly and note which step above should have caught it.
+When the user next mentions how it went, offer two things:
+
+**Thank-you notes.** Offer to draft a short personalized note per interviewer — referencing a specific point from the actual conversation (pulled from the debrief), not a template. One note per panelist for panel rounds. The user sends them; drafting is the help.
+
+**A short debrief.** What was actually asked vs. predicted, what landed, what was missing. Capture it (vault episode if the vault is in use, or memory) so the next prep's question-anticipation is sharper. If the interview surfaced a prep failure, name it plainly and note which step above should have caught it — including whether the mock round rehearsed the answer that failed.
 
 ## Common Rationalizations
 
@@ -101,6 +132,9 @@ When the user next mentions how it went, offer a short debrief: what was actuall
 | "This is a compliance role, so I'll lead with the NIST/ISO structure — that's the standard reference." | Framework recitation is reference material, not the spine. The core need — what the hire is paid to build or run — has to lead; frameworks displacing it is the exact failure this skill exists to prevent. |
 | "This project is their strongest story — it fits three of these questions well enough." | Hanging multiple answers on one engagement reads as a one-engagement career. Spread stories across engagements even when one story is objectively the best fit for several questions. |
 | "There's no clean story for this one, but a composite built from two projects would read fine." | A forced or composited story collapses under one follow-up. No story beats a fabricated one — it goes in Open Gaps instead. |
+| "The report is thorough — the mock is optional if the user seems confident." | Overconfidence is precisely the documented failure mode: experienced candidates assume the track record speaks for itself and fumble the opener. The mock is the default next step; skipping it is the user's call to make explicitly, never a silent omission. |
+| "The user knows their own salary expectations — no need to research comp." | An unresearched number costs real money in both directions, and a stall reads as unprepared. The comp range gets a fresh dated search like any other time-sensitive claim. |
+| "In the mock, their answer was weak — I'll suggest a stronger version of the story." | A stronger version that the master resume and standing rules don't support is a fabrication with a coach's fingerprints on it. The gates bind mock feedback exactly as they bind the report. |
 
 ## Red Flags
 
@@ -110,3 +144,6 @@ When the user next mentions how it went, offer a short debrief: what was actuall
 - Two or more anticipated questions in the same report are assigned to the same engagement.
 - A question or claim appears with no traceable story behind it and no corresponding Open Gaps entry.
 - The report is published without a visible consistency-gate, recency-gate, or red-team pass having run.
+- The report is published without a Quick Sheet page, a staples section (opener, why-here, why-looking, comp range), or a researched comp range with a dated source.
+- The session ends at publish with no mock round run and no explicit decline from the user.
+- Mock feedback coaches an answer or claim that the consistency gate would reject in the written report.
