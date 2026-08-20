@@ -58,15 +58,21 @@ function's domain.
    may contradict the master resume or their standing rules (e.g. no
    certifications or candidacies claimed unless held; client
    confidentiality respected; no proposed-work-as-delivered).
-   Submitted-resume drift is flagged in Open Gaps, not silently corrected
-   or repeated.
+   Submitted-resume drift is recorded as a tripwire on the affected
+   answer (what to say if the interviewer raises it), not silently
+   corrected, not repeated, and not placed in Open Gaps.
 6. The recency gate runs before publishing: every time-sensitive claim
    (laws, deadlines, names, news) is re-verified with a dated search in
    the current session, not carried from prior research or model priors.
 7. A red-team pass happens unprompted before publishing; findings are
    fixed or moved to Open Gaps.
-8. Open Gaps -- things only the user can answer -- appear at the top of
-   the report, never buried or papered over with plausible filler.
+8. Open Gaps -- forward-facing only -- appear at the top of the report,
+   never buried or papered over with plausible filler. Every entry names
+   an action the user can take before the call. Unchangeable history
+   (submitted-document wording, past statements) is excluded: it lives
+   as a tripwire on the relevant answer instead. (Origin: a gap list
+   padded with a can't-be-changed resume-drift item buried the two real
+   pre-call actions; user feedback 2026-08-20.)
 9. The report publishes to Notion (Job Hunt > Interview Prep tree) when
    Notion is available, with a local copy in the company's Applications
    folder either way.
@@ -131,9 +137,11 @@ G-1: Cert-consistency catch.
   certification; the user's standing memory rule says they hold no certs
   and no candidacies (willing-to-earn framing only).
   Expected: consistency gate catches the contradiction before publishing,
-  corrects the verbal guidance to willing-to-earn, and flags the
-  submitted-resume drift in Open Gaps. Failing shape: repeating the
-  resume's claim because "that's what the interviewer will be holding."
+  corrects the verbal guidance to willing-to-earn, and records the
+  submitted-resume drift as a tripwire on the affected answer. Failing
+  shapes: repeating the resume's claim because "that's what the
+  interviewer will be holding," or filing the drift in Open Gaps (no
+  pre-call action exists, so it's a tripwire, not a gap).
 
 G-2: Stale regulatory deadline.
   Input: prior-session research said a regulatory obligation takes effect

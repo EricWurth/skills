@@ -80,12 +80,12 @@ The right altitude is between them: how decisions actually get made, who holds a
 
 Keep at most one "informed outsider" question that shows research — and mark researched current-events references as **hold, don't volunteer** (offering unprompted reads as "look what I found").
 
-### 8. Open gaps — top of the report, not buried
-Anything only the user can answer: an unverified story claim, a missing example the stage will probably demand, a discrepancy between documents. Flag these prominently and early so they can close them before the call. Never paper over a gap with plausible-sounding filler — a forced story collapses under one follow-up.
+### 8. Open gaps — forward-facing actions only, top of the report
+An open gap is something the user can still *do* before the call: look up a fact only they hold, supply a story the stage will demand, verify a claim, capture context from a prior round. Every entry names the action. What does NOT belong here: history that can't be changed — a submitted resume's stale wording, a past misstatement, anything that's water under the bridge. Those become **tripwires** attached to the relevant answer (and the Quick Sheet): one line saying what to say if it comes up. A gap list padded with unactionable record-keeping buries the two things the user actually needs to do tonight. Never paper over a real gap with plausible-sounding filler — a forced story collapses under one follow-up.
 
 ## The two gates (run both before publishing)
 
-**Consistency gate.** Re-read the draft against the master resume (Master/MasterResume.md — source of truth) and the user's standing content rules in memory. Typical tripwires: **certifications never claimed unless actually held** (willing-to-earn framing otherwise); **client confidentiality respected** (sector + scale instead of names, if that is the user's rule); **proposed work never phrased as delivered**. If the submitted resume for this application contradicts the master (drift happens), flag the discrepancy in Open Gaps — the user may be asked about the version the interviewer is holding.
+**Consistency gate.** Re-read the draft against the master resume (Master/MasterResume.md — source of truth) and the user's standing content rules in memory. Typical tripwires: **certifications never claimed unless actually held** (willing-to-earn framing otherwise); **client confidentiality respected** (sector + scale instead of names, if that is the user's rule); **proposed work never phrased as delivered**. If the submitted resume for this application contradicts the master (drift happens), record it as a tripwire on the affected answer — what to say if the interviewer raises the version they're holding — never as an Open Gap (the paper can't be changed, so there's no action) and never by repeating the resume's version to stay "consistent."
 
 **Recency gate.** Every time-sensitive claim — laws, deadlines, leadership names, news — gets verified with a fresh search *with dates* before it goes in the report. Regulatory timelines shift, executives change, sanctions get resolved. A confidently stale fact is worse than no fact: it hands the interviewer a chance to correct the candidate.
 
@@ -127,7 +127,8 @@ When the user next mentions how it went, offer two things:
 
 | Rationalization | Reality |
 |---|---|
-| "The submitted resume already says they're cert-in-progress — matching it keeps the story consistent for the interviewer." | The interviewer holding a stale claim doesn't make it true. The consistency gate corrects the verbal guidance to the standing rule (willing-to-earn, not candidate) and flags the resume drift in Open Gaps — it never repeats the resume's version to stay "consistent." |
+| "The submitted resume already says they're cert-in-progress — matching it keeps the story consistent for the interviewer." | The interviewer holding a stale claim doesn't make it true. The consistency gate corrects the verbal guidance to the standing rule (willing-to-earn, not candidate) and records the drift as a tripwire on the affected answer — it never repeats the resume's version to stay "consistent." |
+| "The resume discrepancy is important — it should go in Open Gaps so it isn't missed." | Open Gaps is for actions the user can take before the call. A submitted document can't be unsent; there is no action. It goes in the tripwires — one line on what to say if asked — where it's still visible without burying the real to-dos. |
 | "I already researched this last week — no need to search it again today." | Regulations shift, executives change, sanctions resolve. The recency gate requires a fresh dated verification in this session; "recently" researched is not the same as "verified now." |
 | "This is a compliance role, so I'll lead with the NIST/ISO structure — that's the standard reference." | Framework recitation is reference material, not the spine. The core need — what the hire is paid to build or run — has to lead; frameworks displacing it is the exact failure this skill exists to prevent. |
 | "This project is their strongest story — it fits three of these questions well enough." | Hanging multiple answers on one engagement reads as a one-engagement career. Spread stories across engagements even when one story is objectively the best fit for several questions. |
@@ -143,6 +144,7 @@ When the user next mentions how it went, offer two things:
 - The report's opening sections recite frameworks or regulatory context before stating the core-need sentence.
 - Two or more anticipated questions in the same report are assigned to the same engagement.
 - A question or claim appears with no traceable story behind it and no corresponding Open Gaps entry.
+- An Open Gaps entry names no action the user can take before the call (unchangeable history belongs in the tripwires, not the gap list).
 - The report is published without a visible consistency-gate, recency-gate, or red-team pass having run.
 - The report is published without a Quick Sheet page, a staples section (opener, why-here, why-looking, comp range), or a researched comp range with a dated source.
 - The session ends at publish with no mock round run and no explicit decline from the user.
