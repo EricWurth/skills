@@ -50,7 +50,9 @@ function's domain.
 3. Question anticipation is stage-aware (recruiter / hiring manager /
    panel / exec screen for different things) and each anticipated question
    leads with method, then assigns exactly one story with a checkable
-   result; stories are spread across engagements.
+   result; stories are spread across engagements. Each named attendee
+   gets a bite-sized need-to-know card (role/background from a fresh
+   search, what they screen for, one connection point, one don't).
 4. For leadership/program-owning roles, a problem-to-solve section
    sketches the implementation approach for the core need as approach +
    discovery questions -- never a finished prescription.
