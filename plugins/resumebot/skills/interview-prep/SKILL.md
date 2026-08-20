@@ -101,6 +101,8 @@ Create the report as a child page under the company's page in Notion's Job Hunt 
 
 Report order: Quick Sheet → Open Gaps → Core Need → What Good Looks Like → Stage Read → Staples → Questions & Stories → Problem-to-Solve → Questions to Ask → Reference (frameworks/news, clearly marked hold-vs-lead).
 
+**Unpack acronyms on first use in the body.** Domain shorthand (regulatory programs, audit terms, internal project codenames) gets spelled out with a gloss the first time it appears — the user may need to say these correctly out loud, and a prep report that requires its own decoder fails at T-minus-30. The Quick Sheet may stay terse, but only with terms the body has already unpacked. Count the interview rounds from the user's side of the process (every conversation including recruiter screens), even when the company's own emails number them differently — note the company's label so the user can mirror it in the room.
+
 ## Mock interview mode (the default next step, not an add-on)
 
 The report is study material; the interview is a performance, and the research is unambiguous about where interviews are lost — answers that were never said aloud. So the session doesn't end at publish. Hand the user the report, tell them to read it through, and say the mock starts whenever they're ready. Then run it.
