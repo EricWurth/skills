@@ -36,6 +36,8 @@ For this function, in this organization: what are the established frameworks, me
 ### 3. Stage and interviewer read
 What this round screens for. Recruiter screens gate on basic fit, comms, comp, motivation. Hiring managers probe depth, problem-solving, and would-I-want-you-on-my-team; they live with the hire, so expect "how would you actually do this." Panels test consistency and cross-functional fit. Execs test judgment and strategic framing. Tailor everything downstream to the stage, and to the interviewer's function (a compliance leader probes ethics-under-pressure; an engineering leader probes technical judgment).
 
+**Every named attendee gets anticipated questions — including the maybes.** A "may join if around" attendee still asks questions when they show, usually fast and without warm-up; a card plus a what-to-give-them plan is not coverage. Two or three anticipated questions per contingent attendee, same format as the confirmed ones.
+
 **Per named attendee, include a bite-sized need-to-know card** (three to five lines): role and background from a fresh search, what their round screens for, one connection point to the user's material, and one **don't**. Cards are scannable facts, not prose — they're what the user rereads between back-to-back sessions when there's no time for the full stage read.
 
 ### 4. The staples — asked in every round, fumbled most often
