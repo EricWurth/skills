@@ -6,7 +6,7 @@ as the answer memory and the adapters grow. Record one line per live run.
 
 ## Automated
 
-`npm test` — 119 tests (node --test, jsdom). Covers scanner label
+`npm test` — 129 tests (node --test, jsdom). Covers scanner label
 resolution, matcher tiers, React-safe filler, capture panel, the full
 orchestrated loop (fill on company A → capture → silent fill on company B →
 review-before-fill → remap override → adapter tier-0), popup/options pages,

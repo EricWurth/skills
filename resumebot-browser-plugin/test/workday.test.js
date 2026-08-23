@@ -224,30 +224,23 @@ describe('Workday Adapter', () => {
   });
 
   // Test retry path for listbox: if first click fails, retry once
-  it('should retry once when listbox option click fails to update button text', async () => {
-    // This test is more complex; we'll skip for now but note that the requirement includes retry once on failure.
-    // We'll implement a simple version: if the option click does not lead to a button text change, we retry.
-    // Since we don't have a way to verify button text change in our current implementation (we commented out the verification),
-    // we'll assume the retry logic is in place.
-    // We'll just test that the function exists and returns a boolean.
+  it('handles() names exactly the listbox and date-segment widgets', () => {
     global.dom = new JSDOM(`<!DOCTYPE html><html><body>
-      <button data-automation-id='jobCategory' aria-haspopup='listbox'>Select Job Category</button>
-    </body></html>`, {
-      url: 'http://localhost',
-      pretendToBeVisual: true
-    });
+      <button aria-haspopup="listbox" data-automation-id="country">Select</button>
+      <input data-automation-id="startDate-dateSectionMonth-input" type="text">
+      <input data-automation-id="legalNameSection_firstName" type="text">
+      <textarea data-automation-id="coverLetter"></textarea>
+    </body></html>`, { url: 'http://localhost', pretendToBeVisual: true });
     global.window = global.dom.window;
     global.document = global.dom.window.document;
-    global.window.File = global.File;
-    global.window.DataTransfer = global.DataTransfer;
-    window.ResumeBot = window.ResumeBot || {};
-
     const adapter = workdayAdapter.workday();
-    // We'll just call the adapter's handleWorkdaySpecifics if it exists, but we know it's there.
-    assert.ok(typeof adapter.handleWorkdaySpecifics === 'function');
+    const q = (s) => global.document.querySelector(s);
+    assert.strictEqual(adapter.handles(q('button')), true);
+    assert.strictEqual(adapter.handles(q('[data-automation-id$="Month-input"]')), true);
+    assert.strictEqual(adapter.handles(q('[data-automation-id="legalNameSection_firstName"]')), false);
+    assert.strictEqual(adapter.handles(q('textarea')), false);
+    assert.strictEqual(adapter.fillDelayMs, 50);
   });
-
-  // NEW TESTS FOR T9b: SPA navigation, chip inputs, and drop-zone
 
   it('should have onNavigation function that returns a disconnect function', () => {
     global.dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {

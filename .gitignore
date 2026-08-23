@@ -2,7 +2,9 @@
 # run, or a maintainer needs it to verify one. Everything else stays local.
 #
 # The three tiers:
-#   ships   -- skills/, plugins/, .claude-plugin/, README, LICENSE
+#   ships   -- skills/, plugins/, .claude-plugin/, README, LICENSE,
+#              resumebot-browser-plugin/ (a Chrome extension; its own
+#              .gitignore covers machine-specific files)
 #   tooling -- scripts/ (tracked: CI and contributors need to run the checks)
 #   local   -- everything below
 

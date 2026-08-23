@@ -18,6 +18,8 @@
 
     const walk = (node) => {
       if (node.nodeType === 1) { // Node.ELEMENT_NODE
+        // Our own panels (capture, remap picker) are not the page's form.
+        if (node.id && node.id.indexOf('resumebot-') === 0) return;
         if (isFillableField(node)) {
           const fieldInfo = extractFieldInfo(node, doc, opts);
           if (fieldInfo) {
@@ -48,7 +50,9 @@
       return true;
     }
 
-    if (el.isContentEditable) {
+    // Only the editing host: in Chrome every descendant of a contenteditable
+    // element also reports isContentEditable, and a rich editor has dozens.
+    if (el.isContentEditable && !(el.parentElement && el.parentElement.isContentEditable)) {
       return true;
     }
 
@@ -293,8 +297,7 @@
 
   const api = {
     scanFields,
-    isVisible,
-    scanAndReport
+    isVisible
   };
 
   root.ResumeBot = Object.assign(root.ResumeBot || {}, { scanner: api });
@@ -303,26 +306,4 @@
     module.exports = api;
   }
 
-  // Scan and report to the service worker (badge count). main.js calls this;
-  // kept on the API for adapters that want to trigger a re-count.
-  function scanAndReport() {
-    const fields = api.scanFields(document, { frameUrl: document.URL });
-    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
-      try { chrome.runtime.sendMessage({ action: 'scanResult', fields: fields.map(f => ({ label: f.label, type: f.type })) }, () => void chrome.runtime.lastError); } catch (e) { /* ignore */ }
-    }
-    return fields;
-  }
-
-  // Raw field report for the service worker / tests. Matching + filling
-  // live in main.js (scanAndMatchFromContent, fillFromContent).
-  if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-      if (message && message.action === 'scanFromContent') {
-        const fields = api.scanFields(document, { frameUrl: document.URL });
-        sendResponse({ success: true, fields });
-        return true;
-      }
-      return false;
-    });
-  }
 })(typeof window !== "undefined" ? window : globalThis);

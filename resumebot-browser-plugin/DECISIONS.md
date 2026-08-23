@@ -8,6 +8,7 @@ To record architectural and implementation decisions made during development tha
 ## Decision Log
 
 ### 2026-07-22: Matcher Implementation Approach
+*(Historical: the namespace was `ApplyOnce` then; it is `ResumeBot` since the 2026-08-22 import. The pattern is unchanged.)*
 **Decision**: Implemented matcher as a dual-environment module that works in both Chrome extension context and Node.js test environment.
 **Rationale**: Following the established pattern from scanner.js, the matcher needs to be accessible via `window.ApplyOnce.matcher` in Chrome content scripts and via `require()` in Node.js tests. Used the IIFE pattern with `root.ApplyOnce` assignment and `module.exports` for Node compatibility.
 
@@ -50,3 +51,15 @@ To record architectural and implementation decisions made during development tha
 ### 2026-08-22: Native host launcher scripts
 **Decision**: The installers generate `run-host.sh` / `run-host.cmd` that pin the absolute path of `node` and point the native messaging manifest at that launcher, not at `host.js`.
 **Rationale**: Chrome does not inherit a login shell's PATH (nvm, Homebrew, fnm), and Windows cannot execute a `.js` file as a native host at all.
+
+### 2026-08-22: Post-import review, second pass
+**Decision**: A review of the import commit found ten confirmed defects and a round of duplication; all fixed in one commit rather than logged as follow-ups. The structural changes:
+- `content/common.js` now holds the ATS table, profile-path helpers, EEO rules, the account-creation heuristic, the navigation observer and the one `sendMessage` wrapper; the service worker `importScripts` it. Five hostname tables and five message promisifiers became one each.
+- Adapter contract narrowed: only an adapter with real widgets (Workday) has `handles`/`fillField`; Greenhouse, Lever and iCIMS carry a selector map and an observer. The unreachable per-adapter fill fallbacks (which also probed a `filler.fill` that never existed) are gone.
+- capture.js takes the profile, qa-memory and a `persist` callback from main.js and never reads `chrome.storage` itself; it no longer lists password or hidden fields, an untouched checkbox is "no answer", review rows report back so `timesUsed`/`reviewBeforeFill` update, and the closed shadow root is no longer re-exposed (the scanner also skips `resumebot-*` containers).
+- EEO: an empty profile value now falls through to qa-memory in the matcher, so a "decline" answered once in the capture panel is reused; the Options "prefer not to answer" flags resolve to the decline option via aliases.
+- `setSiteRegistry` merges at the top level (Options used to wipe `domains` and `fieldOverrides` on every save); `qaUpsertMany` replaces N round trips.
+- `fillCredentials` carries the hostname and a frame on another origin fills nothing; the native host checks the `chrome-extension://` origin Chrome passes in argv against `config.json`'s `extensionId` and refuses other callers.
+- install.ps1 had an invalid regex on the backslash-escaping line (blank manifest path) and wrote a BOM; it now uses `ConvertTo-Json` and BOM-less writes, and host.js tolerates a BOM anyway.
+- Scan work is proportional again: synonyms and labels are tokenized once per page, company candidates once per document, the DOM walk overlaps the store round trips, and the scan payload no longer carries the resume bytes into every frame.
+**Rationale**: Each of these was a bug a user would hit on the first real application (wiped remaps, a password in plaintext memory, a Windows install that cannot work) or a duplication that had already drifted. Fixing them before any live run is cheaper than finding them on a Workday tenant.

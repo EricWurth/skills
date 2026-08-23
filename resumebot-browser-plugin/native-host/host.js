@@ -23,18 +23,34 @@ const fs = require("fs");
 const path = require("path");
 
 let client = null;
-let config = { accountName: "", vaultId: "" };
+let config = { accountName: "", vaultId: "", extensionId: "" };
 
 function loadConfig() {
   const configPath = path.join(__dirname, "config.json");
   if (fs.existsSync(configPath)) {
     try {
-      config = { ...config, ...JSON.parse(fs.readFileSync(configPath, "utf8")) };
+      // Tolerate a UTF-8 BOM: editors on Windows add one.
+      const text = fs.readFileSync(configPath, "utf8").replace(/^﻿/, "");
+      config = { ...config, ...JSON.parse(text) };
     } catch (e) {
       console.error(`[host] config.json unreadable: ${e.message}`);
     }
   }
   return config;
+}
+
+// Chrome launches the host with the calling extension's origin as an
+// argument (chrome-extension://<id>/ on every platform; Windows adds
+// --parent-window=). The manifest's allowed_origins already gates Chrome,
+// but nothing stops another local process from starting this script and
+// asking for credentials, so the host checks the origin itself and refuses
+// to serve when it is missing or not the installed extension.
+function callerAllowed(argv) {
+  if (process.env.RESUMEBOT_TEST_MODE === "true") return true;
+  const origin = (argv || []).find(a => /^chrome-extension:\/\//.test(a));
+  if (!origin) return false;
+  if (!config.extensionId) return true; // pre-1.2 config: Chrome's allowlist is the only gate
+  return origin === `chrome-extension://${config.extensionId}/`;
 }
 
 async function getClient() {
@@ -228,6 +244,11 @@ async function handleGet(itemId) {
 
 async function main() {
   loadConfig();
+  if (!callerAllowed(process.argv.slice(2))) {
+    console.error("[host] refusing: not launched by the installed extension");
+    writeMessage({ error: "unauthorized_caller" });
+    process.exit(2);
+  }
   console.error("[host] starting");
 
   while (true) {

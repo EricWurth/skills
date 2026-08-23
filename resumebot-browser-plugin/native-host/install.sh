@@ -73,7 +73,8 @@ CONFIG_FILE="$SCRIPT_DIR/config.json"
 cat > "$CONFIG_FILE" <<CONFIG
 {
   "accountName": "$ACCOUNT_NAME",
-  "vaultId": "$VAULT_ID"
+  "vaultId": "$VAULT_ID",
+  "extensionId": "$EXTENSION_ID"
 }
 CONFIG
 

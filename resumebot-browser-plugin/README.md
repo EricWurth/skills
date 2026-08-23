@@ -130,8 +130,12 @@ failing; unlock and retry.
 
 ```bash
 npm install
-npm test          # node --test, jsdom; 119 tests
+npm test          # node --test, jsdom; 129 tests
 ```
+
+The suite runs in a `node:22` container in CI (`.github/workflows/build.yml`)
+and in the same image locally; no global Node install is assumed. A
+`package-lock.json` is committed for `npm ci`.
 
 Layout:
 
@@ -140,12 +144,13 @@ extension/
   manifest.json
   service-worker.js      storage, message router, frame fan-out, badge, command, context menu, native bridge
   content/
+    common.js            ATS table, profile-path + EEO helpers, navigation observer (loads first; the service worker imports it too)
     normalize.js         question normalization + SHA-1 keys
     scanner.js           field discovery + label resolution
     matcher.js           override → adapter → attribute → label/qa-memory
     filler.js            React-safe value injection
     capture.js           ask-once panel
-    main.js              orchestrator (runs last; handles fill/scan/credential/remap messages)
+    main.js              orchestrator (runs last; the only content module that talks to chrome.*)
     synonyms.json        attribute dictionary (editable without code changes)
     ats/                 detect.js + one adapter per platform
   popup/                 status, fill, grant, 1Password buttons

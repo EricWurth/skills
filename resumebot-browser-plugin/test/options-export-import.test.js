@@ -281,22 +281,21 @@ describe('Options Export/Import', () => {
     const setSiteRegistryMsg = messages.find(msg => msg.action === 'setSiteRegistry');
     assert.ok(setSiteRegistryMsg, 'setSiteRegistry should be called');
     
-    // Verify that qaUpsert was called for each entry
-    const qaUpsertMsgs = messages.filter(msg => msg.action === 'qaUpsert');
-    assert.strictEqual(qaUpsertMsgs.length, 2, 'Should upsert 2 QA entries');
-    
-    // Check first upsert (new entry)
-    const firstUpsert = qaUpsertMsgs[0];
-    assert.ok(firstUpsert.entry.question === 'Imported question 1?' || firstUpsert.entry.question === 'Updated existing question?');
-    
-    // Check second upsert (existing entry - should have updated values)
-    const secondUpsert = qaUpsertMsgs.find(msg => msg.entry.key === 'existing-hash');
-    assert.ok(secondUpsert, 'Should upsert existing hash with updated values');
-    assert.strictEqual(secondUpsert.entry.question, 'Updated existing question?');
-    assert.strictEqual(secondUpsert.entry.answer, 'Updated existing answer.');
-    assert.strictEqual(secondUpsert.entry.timesUsed, 10);
-    assert.strictEqual(secondUpsert.entry.firstSeen.date, '2026-07-23');
-    assert.strictEqual(secondUpsert.entry.reviewBeforeFill, true);
+    // All imported QA entries go up in one qaUpsertMany (one read-modify-write)
+    const many = messages.filter(msg => msg.action === 'qaUpsertMany');
+    assert.strictEqual(many.length, 1, 'Should send one qaUpsertMany');
+    const entries = many[0].entries;
+    assert.strictEqual(entries.length, 2, 'Should upsert 2 QA entries');
+    assert.ok(entries[0].question === 'Imported question 1?' || entries[0].question === 'Updated existing question?');
+
+    // Existing entry carries the imported (updated) values
+    const existing = entries.find(e => e.key === 'existing-hash');
+    assert.ok(existing, 'Should upsert existing hash with updated values');
+    assert.strictEqual(existing.question, 'Updated existing question?');
+    assert.strictEqual(existing.answer, 'Updated existing answer.');
+    assert.strictEqual(existing.timesUsed, 10);
+    assert.strictEqual(existing.firstSeen.date, '2026-07-23');
+    assert.strictEqual(existing.reviewBeforeFill, true);
     
     // Verify saved message was shown
     const savedMessage = document.getElementById('saved-message');

@@ -6,6 +6,7 @@ const { describe, it, beforeEach, afterEach } = require('node:test');
 const assert = require('node:assert/strict');
 const { JSDOM } = require('jsdom');
 const { createChromeMock } = require('./helpers/chrome-mock');
+const common = require('../extension/content/common.js');
 
 function loadFresh(modulePath) {
   delete require.cache[require.resolve(modulePath)];
@@ -40,7 +41,7 @@ describe('Credential Flow', () => {
           <input type="password" id="confirm-password" />
           <button type="submit">Submit</button>
         </form>`);
-      assert.strictEqual(serviceWorker.isAccountCreationPage(fields), true);
+      assert.strictEqual(common.isAccountCreationPage(fields), true);
     });
 
     it('should detect form text with account creation keywords', () => {
@@ -52,7 +53,7 @@ describe('Credential Flow', () => {
           <input type="password" id="password" />
           <button type="submit">Sign Up</button>
         </form>`);
-      assert.strictEqual(serviceWorker.isAccountCreationPage(fields), true);
+      assert.strictEqual(common.isAccountCreationPage(fields), true);
     });
 
     it('should not detect plain login forms', () => {
@@ -64,7 +65,7 @@ describe('Credential Flow', () => {
           <input type="password" id="password" />
           <button type="submit">Log In</button>
         </form>`);
-      assert.strictEqual(serviceWorker.isAccountCreationPage(fields), false);
+      assert.strictEqual(common.isAccountCreationPage(fields), false);
     });
   });
 
@@ -124,6 +125,18 @@ describe('Credential Flow', () => {
       // Defaults are layered under whatever was stored.
       assert.deepStrictEqual(second.data.atsOverrides, []);
       assert.deepStrictEqual(second.data.fieldOverrides, {});
+    });
+
+    it('a partial setSiteRegistry (Options saving atsOverrides) keeps domains and remaps', async () => {
+      await chrome._dispatchMessage({ action: 'setSiteRegistry', data: {
+        domains: { 'acme.myworkdayjobs.com': { hasCredential: true, opItemId: 'op1', ats: 'workday' } },
+        fieldOverrides: { workday: { 'textfield-custom': 'identity.linkedin' } }
+      } });
+      await chrome._dispatchMessage({ action: 'setSiteRegistry', data: { atsOverrides: [{ atsType: 'workday', domainPattern: 'jobs.acme.com' }] } });
+      const r = await chrome._dispatchMessage({ action: 'getSiteRegistry' });
+      assert.strictEqual(r.data.domains['acme.myworkdayjobs.com'].opItemId, 'op1');
+      assert.strictEqual(r.data.fieldOverrides.workday['textfield-custom'], 'identity.linkedin');
+      assert.strictEqual(r.data.atsOverrides.length, 1);
     });
   });
 

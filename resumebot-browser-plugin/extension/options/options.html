@@ -408,13 +408,7 @@
       <!-- ATS override rows will be inserted here -->
     </div>
     <div>
-      <select id="ats-type-select">
-        <option value="">-- Select ATS Type --</option>
-        <option value="workday">Workday</option>
-        <option value="greenhouse">Greenhouse</option>
-        <option value="lever">Lever</option>
-        <option value="icims">ICIMS</option>
-      </select>
+      <select id="ats-type-select"></select>
       <input type="text" id="ats-domain-input" placeholder="Domain pattern (e.g., company.myworkdayjobs.com)">
       <button type="button" id="add-ats-override" class="add-row">Add Override</button>
     </div>
@@ -462,6 +456,7 @@
     <div class="saved" id="saved-message">Saved!</div>
   </div>
   
+  <script src="../content/common.js"></script>
   <script src="options.js"></script>
 </body>
 </html>

@@ -376,9 +376,13 @@
   };
 
   // --- Helper functions ---
+  function common() {
+    return (root.ResumeBot && root.ResumeBot.common) ||
+      (typeof require === "function" ? require("./common.js") : null);
+  }
+
   function normalizeString(str) {
     if (!str) return "";
-    // Lowercase, remove punctuation (keep alphanumeric and space), collapse whitespace
     return str.toLowerCase()
       .replace(/[^a-z0-9\s]/g, "")
       .replace(/\s+/g, " ")
@@ -391,10 +395,11 @@
   }
 
   function tokenSetOverlapRatio(set1, set2) {
-    if (set1.size === 0 && set2.size === 0) return 1.0; // both empty
-    const intersection = new Set([...set1].filter(x => set2.has(x)));
-    const union = new Set([...set1, ...set2]);
-    return intersection.size / union.size;
+    if (set1.size === 0 && set2.size === 0) return 1.0;
+    let intersection = 0;
+    for (const x of set1) if (set2.has(x)) intersection++;
+    const union = set1.size + set2.size - intersection;
+    return union === 0 ? 0 : intersection / union;
   }
 
   // Split an attribute value into lowercase word tokens: camelCase, kebab,
@@ -409,28 +414,51 @@
       .filter(Boolean);
   }
 
-  // Tier 1 comparison. A synonym matches an attribute when it equals the
-  // attribute (1.0), or equals a contiguous run of the attribute's tokens
-  // (0.9). The old "substring in either direction" rule matched `end` inside
-  // `gender` and `tel` inside `hotel`; token boundaries stop that.
-  function attrMatchesSynonym(attrValue, synonym) {
-    const tokens = attrTokens(attrValue);
-    if (tokens.length === 0) return 0;
-    const joined = tokens.join("");
-    const syn = attrTokens(synonym).join("");
-    if (!syn) return 0;
-    if (joined === syn) return 1.0;
-    if (syn.length < 4) return 0;
+  // Tokenized view of an attribute value, computed once per value.
+  function attrView(value) {
+    const tokens = attrTokens(value);
     const boundaries = new Set([0]);
     let acc = 0;
     for (const t of tokens) { acc += t.length; boundaries.add(acc); }
-    let idx = joined.indexOf(syn);
+    return { joined: tokens.join(""), boundaries };
+  }
+
+  // A synonym matches an attribute when it equals the attribute (1.0), or
+  // equals a contiguous run of the attribute's tokens (0.9). The old
+  // "substring in either direction" rule matched `end` inside `gender`
+  // and `tel` inside `hotel`; token boundaries stop that.
+  function viewMatchesSyn(view, syn) {
+    if (!syn || !view.joined) return 0;
+    if (view.joined === syn) return 1.0;
+    if (syn.length < 4) return 0;
+    let idx = view.joined.indexOf(syn);
     while (idx !== -1) {
-      if (boundaries.has(idx) && boundaries.has(idx + syn.length)) return 0.9;
-      idx = joined.indexOf(syn, idx + 1);
+      if (view.boundaries.has(idx) && view.boundaries.has(idx + syn.length)) return 0.9;
+      idx = view.joined.indexOf(syn, idx + 1);
     }
     return 0;
   }
+
+  function attrMatchesSynonym(attrValue, synonym) {
+    return viewMatchesSyn(attrView(attrValue), attrTokens(synonym).join(""));
+  }
+
+  // Pre-tokenized dictionaries, cached per dictionary object so the
+  // synonym list is tokenized once per page, not once per field.
+  const dictCache = new WeakMap();
+  function compiledSynonyms(dict) {
+    let c = dictCache.get(dict);
+    if (!c) {
+      c = [];
+      for (const [profilePath, syns] of Object.entries(dict)) {
+        for (const synonym of syns) c.push({ profilePath, syn: attrTokens(synonym).join("") });
+      }
+      dictCache.set(dict, c);
+    }
+    return c;
+  }
+  const LABEL_TOKENS = Object.entries(LABELS_MAP).map(([profilePath, labels]) =>
+    ({ profilePath, sets: labels.map(tokenSet) }));
 
   // Stable identity for a field on a given ATS, used by the remap override
   // map. Prefers the most specific attribute, falls back to the label.
@@ -457,12 +485,28 @@
     };
   }
 
+  // qa-memory lookup for a field: exact normalized question, then fuzzy.
+  function qaLookup(field, labelSet, qa) {
+    if (field.questionNormalized) {
+      const exact = qa.entries.find(e => e.questionNormalized && e.questionNormalized === field.questionNormalized);
+      if (exact) return qaMatch(exact, 1.0, 2, "qa-memory");
+    }
+    let best = null;
+    for (let i = 0; i < qa.entries.length; i++) {
+      const ratio = tokenSetOverlapRatio(labelSet, qa.sets[i]);
+      if (ratio >= 0.75 && (!best || ratio > best.confidence)) best = qaMatch(qa.entries[i], ratio, 2, "qa-memory");
+    }
+    return best;
+  }
+
   // --- Main matching function ---
   /**
    * Match scanned fields against profile and qa-memory. First match wins:
    * override map -> adapter selector map -> attributes -> labels/qa-memory.
+   * An EEO field whose profile value is empty falls through to qa-memory so
+   * a "decline to self-identify" captured once is reused, never guessed.
    * @param {Array<Object>} fields - Array of field objects from scanner.scanFields
-   * @param {Object} profile - The user's profile object (from chrome.storage.local)
+   * @param {Object} profile - The user's profile object
    * @param {Object} qaMemory - The qa-memory object ({ entries: [...] })
    * @param {Object} [opts]
    * @param {Object} [opts.synonyms]   - attribute synonym dictionary (defaults to the built-in one)
@@ -473,16 +517,19 @@
   function matchFields(fields, profile, qaMemory, opts) {
     if (!fields || !Array.isArray(fields)) return [];
     opts = opts || {};
-    const synonyms = opts.synonyms || SYNONYMS;
+    const synonyms = compiledSynonyms(opts.synonyms || SYNONYMS);
     const overrides = opts.overrides || {};
     const tier0 = Array.isArray(opts.tier0) ? opts.tier0 : [];
     const entries = qaMemory && Array.isArray(qaMemory.entries) ? qaMemory.entries : [];
+    const qa = { entries, sets: entries.map(e => tokenSet(e.questionNormalized || "")) };
+    const c = common();
 
     const results = [];
 
     for (let i = 0; i < fields.length; i++) {
       const field = fields[i];
       const isFile = field.type === "file";
+      const labelSet = field.label ? tokenSet(field.label) : new Set();
       let match = null;
 
       // --- Tier 0a: user remap override for this ATS (always wins) ---
@@ -505,25 +552,18 @@
       // --- Tier 1: attribute matching ---
       if (!match) {
         const attrs = field.attributes || {};
-        const attributesToCheck = [
-          attrs.autocomplete,
-          attrs.name,
-          attrs.id,
-          attrs["data-automation-id"]
-        ];
+        const attributesToCheck = [attrs.autocomplete, attrs.name, attrs.id, attrs["data-automation-id"]];
         let best = null;
         for (const attrValue of attributesToCheck) {
           if (!attrValue) continue;
-          for (const [profilePath, syns] of Object.entries(synonyms)) {
+          const view = attrView(attrValue);
+          for (const { profilePath, syn } of synonyms) {
             if (isResumePath(profilePath) !== isFile) continue;
-            for (const synonym of syns) {
-              const score = attrMatchesSynonym(attrValue, synonym);
-              if (score > 0 && (!best || score > best.confidence)) {
-                best = { profilePath, tier: 1, confidence: score, source: "attribute" };
-              }
-              if (best && best.confidence === 1.0) break;
+            const score = viewMatchesSyn(view, syn);
+            if (score > 0 && (!best || score > best.confidence)) {
+              best = { profilePath, tier: 1, confidence: score, source: "attribute" };
+              if (score === 1.0) break;
             }
-            if (best && best.confidence === 1.0) break;
           }
           if (best && best.confidence === 1.0) break;
         }
@@ -531,13 +571,7 @@
       }
 
       // --- Tier 2: label matching ---
-      if (!match && field.label) {
-        const labelSet = tokenSet(field.label);
-        if (labelSet.size === 0) {
-          results.push(null);
-          continue;
-        }
-
+      if (!match && labelSet.size > 0) {
         // 2a. qa-memory, exact normalized question (the "ask once" loop)
         if (field.questionNormalized) {
           const exact = entries.find(e => e.questionNormalized && e.questionNormalized === field.questionNormalized);
@@ -546,10 +580,10 @@
 
         // 2b. profile label map
         if (!match && !isFile) {
-          for (const [profilePath, labelArray] of Object.entries(LABELS_MAP)) {
+          for (const { profilePath, sets } of LABEL_TOKENS) {
             if (isResumePath(profilePath)) continue;
-            for (const labelStr of labelArray) {
-              const ratio = tokenSetOverlapRatio(labelSet, tokenSet(labelStr));
+            for (const set of sets) {
+              const ratio = tokenSetOverlapRatio(labelSet, set);
               if (ratio >= 0.75) {
                 match = { profilePath, tier: 2, confidence: ratio, source: "label" };
                 break;
@@ -563,15 +597,13 @@
         }
 
         // 2c. qa-memory, fuzzy
-        if (!match) {
-          let best = null;
-          for (const entry of entries) {
-            if (!entry.questionNormalized) continue;
-            const ratio = tokenSetOverlapRatio(labelSet, tokenSet(entry.questionNormalized));
-            if (ratio >= 0.75 && (!best || ratio > best.confidence)) best = qaMatch(entry, ratio, 2, "qa-memory");
-          }
-          match = best;
-        }
+        if (!match) match = qaLookup(field, labelSet, qa);
+      }
+
+      // --- EEO with no profile answer: a captured answer beats "ask again" ---
+      if (match && match.profilePath && c && c.isEeoEmpty(profile, match.profilePath)) {
+        const fromMemory = qaLookup(field, labelSet, qa);
+        if (fromMemory) match = fromMemory;
       }
 
       results.push(match);
@@ -586,6 +618,8 @@
     fieldKey,
     attrTokens,
     attrMatchesSynonym,
+    tokenSet,
+    tokenSetOverlapRatio,
     SYNONYMS,
     LABELS_MAP
   };

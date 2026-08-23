@@ -82,6 +82,24 @@
     return out;
   }
 
+  // Candidates compiled once per (document, title, URL): a scan calls
+  // normalizeQuestion once per field and the page identity does not change
+  // between fields.
+  const candidateCache = new WeakMap();
+  function compiledCandidates(doc) {
+    if (!doc || typeof doc !== "object") return [];
+    const stamp = (doc.title || "") + "|" + (doc.URL || "");
+    const hit = candidateCache.get(doc);
+    if (hit && hit.stamp === stamp) return hit.list;
+    const list = companyCandidates(doc)
+      .map((c) => c.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ").trim())
+      .filter((c) => c.length > 1)
+      .sort((a, b) => b.length - a.length)
+      .map((c) => new RegExp("\\b" + c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "g"));
+    candidateCache.set(doc, { stamp, list });
+    return list;
+  }
+
   // Normalization pipeline: lowercase → strip punctuation → replace company names → collapse whitespace
   function normalizeQuestion(questionText, doc) {
     if (!questionText) return "";
@@ -92,13 +110,9 @@
     normalized = normalized.replace(/[^a-z0-9\s{}]/g, "");
 
     // Replace detected company names, longest candidate first, whole words only.
-    const candidates = companyCandidates(doc)
-      .map((c) => c.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ").trim())
-      .filter((c) => c.length > 1)
-      .sort((a, b) => b.length - a.length);
-    for (const cand of candidates) {
-      const escaped = cand.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      normalized = normalized.replace(new RegExp("\\b" + escaped + "\\b", "g"), "{company}");
+    for (const re of compiledCandidates(doc)) {
+      re.lastIndex = 0;
+      normalized = normalized.replace(re, "{company}");
     }
 
     // Collapse whitespace

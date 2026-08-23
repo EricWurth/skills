@@ -4,6 +4,12 @@
 // toolbar badge, keyboard command, context menu, and the 1Password native
 // messaging bridge. See MESSAGE-CONTRACT.md for every action's shape.
 
+// Shared vocabulary (ATS table, EEO rules, account-creation heuristic) is
+// the same file the content scripts load first.
+const common = (typeof importScripts === "function")
+  ? (importScripts("content/common.js"), self.ResumeBot.common)
+  : require("./content/common.js");
+
 const STORES = {
   PROFILE: 'profile',
   QA_MEMORY: 'qaMemory',
@@ -11,8 +17,8 @@ const STORES = {
 };
 
 const NATIVE_HOST = 'com.resumebot.op';
-const KNOWN_ATS_DOMAINS = ['myworkdayjobs.com', 'greenhouse.io', 'lever.co', 'icims.com'];
 const CONTENT_SCRIPTS = [
+  'content/common.js',
   'content/normalize.js',
   'content/scanner.js',
   'content/matcher.js',
@@ -139,6 +145,18 @@ async function qaUpsert(entry) {
   await setStore(STORES.QA_MEMORY, qaMemory);
 }
 
+// Capture panel submits several answers at once; one read-modify-write.
+async function qaUpsertMany(entries) {
+  if (!Array.isArray(entries) || entries.length === 0) return;
+  const qaMemory = await getStore(STORES.QA_MEMORY);
+  for (const entry of entries) {
+    if (!entry || !entry.key) continue;
+    const i = qaMemory.entries.findIndex(e => e.key === entry.key);
+    if (i >= 0) qaMemory.entries[i] = entry; else qaMemory.entries.push(entry);
+  }
+  await setStore(STORES.QA_MEMORY, qaMemory);
+}
+
 async function qaList() {
   const qaMemory = await getStore(STORES.QA_MEMORY);
   return qaMemory.entries;
@@ -187,8 +205,11 @@ async function getSiteRegistry() {
   return await getStore(STORES.SITE_REGISTRY);
 }
 
+// Merge at the top level: a caller that only knows about one key (Options
+// edits atsOverrides) must not wipe domains or fieldOverrides.
 async function setSiteRegistry(data) {
-  await setStore(STORES.SITE_REGISTRY, data);
+  const current = await getStore(STORES.SITE_REGISTRY);
+  await setStore(STORES.SITE_REGISTRY, { ...current, ...(data || {}) });
 }
 
 // --- 1Password native messaging ---------------------------------------------
@@ -237,36 +258,15 @@ function sendNativeMessage(message, timeoutMs = NATIVE_TIMEOUT_MS) {
   });
 }
 
-/**
- * Determine if field data indicates an account creation page
- * @param {Array<Object>} fields - Array of field objects from scanner
- * @returns {boolean} True if this appears to be an account creation page
- */
-function isAccountCreationPage(fields) {
-  if (!fields || !Array.isArray(fields)) return false;
-
-  const passwordFields = fields.filter(f => f.type === 'password');
-  if (passwordFields.length >= 2) {
-    return true;
-  }
-
-  const formText = fields
-    .map(f => f.label || '')
-    .join(' ')
-    .toLowerCase();
-  const accountCreationPatterns = [
-    /create.{0,20}account/i,
-    /sign.{0,5}up/i,
-    /register/i
-  ];
-  return accountCreationPatterns.some(pattern => pattern.test(formText));
-}
+// The host only tells us "locked" when asked; remember the last answer so
+// the popup can show "approve in 1Password" before the next click.
+let nativeLocked = false;
 
 function nativeResult(promise) {
   return promise
-    .then(response => ({ success: true, ...response }))
+    .then(response => { nativeLocked = false; return { success: true, ...response }; })
     .catch(error => {
-      if (error && error.locked) return { success: true, locked: true };
+      if (error && error.locked) { nativeLocked = true; return { success: true, locked: true }; }
       return { success: false, error: error && error.message || String(error) };
     });
 }
@@ -332,14 +332,7 @@ function hostnameOf(url) {
   try { return new URL(url).hostname.toLowerCase(); } catch (e) { return ''; }
 }
 
-function atsFromHostname(hostname) {
-  if (!hostname) return null;
-  if (hostname.includes('myworkdayjobs.com')) return 'workday';
-  if (hostname.includes('greenhouse.io')) return 'greenhouse';
-  if (hostname.includes('lever.co')) return 'lever';
-  if (hostname.includes('icims.com')) return 'icims';
-  return null;
-}
+const atsFromHostname = common.atsFromHostname;
 
 // --- Badge --------------------------------------------------------------------------
 // Each frame reports its own count; the badge shows the tab's total.
@@ -381,9 +374,12 @@ async function scanActiveTab() {
   const [profile, qaMemory, siteRegistry] = await Promise.all([
     getStore(STORES.PROFILE), getStore(STORES.QA_MEMORY), getStore(STORES.SITE_REGISTRY)
   ]);
+  // Matching needs to know a resume exists, not its bytes; don't clone
+  // hundreds of KB into every frame.
+  const lean = { ...profile, documents: { ...(profile.documents || {}), resume: { ...((profile.documents || {}).resume || {}), base64: (profile.documents && profile.documents.resume && profile.documents.resume.base64) ? '1' : '' } } };
   const results = await broadcast(tab.id, {
     action: 'scanAndMatchFromContent',
-    profile,
+    profile: lean,
     qaMemory: qaMemory.entries,
     siteRegistry
   });
@@ -401,7 +397,9 @@ async function scanActiveTab() {
   }
   ats = ats || atsFromHostname(hostnameOf(tab.url));
   lastScanResult = { ats, fieldCount: fields.length, matchCount: matches.filter(Boolean).length, timestamp: Date.now() };
-  updateBadge(tab.id, undefined, fields.length);
+  for (const { frameId, response } of results) {
+    if (response && response.success) updateBadge(tab.id, frameId, (response.fields || []).length);
+  }
   return { success: true, fields, matches, ats };
 }
 
@@ -450,7 +448,7 @@ async function getStatus() {
   let url = null;
   try { url = tab.url ? new URL(tab.url) : null; } catch (e) { url = null; }
   const hostname = url ? url.hostname.toLowerCase() : '';
-  const isKnownAts = KNOWN_ATS_DOMAINS.some(domain => hostname.includes(domain));
+  const isKnownAts = common.isKnownAtsHost(hostname);
 
   // Known ATS domains are auto-granted via manifest.json's required
   // host_permissions. Everything else needs an actual check:
@@ -464,7 +462,7 @@ async function getStatus() {
   try {
     const siteRegistry = await getSiteRegistry();
     const site = siteRegistry.domains && siteRegistry.domains[hostname];
-    status.credentialStatus = { hasCredential: !!(site && site.hasCredential), locked: false };
+    status.credentialStatus = { hasCredential: !!(site && site.hasCredential), locked: nativeLocked };
   } catch (e) { /* keep defaults */ }
   status.needsPermission = !hasPermission && !isKnownAts;
   status.ats = status.ats || atsFromHostname(hostname);
@@ -494,7 +492,7 @@ async function createLoginForActiveTab(title) {
   const created = await create1PasswordCredential(hostname, username, title || `${hostname} (job application)`);
   if (!created.success || created.locked) return created;
 
-  const fills = await broadcast(tab.id, { action: 'fillCredentials', username, password: created.password });
+  const fills = await broadcast(tab.id, { action: 'fillCredentials', username, password: created.password, hostname });
   const filled = fills.reduce((n, r) => n + ((r.response && r.response.filled) || 0), 0);
 
   const reg = await getSiteRegistry();
@@ -527,7 +525,7 @@ async function fillLoginForActiveTab() {
   }
   const cred = await get1PasswordCredential(site.opItemId);
   if (!cred.success || cred.locked) return cred;
-  const fills = await broadcast(tab.id, { action: 'fillCredentials', username: cred.username, password: cred.password });
+  const fills = await broadcast(tab.id, { action: 'fillCredentials', username: cred.username, password: cred.password, hostname });
   const filled = fills.reduce((n, r) => n + ((r.response && r.response.filled) || 0), 0);
   return { success: true, filled };
 }
@@ -571,6 +569,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return ok(sendResponse, qaGet(message.key), data => ({ success: true, data }));
     case 'qaUpsert':
       return ok(sendResponse, qaUpsert(message.entry));
+    case 'qaUpsertMany':
+      return ok(sendResponse, qaUpsertMany(message.entries));
     case 'qaList':
       return ok(sendResponse, qaList(), data => ({ success: true, data: { entries: data } }));
     case 'qaDelete':
@@ -582,7 +582,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     case 'getSiteRegistry':
       return ok(sendResponse, getStore(STORES.SITE_REGISTRY), data => ({ success: true, data }));
     case 'setSiteRegistry':
-      return ok(sendResponse, setStore(STORES.SITE_REGISTRY, message.data));
+      return ok(sendResponse, setSiteRegistry(message.data));
 
     // 1Password primitives
     case 'check1PasswordCredential':
@@ -608,7 +608,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     // content script -> badge
     case 'scanResult': {
-      const count = Array.isArray(message.fields) ? message.fields.length : 0;
+      const count = typeof message.count === 'number' ? message.count
+        : Array.isArray(message.fields) ? message.fields.length : 0;
       const tabId = sender && sender.tab ? sender.tab.id : undefined;
       updateBadge(tabId, sender ? sender.frameId : undefined, count);
       if (message.ats && (!sender || !sender.frameId)) lastScanResult.ats = message.ats;
@@ -664,11 +665,12 @@ if (typeof module !== "undefined" && module.exports) {
     qaDelete,
     incrementTimesUsed,
     qaAddAlias,
+    qaUpsertMany,
+    setSiteRegistry,
     sendNativeMessage,
     check1PasswordCredential,
     create1PasswordCredential,
     get1PasswordCredential,
-    isAccountCreationPage,
     atsFromHostname,
     updateBadge
   };

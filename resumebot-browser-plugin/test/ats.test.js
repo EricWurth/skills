@@ -9,6 +9,8 @@ import detectModule from '../extension/content/ats/detect.js';
 import greenhouseAdapter from '../extension/content/ats/greenhouse.js';
 import leverAdapter from '../extension/content/ats/lever.js';
 import genericAdapter from '../extension/content/ats/generic.js';
+import workdayAdapter from '../extension/content/ats/workday.js';
+import icimsAdapter from '../extension/content/ats/icims.js';
 
 // Set up File and DataTransfer constructors for each test
     beforeEach(() => {
@@ -256,18 +258,17 @@ describe('Lever Adapter', () => {
 
   it('should have selector map with expected keys', () => {
     const adapter = leverAdapter.lever();
-    assert.ok(adapter.selectorMap.hasOwnProperty('identity.firstName'));
-    assert.ok(adapter.selectorMap.hasOwnProperty('identity.lastName'));
+    assert.ok(adapter.selectorMap.hasOwnProperty('identity.fullName'));
     assert.ok(adapter.selectorMap.hasOwnProperty('identity.email'));
     assert.ok(adapter.selectorMap.hasOwnProperty('identity.phone'));
     assert.ok(adapter.selectorMap.hasOwnProperty('documents.resume.filename'));
     assert.ok(adapter.selectorMap.hasOwnProperty('identity.linkedin'));
     assert.ok(adapter.selectorMap.hasOwnProperty('identity.website'));
-    assert.ok(adapter.selectorMap.hasOwnProperty('work.org'));
+    assert.ok(adapter.selectorMap.hasOwnProperty('employment.0.company'));
 
-    // Lever special case: firstName and lastName should be null (handled specially)
-    assert.strictEqual(adapter.selectorMap['identity.firstName'], null);
-    assert.strictEqual(adapter.selectorMap['identity.lastName'], null);
+    // Lever has one name field: it maps to the derived identity.fullName, not first/last.
+    assert.ok(adapter.selectorMap['identity.fullName']);
+    assert.strictEqual(adapter.selectorMap['identity.firstName'], undefined);
   });
 });
 
@@ -287,11 +288,10 @@ describe('Generic Adapter', () => {
     assert.deepStrictEqual(adapter.selectorMap, {});
   });
 
-  it('should have no-op fillField', () => {
+  it('carries no fillField: the generic filler sets every value', () => {
     const adapter = genericAdapter.generic();
-    assert.strictEqual(typeof adapter.fillField, 'function');
-    // Should not throw when called
-    assert.doesNotThrow(() => adapter.fillField(null, 'test', {}));
+    assert.strictEqual(adapter.fillField, undefined);
+    assert.strictEqual(adapter.fillDelayMs, 0);
   });
 
   it('should have no-op onNavigation', () => {
@@ -303,83 +303,24 @@ describe('Generic Adapter', () => {
   });
 });
 
-describe('Resume Injection', () => {
-  it('should handle file input in Greenhouse adapter', () => {
-    global.dom = new JSDOM(`<!DOCTYPE html><html><body>
-      <div id="grnhse_app">
-        <input type="file" name="resume" />
-      </div>
-    </body></html>`, { 
-      url: 'http://localhost',
-      pretendToBeVisual: true 
-    });
-    global.window = global.dom.window;
-    global.document = global.dom.window.document;
-    global.window.File = global.File;
-    global.window.DataTransfer = global.DataTransfer;
-    window.ResumeBot = window.ResumeBot || {};
-    const adapter = greenhouseAdapter.greenhouse();
-    const fileInput = global.document.querySelector('input[type="file"][name="resume"]');
-
-    const ctx = {
-      fileData: {
-        filename: 'resume.pdf',
-        mime: 'application/pdf',
-        bytes: [1, 2, 3, 4]
-      },
-      filler: {
-        attachFile: (input, fileData, deps) => {
-          // Verify it was called with correct parameters
-          assert.strictEqual(input, fileInput);
-          assert.strictEqual(fileData.filename, 'resume.pdf');
-          assert.strictEqual(fileData.mime, 'application/pdf');
-          assert.ok(deps.File);
-          assert.ok(deps.DataTransfer);
-          return true;
-        }
-      }
-    };
-
-    const result = adapter.fillField(fileInput, '', ctx);
-    assert.strictEqual(result, true);
+describe('Adapter contract', () => {
+  // main.js routes to adapter.fillField only when adapter.handles(el) says
+  // so; an adapter without widgets must not carry a fillField that can
+  // never run (two of them used to, and drifted from the real filler).
+  it('only Workday declares widgets', () => {
+    const workday = workdayAdapter.workday();
+    assert.strictEqual(typeof workday.handles, 'function');
+    assert.strictEqual(typeof workday.fillField, 'function');
+    for (const a of [greenhouseAdapter.greenhouse(), leverAdapter.lever(), icimsAdapter.icims()]) {
+      assert.strictEqual(a.handles, undefined, a.name);
+      assert.strictEqual(a.fillField, undefined, a.name);
+      assert.strictEqual(typeof a.onNavigation, 'function', a.name);
+      assert.ok(a.selectorMap['documents.resume.filename'], a.name + ' maps the resume input');
+    }
   });
 
-  it('should handle file input in Lever adapter', () => {
-    global.dom = new JSDOM(`<!DOCTYPE html><html><body>
-      <div class="application-form">
-        <input type="file" id="resume" />
-      </div>
-    </body></html>`, { 
-      url: 'http://localhost',
-      pretendToBeVisual: true 
-    });
-    global.window = global.dom.window;
-    global.document = global.dom.window.document;
-    global.window.File = global.File;
-    global.window.DataTransfer = global.DataTransfer;
-    window.ResumeBot = window.ResumeBot || {};
+  it('Lever maps its single name field to the derived identity.fullName', () => {
     const adapter = leverAdapter.lever();
-    const fileInput = global.document.querySelector('input[type="file"][id="resume"]');
-
-    const ctx = {
-      fileData: {
-        filename: 'cv.pdf',
-        mime: 'application/pdf',
-        bytes: [5, 6, 7, 8]
-      },
-      filler: {
-        attachFile: (input, fileData, deps) => {
-          assert.strictEqual(input, fileInput);
-          assert.strictEqual(fileData.filename, 'cv.pdf');
-          assert.strictEqual(fileData.mime, 'application/pdf');
-          assert.ok(deps.File);
-          assert.ok(deps.DataTransfer);
-          return true;
-        }
-      }
-    };
-
-    const result = adapter.fillField(fileInput, '', ctx);
-    assert.strictEqual(result, true);
+    assert.ok(/name='name'/.test(adapter.selectorMap['identity.fullName']));
   });
 });

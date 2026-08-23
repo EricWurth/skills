@@ -93,7 +93,26 @@ function createChromeMock() {
     },
     tabs: {
       query(_info, cb) { cb([]); },
-      sendMessage(_tabId, _msg, cb) { if (cb) cb(undefined); }
+      // Chrome's signature is (tabId, message, options?, callback?) — accept
+      // both arities like the real API. Tests can install `_frameHandler`
+      // to answer per-frame messages as a content script would.
+      sendMessage(_tabId, msg, optionsOrCb, maybeCb) {
+        const cb = typeof optionsOrCb === "function" ? optionsOrCb : maybeCb;
+        const options = typeof optionsOrCb === "object" && optionsOrCb ? optionsOrCb : {};
+        const handler = chrome._frameHandler;
+        if (handler) {
+          Promise.resolve(handler(msg, options.frameId === undefined ? 0 : options.frameId)).then(
+            (r) => { if (cb) cb(r); },
+            () => { if (cb) cb(undefined); }
+          );
+          return;
+        }
+        if (cb) cb(undefined);
+      },
+      onRemoved: { addListener() {} }
+    },
+    webNavigation: {
+      getAllFrames(_info, cb) { cb((chrome._frames || [0]).map(frameId => ({ frameId }))); }
     },
     contextMenus: {
       create() {},
@@ -107,6 +126,8 @@ function createChromeMock() {
       setBadgeBackgroundColor() {}
     },
     // Test helpers (not part of the chrome API)
+    _frameHandler: null,   // (message, frameId) => response, for tabs.sendMessage
+    _frames: null,         // frame ids webNavigation.getAllFrames reports
     _store: store,
     _messageListeners: messageListeners,
     _dispatchMessage(message, sender) {

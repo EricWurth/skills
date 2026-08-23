@@ -1,9 +1,8 @@
 // icims.js
-// iCIMS ATS adapter. iCIMS renders the application inside an iframe on
-// *.icims.com with conventional <input>/<select> controls, so the generic
-// React-safe filler does the work; this adapter only contributes a selector
-// map for the fields whose names never match the synonym dictionary, plus
-// SPA re-scan on step changes.
+// iCIMS adapter. The application renders inside an iframe on *.icims.com
+// with conventional controls, so the generic filler does the work; this
+// adapter contributes a selector map for names that never match the
+// synonym dictionary, plus step re-scan.
 (function (root) {
   "use strict";
   function icims() {
@@ -23,32 +22,13 @@
       return !!doc.querySelector(".icims-widget, #icimsContent, [class*='iCIMS'], form[action*='icims']");
     }
 
-    function handles() {
-      return false;
-    }
-
-    function fillField(el, value, ctx) {
-      if (ctx && ctx.filler && ctx.filler.classify && ctx.filler.fillField) {
-        return ctx.filler.fillField(ctx.filler.classify({ input: el }), value, ctx.profile || {}, { delayMs: 50 });
-      }
-      return false;
-    }
-
     function onNavigation(cb) {
-      if (typeof MutationObserver === "undefined" || !root.document || !root.document.body) return () => {};
-      let pending = null;
-      const observer = new MutationObserver((mutations) => {
-        let big = 0;
-        for (const m of mutations) big += m.addedNodes.length + m.removedNodes.length;
-        if (big < 20) return;
-        clearTimeout(pending);
-        pending = setTimeout(cb, 300);
-      });
-      observer.observe(root.document.body, { childList: true, subtree: true });
-      return () => observer.disconnect();
+      const common = root.ResumeBot && root.ResumeBot.common;
+      if (!common || !root.document || !root.document.body) return () => {};
+      return common.observeBigChanges(root.document.body, cb);
     }
 
-    return { name: "icims", detect, handles, selectorMap, fillField, onNavigation };
+    return { name: "icims", detect, selectorMap, fillDelayMs: 0, onNavigation };
   }
 
   const api = { icims };

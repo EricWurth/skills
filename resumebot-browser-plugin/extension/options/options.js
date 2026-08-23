@@ -66,10 +66,13 @@
   const atsDomainInput = document.getElementById('ats-domain-input');
   const addAtsOverrideButton = document.getElementById('add-ats-override');
 
-  // Send message to service worker and return promise
-  function sendMessage(action, data = null) {
+  // Send a message to the service worker. `fields` are spread onto the
+  // message at the top level; see extension/MESSAGE-CONTRACT.md for which
+  // action reads which field (setProfile/setSiteRegistry read `data`,
+  // qaUpsert reads `entry`, qaDelete reads `key`).
+  function sendMessage(action, fields = {}) {
     return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ action, data }, (response) => {
+      chrome.runtime.sendMessage({ action, ...fields }, (response) => {
         if (chrome.runtime.lastError) {
           reject(chrome.runtime.lastError);
         } else {
@@ -81,6 +84,7 @@
 
   // Initialize the options page
   async function init() {
+    if (atsTypeSelect) atsTypeSelect.innerHTML = atsOptionsHtml();
     await loadProfile();
     await loadSiteRegistry();
     await loadQAMemory();
@@ -215,7 +219,7 @@
         }
       };
 
-      const response = await sendMessage('setProfile', profile);
+      const response = await sendMessage('setProfile', { data: profile });
 
       if (response.success) {
         // Show saved message
@@ -232,14 +236,16 @@
     }
   }
 
-  // Save siteRegistry via service worker
+  // Save the one registry key this page edits. The service worker merges it
+  // over the stored registry, so domains (1Password items) and
+  // fieldOverrides (remaps) are untouched.
   async function saveSiteRegistry() {
     try {
       const siteRegistry = {
         atsOverrides: getAtsOverridesRows()
       };
 
-      const response = await sendMessage('setSiteRegistry', siteRegistry);
+      const response = await sendMessage('setSiteRegistry', { data: siteRegistry });
 
       if (!response.success) {
         throw new Error(response.error || 'Failed to save siteRegistry');
@@ -251,26 +257,17 @@
   }
 
   // Get default profile structure
+  // The service worker owns the store schemas (getProfile/getSiteRegistry
+  // already return schema-defaulted objects); these are only the shells
+  // used when it cannot be reached.
   function getDefaultProfile() {
-    return {
-      identity: { firstName: '', lastName: '', email: '', phone: '', linkedin: '', website: '' },
-      address: { street: '', city: '', state: '', zip: '', country: 'US' },
-      work: { authorized: '', sponsorship: '', remotePreference: '', salaryExpectation: '', startDate: '', noticePeriod: '' },
-      eeo: { gender: '', race: '', veteranStatus: '', disabilityStatus: '' },
-      education: [{ school: '', degree: '', field: '', startYear: '', endYear: '' }],
-      employment: [{ company: '', title: '', location: '', startDate: '', endDate: '', current: false, description: '' }],
-      documents: { resume: { filename: '', mime: '', base64: '' }, coverLetterTemplate: '' }
-    };
+    return { identity: {}, address: {}, work: {}, eeo: {}, education: [], employment: [], documents: { resume: {}, coverLetterTemplate: '' } };
   }
 
-  // Get default siteRegistry structure
   function getDefaultSiteRegistry() {
-    return {
-      atsOverrides: []
-    };
+    return { domains: {}, atsOverrides: [], fieldOverrides: {} };
   }
 
-  // Setup event listeners
   function setupEventListeners() {
     if (saveButton) {
       saveButton.addEventListener('click', (e) => {
@@ -456,17 +453,19 @@
   }
 
   // Add an ATS override row to the container
+  // ATS names come from the shared table (content/common.js) when loaded.
+  function atsOptionsHtml() {
+    const table = (window.ResumeBot && window.ResumeBot.common && window.ResumeBot.common.ATS) || [];
+    const names = table.length ? table.map(a => a.name) : ['workday', 'greenhouse', 'lever', 'icims'];
+    return '<option value="">-- Select ATS Type --</option>' +
+      names.map(n => `<option value="${n}">${n.charAt(0).toUpperCase() + n.slice(1)}</option>`).join('');
+  }
+
   function addAtsOverrideRow(data = { atsType: '', domainPattern: '' }, index) {
     const rowDiv = document.createElement('div');
     rowDiv.className = 'ats-override-row';
     rowDiv.innerHTML = `
-      <select>
-        <option value="">-- Select ATS Type --</option>
-        <option value="workday">Workday</option>
-        <option value="greenhouse">Greenhouse</option>
-        <option value="lever">Lever</option>
-        <option value="icims">ICIMS</option>
-      </select>
+      <select>${atsOptionsHtml()}</select>
       <input type="text" placeholder="Domain pattern (e.g., company.myworkdayjobs.com)">
       <div class="ats-override-actions">
         <button type="button" class="remove-row">Remove</button>
@@ -658,12 +657,7 @@
 
       // Send the qaUpsert message
       try {
-        const response = await new Promise((resolve, reject) => {
-          chrome.runtime.sendMessage({ action: 'qaUpsert', entry: entryToSend }, (res) => {
-            if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-            else resolve(res);
-          });
-        });
+        const response = await sendMessage('qaUpsert', { entry: entryToSend });
         if (!response.success) {
           throw new Error(response.error || 'Failed to upsert QA entry');
         }
@@ -685,12 +679,7 @@
       const key = originalEntry.key;
 
       try {
-        const response = await new Promise((resolve, reject) => {
-          chrome.runtime.sendMessage({ action: 'qaDelete', key }, (res) => {
-            if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-            else resolve(res);
-          });
-        });
+        const response = await sendMessage('qaDelete', { key });
         if (!response.success) {
           throw new Error(response.error || 'Failed to delete QA entry');
         }
@@ -812,19 +801,11 @@
       }
 
       // Import data
-      await sendMessage('setProfile', importData.profile);
-      await sendMessage('setSiteRegistry', importData.siteRegistry);
+      await sendMessage('setProfile', { data: importData.profile });
+      await sendMessage('setSiteRegistry', { data: importData.siteRegistry });
 
-      // For QA memory, we need to upsert each entry
-      if (importData.qaMemory.entries) {
-        for (const entry of importData.qaMemory.entries) {
-          await new Promise((resolve, reject) => {
-            chrome.runtime.sendMessage({ action: 'qaUpsert', entry }, (res) => {
-              if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-              else resolve(res);
-            });
-          });
-        }
+      if (importData.qaMemory && Array.isArray(importData.qaMemory.entries) && importData.qaMemory.entries.length) {
+        await sendMessage('qaUpsertMany', { entries: importData.qaMemory.entries });
       }
 
       // Reload the page to show imported data

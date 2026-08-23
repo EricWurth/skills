@@ -9,11 +9,12 @@ const { JSDOM } = require('jsdom');
 const { createChromeMock } = require('./helpers/chrome-mock');
 
 const CONTENT = [
-  'normalize.js', 'scanner.js', 'matcher.js', 'filler.js', 'capture.js',
+  'common.js', 'normalize.js', 'scanner.js', 'matcher.js', 'filler.js', 'capture.js',
   'ats/detect.js', 'ats/generic.js', 'ats/workday.js', 'ats/greenhouse.js', 'ats/lever.js', 'ats/icims.js',
   'main.js'
 ];
 
+let captureResult = null;
 function loadContentScripts(window) {
   // Same order as manifest.json; `module` is left undefined so each file
   // takes the browser branch and hangs off window.ResumeBot.
@@ -21,8 +22,12 @@ function loadContentScripts(window) {
     const src = fs.readFileSync(path.join(__dirname, '../extension/content', f), 'utf8');
     window.eval(src);
   }
+  // The panel lives in a closed shadow root; keep the handle capture returns.
+  const real = window.ResumeBot.capture.capture;
+  window.ResumeBot.capture.capture = async (...args) => { captureResult = await real(...args); return captureResult; };
   return window.ResumeBot;
 }
+async function lastCapture() { return captureResult; }
 
 const PROFILE = {
   identity: { firstName: 'Jordan', lastName: 'Okafor', email: 'jordan@example.com', phone: '555-0100', linkedin: 'https://linkedin.com/in/jordan', website: '' },
@@ -124,12 +129,12 @@ describe('main.js orchestrator', () => {
     await NS.main.init();
     await NS.main.fillPage();
     const doc = page.window.document;
-    const panel = doc.getElementById('resumebot-capture-container');
-    const rows = panel.shadowRoot.querySelectorAll('.field-row');
+    const panel = (await lastCapture()).panel;
+    const rows = panel.querySelectorAll('.field-row');
     const coverRow = Array.from(rows).find(r => r.querySelector('.field-label').textContent.includes('Why do you want'));
     assert.ok(coverRow, 'custom question is in the capture panel');
     coverRow.querySelector('.answer-control').value = 'Because the mission matters.';
-    panel.shadowRoot.querySelector('.submit-btn').click();
+    panel.querySelector('.submit-btn').click();
     await new Promise(r => setTimeout(r, 200));
 
     assert.equal(doc.getElementById('cover').value, 'Because the mission matters.');
@@ -164,8 +169,8 @@ describe('main.js orchestrator', () => {
     await NS.main.fillPage();
     const doc = page.window.document;
     assert.equal(doc.getElementById('cover').value, '', 'not filled silently');
-    const panel = doc.getElementById('resumebot-capture-container');
-    const review = Array.from(panel.shadowRoot.querySelectorAll('.field-row')).find(r => r.querySelector('.review-flag'));
+    const panel = (await lastCapture()).panel;
+    const review = Array.from(panel.querySelectorAll('.field-row')).find(r => r.querySelector('.review-flag'));
     assert.ok(review, 'review row present');
     assert.equal(review.querySelector('.answer-control').value, long);
   });
@@ -207,5 +212,82 @@ describe('main.js orchestrator', () => {
     assert.equal(info.hasPasswordField, true);
     assert.equal(info.isAccountCreation, false);
     assert.equal(info.ats, 'greenhouse');
+  });
+
+  it('a password field is never captured and a typed EEO decline is reused next time', async () => {
+    await NS.main.init();
+    await NS.main.fillPage();
+    const panel = (await lastCapture()).panel;
+    const labels = Array.from(panel.querySelectorAll('.field-label')).map(l => l.textContent);
+    assert.ok(!labels.some(l => /password/i.test(l)), 'no password row');
+    const genderRow = Array.from(panel.querySelectorAll('.field-row')).find(r => r.querySelector('.eeo-flag'));
+    assert.ok(genderRow, 'EEO row present');
+    genderRow.querySelector('.answer-control').value = 'f';
+    panel.querySelector('.submit-btn').click();
+    await new Promise(r => setTimeout(r, 100));
+    assert.equal(page.window.document.getElementById('gender').value, 'f');
+    const saved = page.chrome._store.get('qaMemory').entries;
+    assert.ok(saved.find(e => e.questionNormalized === 'gender'));
+
+    // Same EEO question on the next site: the saved answer wins over "ask again".
+    const page2 = makePage(FORM, 'https://jobs.lever.co/initech/1');
+    await bootServiceWorker(page2.chrome, { entries: saved });
+    const NS2 = loadContentScripts(page2.window);
+    NS2.scanner.isVisible = () => true;
+    await NS2.main.init();
+    await NS2.main.fillPage();
+    assert.equal(page2.window.document.getElementById('gender').value, 'f');
+  });
+
+  it('"prefer not to answer" in Options fills the decline option without guessing', async () => {
+    const p = makePage(`<form><label for="g">Gender</label><select id="g" name="gender"><option value="">Select</option><option value="m">Male</option><option value="x">I decline to self-identify</option></select></form>`);
+    const profile = JSON.parse(JSON.stringify(PROFILE));
+    profile.eeo.genderPreferNotToAnswer = true;
+    await bootServiceWorker(p.chrome);
+    p.chrome._store.set('profile', profile);
+    const N = loadContentScripts(p.window);
+    N.scanner.isVisible = () => true;
+    await N.main.init();
+    const r = await N.main.fillPage();
+    assert.equal(p.window.document.getElementById('g').value, 'x');
+    assert.equal(r.captured, 0);
+  });
+
+  it('fillCredentials only fills when the frame is on the credential host', async () => {
+    await NS.main.init();
+    const miss = await NS.main.fillCredentials('u', 'p', 'evil.example');
+    assert.equal(miss.filled, 0);
+    assert.equal(page.window.document.getElementById('pw').value, '');
+    const hit = await NS.main.fillCredentials('u', 'p', 'boards.greenhouse.io');
+    assert.equal(hit.filled, 2);
+    assert.equal(page.window.document.getElementById('pw').value, 'p');
+  });
+
+  it('scanning again does not pick up the capture panel as page fields', async () => {
+    await NS.main.init();
+    const first = await NS.main.fillPage();
+    const second = await NS.main.fillPage();
+    assert.equal(second.fieldCount, first.fieldCount);
+  });
+
+  it('service worker fan-out: fill sums per-frame results and the badge counts each frame once', async () => {
+    const calls = [];
+    page.chrome._frames = [0, 7];
+    page.chrome._frameHandler = (msg, frameId) => {
+      calls.push([msg.action, frameId]);
+      if (msg.action === 'scanAndMatchFromContent') return { success: true, fields: new Array(frameId === 0 ? 2 : 3).fill({}), matches: [] };
+      if (msg.action === 'fillFromContent') return { success: true, fieldCount: 1, matchCount: 1, attempted: 1, filled: 1, captured: 0 };
+      return undefined;
+    };
+    page.chrome.tabs.query = (_i, cb) => cb([{ id: 5, url: 'https://boards.greenhouse.io/acme/jobs/1' }]);
+    const badge = [];
+    page.chrome.action.setBadgeText = (d) => badge.push(d);
+    const scan = await page.chrome._dispatchMessage({ action: 'scan' });
+    assert.equal(scan.success, true);
+    assert.equal(scan.fields.length, 5);
+    assert.equal(badge[badge.length - 1].text, '5');
+    const fill = await page.chrome._dispatchMessage({ action: 'fill' });
+    assert.equal(fill.filled, 2);
+    assert.deepEqual(calls.filter(c => c[0] === 'fillFromContent').map(c => c[1]), [0, 7]);
   });
 });

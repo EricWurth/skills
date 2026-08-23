@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ResumeBot Browser Plugin",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Fills job applications from a local profile and a growing answer memory. Never submits. Nothing leaves your machine.",
   "permissions": [
     "storage",
@@ -41,6 +41,7 @@
       "all_frames": true,
       "run_at": "document_idle",
       "js": [
+        "content/common.js",
         "content/normalize.js",
         "content/scanner.js",
         "content/matcher.js",

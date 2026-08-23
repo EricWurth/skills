@@ -53,3 +53,21 @@ jobs:
           name: plugins
           path: dist/*.plugin
           retention-days: 14
+
+  # resumebot-browser-plugin is a Chrome extension, not a skill or plugin:
+  # the packager never sees it, so its own suite has to run here. Node's
+  # built-in runner + jsdom; the 1Password SDK is mocked in test mode.
+  browser-plugin:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: resumebot-browser-plugin
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: resumebot-browser-plugin/package-lock.json
+      - run: npm ci
+      - run: npm test

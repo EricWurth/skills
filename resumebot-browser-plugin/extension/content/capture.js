@@ -4,115 +4,61 @@
 // profile value, plus qa-memory answers flagged reviewBeforeFill) is listed
 // here. Submitting fills the fields AND persists the answers to qa-memory so
 // the next application on any ATS can answer them silently.
+//
+// This module owns no storage: the orchestrator hands it the profile and
+// qa-memory it already loaded and a `persist` callback, and gets back what
+// was filled, saved and reviewed.
 (function (root) {
   "use strict";
 
   const CONTAINER_ID = "resumebot-capture-container";
-  const EEO_PATHS = ["eeo.gender", "eeo.race", "eeo.veteranStatus", "eeo.disabilityStatus"];
   const LONG_ANSWER = 200; // chars; longer free text defaults to review-before-fill
 
-  // --- Small helpers -------------------------------------------------------
-
-  function getNestedValue(obj, path) {
-    if (!obj || !path) return undefined;
-    let cur = obj;
-    for (const part of path.split(".")) {
-      if (cur === undefined || cur === null) return undefined;
-      cur = cur[part];
-    }
-    return cur;
+  function common() {
+    return (root.ResumeBot && root.ResumeBot.common) ||
+      (typeof require === "function" ? require("./common.js") : null);
   }
-
-  function storageGet(key, fallback) {
-    return new Promise((resolve) => {
-      try {
-        const r = chrome.storage.local.get(key, (data) => resolve((data && data[key]) || fallback));
-        if (r && typeof r.then === "function") r.then((data) => resolve((data && data[key]) || fallback));
-      } catch (e) {
-        resolve(fallback);
-      }
-    });
+  function filler() {
+    return (root.ResumeBot && root.ResumeBot.filler) ||
+      (typeof require === "function" ? require("./filler.js") : null);
   }
-
-  function storageSet(obj) {
-    return new Promise((resolve) => {
-      try {
-        const r = chrome.storage.local.set(obj, () => resolve());
-        if (r && typeof r.then === "function") r.then(() => resolve());
-      } catch (e) {
-        resolve();
-      }
-    });
-  }
-
-  // Fallbacks keep this module loadable on its own in tests; in the
-  // extension, normalize.js and filler.js always load first.
-  function normalizeQuestion(text, doc) {
-    const n = root.ResumeBot && root.ResumeBot.normalize;
-    if (n && n.normalizeQuestion) return n.normalizeQuestion(text, doc);
-    return String(text || "").toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ").trim();
-  }
-
-  async function generateKey(normalized) {
-    const n = root.ResumeBot && root.ResumeBot.normalize;
-    if (n && n.generateKey) return n.generateKey(normalized);
-    let hash = 0;
-    for (let i = 0; i < normalized.length; i++) {
-      hash = ((hash << 5) - hash) + normalized.charCodeAt(i);
-      hash = hash & hash;
-    }
-    return Math.abs(hash).toString(16);
-  }
-
-  function classifyField(field) {
-    const input = field.input;
-    const tag = String(field.tag || (input && input.tagName) || "").toLowerCase();
-    let type = String(field.type || (input && input.type) || "").toLowerCase();
-    if (tag === "select") type = "select";
-    const filler = root.ResumeBot && root.ResumeBot.filler;
-    const isTextDate = tag === "input" && ["text", ""].includes(type) && !!input &&
-      !!(filler && filler.detectExplicitDateFormat && filler.detectExplicitDateFormat(input));
-    return {
-      tag,
-      type,
-      isText: tag === "input" && ["text", "email", "tel", "url", "search", "number", ""].includes(type) && !isTextDate,
-      isTextarea: tag === "textarea",
-      isSelect: tag === "select",
-      isCheckbox: type === "checkbox",
-      isRadio: type === "radio",
-      isFile: type === "file",
-      isDate: type === "date" || isTextDate
-    };
+  function normalize() {
+    return (root.ResumeBot && root.ResumeBot.normalize) ||
+      (typeof require === "function" ? require("./normalize.js") : null);
   }
 
   // Collect which fields need a human. Radios are grouped by name so a
-  // yes/no question is one row, not two.
+  // yes/no question is one row, not two. Password fields never get a row
+  // (the only password path is the 1Password flow) and hidden inputs are
+  // honeypots or collapsed steps.
   function collectRows(fields, matchResults, profile, review) {
+    const c = common();
+    const f = filler();
     const rows = [];
     const seenGroups = new Map();
 
     fields.forEach((field, index) => {
+      if (field.type === "password" || field.visible === false) return;
       const match = matchResults[index];
-      const cls = classifyField(field);
+      const cls = f.classify({ input: field.input, tag: field.tag, type: field.type });
       let reason = null;
 
       if (!match) {
         reason = "unmatched";
-      } else if (match.profilePath && EEO_PATHS.includes(match.profilePath)) {
-        const v = getNestedValue(profile, match.profilePath);
-        if (v === "" || v === null || v === undefined) reason = "eeo";
+      } else if (match.profilePath && c.isEeoEmpty(profile, match.profilePath)) {
+        reason = "eeo";
       }
       if (!reason) return;
 
-      if (cls.isRadio && field.groupName) {
+      if (cls.isRadioType && field.groupName) {
+        const option = { value: field.value || "", text: field.optionLabel || field.value || "" };
         const existing = seenGroups.get(field.groupName);
         if (existing) {
           existing.groupFields.push({ field, index });
-          existing.options.push({ value: field.value || "", text: field.optionLabel || field.value || "" });
+          existing.options.push(option);
           return;
         }
-        const row = { field, index, match, cls, reason, groupFields: [{ field, index }],
-          options: [{ value: field.value || "", text: field.optionLabel || field.value || "" }] };
+        const row = { field, index, match, cls, reason, groupFields: [{ field, index }], options: [option] };
         seenGroups.set(field.groupName, row);
         rows.push(row);
         return;
@@ -125,7 +71,7 @@
     for (const r of review || []) {
       const field = fields[r.index];
       if (!field) continue;
-      rows.push({ field, index: r.index, match: r.match, cls: classifyField(field), reason: "review", prefill: r.value });
+      rows.push({ field, index: r.index, match: r.match, cls: f.classify({ input: field.input, tag: field.tag, type: field.type }), reason: "review", prefill: r.value });
     }
 
     return rows;
@@ -158,27 +104,10 @@
       .footer { padding: 0 16px 16px; }
   `;
 
-  function makeShadow(container) {
-    const ponyfill = {
-      querySelector: (s) => container.querySelector(s),
-      querySelectorAll: (s) => container.querySelectorAll(s),
-      getElementById: (id) => container.querySelector("#" + id),
-      appendChild: (c) => container.appendChild(c),
-      removeChild: (c) => container.removeChild(c)
-    };
-    let shadowRoot = null;
-    if (typeof container.attachShadow === "function") {
-      try { shadowRoot = container.attachShadow({ mode: "closed" }); } catch (e) { shadowRoot = null; }
-    }
-    if (!shadowRoot) shadowRoot = ponyfill;
-    Object.defineProperty(container, "shadowRoot", { value: shadowRoot, configurable: true });
-    return shadowRoot;
-  }
-
   function buildAnswerControl(row, doc) {
     const { field, cls } = row;
     let control;
-    if (row.groupFields || cls.isSelect) {
+    if (row.groupFields || cls.isSelectType) {
       control = doc.createElement("select");
       const options = row.groupFields ? row.options
         : (field.options || (field.input && field.input.options ? Array.from(field.input.options).map(o => ({ value: o.value, text: o.textContent })) : []));
@@ -192,17 +121,17 @@
         opt.textContent = o.text;
         control.appendChild(opt);
       }
-    } else if (cls.isCheckbox) {
+    } else if (cls.isCheckboxType) {
       control = doc.createElement("input");
       control.type = "checkbox";
-    } else if (cls.isTextarea || (typeof row.prefill === "string" && row.prefill.length > 80)) {
+    } else if (cls.tag === "textarea" || (typeof row.prefill === "string" && row.prefill.length > 80)) {
       control = doc.createElement("textarea");
       control.rows = 4;
-    } else if (cls.isDate) {
+    } else if (cls.isDateType) {
       control = doc.createElement("input");
       control.type = "text";
       control.placeholder = "YYYY-MM-DD";
-    } else if (cls.isFile) {
+    } else if (cls.isFileType) {
       control = doc.createElement("input");
       control.type = "text";
       control.placeholder = "Set your resume in Options to fill this";
@@ -217,10 +146,11 @@
     return control;
   }
 
+  // An untouched control is "no answer", never a value to persist. A
+  // checkbox therefore only answers when it is ticked.
   function readAnswer(control) {
-    if (!control) return "";
-    if (control.type === "checkbox") return control.checked ? "true" : "false";
-    if (control.disabled) return "";
+    if (!control || control.disabled) return "";
+    if (control.type === "checkbox") return control.checked ? "true" : "";
     return String(control.value || "").trim();
   }
 
@@ -230,26 +160,25 @@
    * Show the capture panel.
    * @param {Array} fields        scanner fields (with non-enumerable `input`)
    * @param {Array} matchResults  matcher output aligned with fields
-   * @param {Object} [opts]
+   * @param {Object} opts
+   * @param {Object} opts.profile   the profile (for the EEO rule)
+   * @param {Object} opts.qaMemory  { entries } as loaded for this fill pass
    * @param {Array}  [opts.review]  [{ index, match, value }] answers to confirm before filling
    * @param {string} [opts.ats]     detected ATS name (for firstSeen)
-   * @param {Function} [opts.onDone] called with { filled, saved } after submit
+   * @param {string} [opts.domain]  hostname (for firstSeen)
+   * @param {Function} opts.persist  async (entries) => void; upserts the given qa entries
+   * @param {Function} [opts.onDone] called with { filled, saved, reviewed } after submit
    */
   async function capture(fields, matchResults, opts) {
     opts = opts || {};
     const doc = root.document;
-    const [profile, qaMemory, siteRegistry] = await Promise.all([
-      storageGet("profile", {}),
-      storageGet("qaMemory", { entries: [] }),
-      storageGet("siteRegistry", { domains: {} })
-    ]);
-
-    const domain = root.location ? root.location.hostname : "";
-    const siteInfo = (siteRegistry.domains || {})[domain] || {};
-    const ats = opts.ats || siteInfo.ats || "";
+    const profile = opts.profile || {};
+    const qaMemory = opts.qaMemory || { entries: [] };
+    const domain = opts.domain || (root.location ? root.location.hostname : "");
+    const ats = opts.ats || "";
 
     const rows = collectRows(fields, matchResults || [], profile, opts.review);
-    if (rows.length === 0) return { shown: false };
+    if (rows.length === 0) return { shown: false, rows: 0 };
 
     // Replace any earlier panel
     const old = doc.getElementById(CONTAINER_ID);
@@ -263,11 +192,13 @@
       zIndex: "2147483647", transition: "right 0.3s ease-out", overflowY: "auto",
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
     });
-    const shadowRoot = makeShadow(container);
+    // Closed root: the page cannot reach our controls and the scanner
+    // cannot mistake them for form fields. Kept in a local only.
+    const shadow = container.attachShadow({ mode: "closed" });
 
     const style = doc.createElement("style");
     style.textContent = STYLE;
-    shadowRoot.appendChild(style);
+    shadow.appendChild(style);
 
     const header = doc.createElement("div");
     header.className = "header";
@@ -279,11 +210,11 @@
     closeBtn.title = "Close";
     header.appendChild(title);
     header.appendChild(closeBtn);
-    shadowRoot.appendChild(header);
+    shadow.appendChild(header);
 
     const fieldsContainer = doc.createElement("div");
     fieldsContainer.className = "fields";
-    shadowRoot.appendChild(fieldsContainer);
+    shadow.appendChild(fieldsContainer);
 
     const rowEls = [];
     rows.forEach((row) => {
@@ -318,7 +249,7 @@
       if (row.reason === "eeo") {
         const note = doc.createElement("div");
         note.className = "note";
-        note.textContent = "Not guessed. Set it in Options to fill silently next time.";
+        note.textContent = "Not guessed. Answer here once, or set it in Options.";
         el.appendChild(note);
       }
 
@@ -343,7 +274,7 @@
     submitBtn.className = "submit-btn";
     submitBtn.textContent = "Save and fill";
     footer.appendChild(submitBtn);
-    shadowRoot.appendChild(footer);
+    shadow.appendChild(footer);
 
     doc.body.appendChild(container);
     const raf = root.requestAnimationFrame || ((cb) => setTimeout(cb, 0));
@@ -359,7 +290,7 @@
       submitBtn.disabled = true;
       submitBtn.textContent = "Saving...";
       try {
-        const result = await submit(rowEls, fields, { qaMemory, domain, ats, doc });
+        const result = await submit(rowEls, { qaMemory, domain, ats, doc, persist: opts.persist });
         close();
         if (typeof opts.onDone === "function") opts.onDone(result);
       } catch (err) {
@@ -369,15 +300,17 @@
       }
     });
 
-    return { shown: true, rows: rows.length };
+    // Test hook: lets a test drive the panel without the closed root.
+    return { shown: true, rows: rows.length, panel: shadow };
   }
 
   // Persist answers + fill the page. Split out so it has no UI state of its own.
-  async function submit(rowEls, fields, ctx) {
-    const filler = root.ResumeBot && root.ResumeBot.filler;
+  async function submit(rowEls, ctx) {
+    const f = filler();
+    const n = normalize();
     const fills = [];
     const entriesToSave = [];
-    const currentEntries = Array.isArray(ctx.qaMemory.entries) ? ctx.qaMemory.entries.slice() : [];
+    const reviewed = [];
     const today = new Date().toISOString().split("T")[0];
 
     for (const { row, control, toggleInput } of rowEls) {
@@ -387,22 +320,22 @@
 
       if (row.reason === "review") {
         if (!save) continue; // "Use this answer" unticked: leave the field alone
+        reviewed.push(row.match.qaKey);
         // The user may have edited the stored answer: persist the edit.
-        const existing = currentEntries.find(e => e.key === row.match.qaKey);
+        const existing = (ctx.qaMemory.entries || []).find(e => e.key === row.match.qaKey);
         if (existing && existing.answer !== value) {
-          existing.answer = value;
-          entriesToSave.push(existing);
+          entriesToSave.push({ ...existing, answer: value });
         }
       } else if (save) {
         const questionRaw = row.field.label || "";
-        const questionNormalized = normalizeQuestion(questionRaw, ctx.doc);
+        const questionNormalized = n.normalizeQuestion(questionRaw, ctx.doc);
         if (questionNormalized) {
-          const key = await generateKey(questionNormalized);
+          const key = await n.generateKey(questionNormalized);
           const answerType = row.groupFields ? "radio"
-            : row.cls.isSelect ? "select"
-            : row.cls.isCheckbox ? "checkbox"
-            : row.cls.isFile ? "file"
-            : row.cls.isDate ? "date" : "text";
+            : row.cls.isSelectType ? "select"
+            : row.cls.isCheckboxType ? "checkbox"
+            : row.cls.isFileType ? "file"
+            : row.cls.isDateType ? "date" : "text";
           entriesToSave.push({
             key,
             questionRaw,
@@ -426,34 +359,17 @@
       }
     }
 
-    if (entriesToSave.length > 0) {
-      const merged = currentEntries.slice();
-      for (const entry of entriesToSave) {
-        const i = merged.findIndex(e => e.key === entry.key);
-        if (i >= 0) merged[i] = entry; else merged.push(entry);
-      }
-      await storageSet({ qaMemory: { entries: merged } });
+    if (entriesToSave.length > 0 && typeof ctx.persist === "function") {
+      await ctx.persist(entriesToSave);
     }
 
     let filled = 0;
-    if (fills.length > 0) {
-      if (filler && filler.fillAll) {
-        const results = await filler.fillAll(fills, {}, { delayMs: 50 });
-        filled = results.filter(Boolean).length;
-      } else {
-        for (const f of fills) {
-          if (!f.input) continue;
-          if (f.input.tagName === "SELECT" || f.input.tagName === "INPUT" || f.input.tagName === "TEXTAREA") {
-            f.input.value = f.value;
-            f.input.dispatchEvent(new root.Event("input", { bubbles: true }));
-            f.input.dispatchEvent(new root.Event("change", { bubbles: true }));
-            filled++;
-          }
-        }
-      }
+    if (fills.length > 0 && f && f.fillAll) {
+      const results = await f.fillAll(fills, {}, { delayMs: 0 });
+      filled = results.filter(Boolean).length;
     }
 
-    return { filled, saved: entriesToSave.length };
+    return { filled, saved: entriesToSave.length, reviewed };
   }
 
   // --- Remap support -----------------------------------------------------------
@@ -473,12 +389,13 @@
     return lastContextTarget;
   }
 
-  // --- Export API ---
   const api = {
     capture,
     collectRows,
+    readAnswer,
     initContextMenu,
     getLastContextTarget,
+    CONTAINER_ID,
     LONG_ANSWER
   };
 

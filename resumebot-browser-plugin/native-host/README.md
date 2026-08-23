@@ -48,9 +48,9 @@ Restart Chrome afterwards.
   `HKCU\Software\Google\Chrome\NativeMessagingHosts\com.resumebot.op`
   whose default value is the manifest path. Only your extension ID is
   allow-listed.
-- Writes `config.json` with your account name and, optionally, the vault
-  ID to use (default: your first personal/private vault). See
-  `config.example.json`. All generated files are gitignored.
+- Writes `config.json` with your account name, the extension ID, and
+  optionally the vault ID to use (default: your first personal/private
+  vault). See `config.example.json`. All generated files are gitignored.
 
 ## How it works
 
@@ -76,7 +76,10 @@ websites })`, `items.get(vaultId, itemId)`, and the static
 `Secrets.generatePassword({ type: "Random", parameters })`.
 
 Secrets live only in the reply being written; nothing is cached or logged.
-stderr logs command names, never arguments.
+stderr logs command names, never arguments. The host also checks the
+`chrome-extension://<id>/` origin Chrome passes on its command line against
+`config.json`'s `extensionId` and exits with `unauthorized_caller` for any
+other launcher, so a local process cannot use it as a credential oracle.
 
 ## Testing
 

@@ -1,371 +1,176 @@
 // test/capture.test.js
+// The capture panel is given its data (profile, qa-memory) and a persist
+// callback by the orchestrator; it never touches chrome.* itself. These
+// tests drive it the same way.
 const { describe, it, beforeEach, afterEach } = require('node:test');
 const assert = require('node:assert/strict');
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
-const sinon = require('sinon');
+const { JSDOM } = require('jsdom');
 
-// Create a DOM for testing
-function createDom(html = '<input type="text">') {
-  return new JSDOM(`<!DOCTYPE html><html><body>${html}</body></html>`, {
-    url: 'http://localhost',
-    pretendToBeVisual: true
-  });
+function loadFresh(modulePath) {
+  delete require.cache[require.resolve(modulePath)];
+  return require(modulePath);
 }
 
+const PROFILE = {
+  identity: { firstName: 'John', lastName: 'Doe', email: 'john@example.com' },
+  work: { authorized: 'yes', sponsorship: 'no' },
+  eeo: { gender: '', race: '', veteranStatus: '', disabilityStatus: '' }
+};
+
 describe('capture.js', () => {
-  let dom;
-  let captureApi;
-  let chromeStorageStub;
-  
+  let dom, window, document, captureApi, saved;
+
+  function field(html, extra) {
+    document.body.insertAdjacentHTML('beforeend', html);
+    const input = document.body.lastElementChild;
+    const f = Object.assign({ label: 'Question', type: input.type || '', tag: input.tagName.toLowerCase(), attributes: {}, visible: true }, extra || {});
+    Object.defineProperty(f, 'input', { value: input, enumerable: false });
+    return f;
+  }
+
+  function persist(entries) { saved.push(...entries); return Promise.resolve(); }
+
   beforeEach(() => {
-    // Reset module cache
-    delete require.cache[require.resolve('../extension/content/capture.js')];
-    
-    // Create fresh DOM
-    dom = createDom();
-    
-    // Set up globals for the module
-    global.window = dom.window;
-    global.document = dom.window.document;
-    
-    // Mock requestAnimationFrame and cancelAnimationFrame for jsdom
-    global.requestAnimationFrame = (callback) => setTimeout(callback, 0);
-    global.cancelAnimationFrame = (id) => clearTimeout(id);
-    
-    // Mock chrome.storage
-    chromeStorageStub = {
-      local: {
-        get: (key, callback) => {
-          let data = {};
-          if (typeof key === 'string') {
-            if (key === 'profile') {
-              data.profile = {
-                identity: { firstName: 'John', lastName: 'Doe', email: 'john@example.com' },
-                address: { street: '123 Main St', city: 'Anytown', state: 'CA', zip: '12345' },
-                work: { authorized: 'yes', sponsorship: 'no' },
-                eeo: { gender: '', race: '', veteranStatus: '', disabilityStatus: '' },
-                education: [],
-                employment: [],
-                documents: { resume: {}, coverLetterTemplate: '' }
-              };
-            } else if (key === 'qaMemory') {
-              data.qaMemory = { entries: [] };
-            } else if (key === 'siteRegistry') {
-              data.siteRegistry = { domains: {} };
-            }
-          } else if (typeof key === 'object') {
-            // Handle multiple keys
-            if (key.profile) data.profile = {
-              identity: { firstName: 'John', lastName: 'Doe', email: 'john@example.com' },
-              address: { street: '123 Main St', city: 'Anytown', state: 'CA', zip: '12345' },
-              work: { authorized: 'yes', sponsorship: 'no' },
-              eeo: { gender: '', race: '', veteranStatus: '', disabilityStatus: '' },
-              education: [],
-              employment: [],
-              documents: { resume: {}, coverLetterTemplate: '' }
-            };
-            if (key.qaMemory) data.qaMemory = { entries: [] };
-            if (key.siteRegistry) data.siteRegistry = { domains: {} };
-          }
-          callback(data);
-        },
-        set: (data, callback) => {
-          // Mock storage set
-          callback();
-        }
-      }
-    };
-    global.chrome = { storage: chromeStorageStub };
-    
-    // Require the capture module
-    captureApi = require('../extension/content/capture.js');
-    
-    // Set up ResumeBot on window
-    window.ResumeBot = window.ResumeBot || {};
-    window.ResumeBot.capture = captureApi;
+    dom = new JSDOM('<!DOCTYPE html><html><head><title>Engineer at Acme</title></head><body></body></html>', { url: 'https://boards.greenhouse.io/acme/jobs/1', pretendToBeVisual: true });
+    window = dom.window;
+    document = window.document;
+    global.window = window;
+    global.document = document;
+    global.requestAnimationFrame = (cb) => setTimeout(cb, 0);
+    saved = [];
+    // Load the chain the way the manifest does, so capture finds its peers
+    // on window.ResumeBot rather than through require fallbacks.
+    for (const m of ['common', 'normalize', 'filler', 'capture']) loadFresh(`../extension/content/${m}.js`);
+    captureApi = window.ResumeBot.capture;
   });
-  
+
   afterEach(() => {
-    // Clean up globals
     delete global.window;
     delete global.document;
-    delete global.chrome;
-    
-    // Clean up DOM
-    dom.window.close();
+    delete global.requestAnimationFrame;
   });
-  
-  describe('capture function', () => {
-    it('should return early when no unmatched fields', async () => {
-      // Create mock fields with matches
-      const fields = [
-        { 
-          input: document.createElement('input'),
-          label: 'First Name',
-          type: 'text'
-        }
-      ];
-      const matchResults = [
-        { profilePath: 'identity.firstName', tier: 1, confidence: 1.0 }
-      ];
-      
-      // Spy on storage get to verify it's called
-      const storageGetSpy = sinon.spy(chromeStorageStub.local, 'get');
-      
-      // Call capture
-      await captureApi.capture(fields, matchResults);
-      
-      // Should have called storage get but not proceeded further since no unmatched fields
-      assert.ok(storageGetSpy.called);
-    });
-    
-    it('should identify EEO fields with empty values as unmatched', async () => {
-      // Create a field that matches an EEO path but has empty profile value
-      const genderInput = document.createElement('input');
-      genderInput.type = 'text';
-      document.body.appendChild(genderInput);
-      
-      const fields = [
-        { 
-          input: genderInput,
-          label: 'Gender',
-          type: 'text'
-        }
-      ];
-      const matchResults = [
-        { profilePath: 'eeo.gender', tier: 1, confidence: 1.0 } // Matches EEO field
-      ];
-      
-      // Spy on storage get
-      const storageGetSpy = sinon.spy(chromeStorageStub.local, 'get');
-      
-      // Call capture
-      await captureApi.capture(fields, matchResults);
-      
-      // Should have called storage get
-      assert.ok(storageGetSpy.called);
-      
-      // Clean up
-      document.body.removeChild(genderInput);
-    });
-    
-    it('should create capture overlay UI elements', async () => {
-      // Create a field with no match (unmatched)
-      const textInput = document.createElement('input');
-      textInput.type = 'text';
-      textInput.placeholder = 'Custom Question';
-      document.body.appendChild(textInput);
-      
-      const fields = [
-        { 
-          input: textInput,
-          label: 'Custom Question',
-          type: 'text'
-        }
-      ];
-      const matchResults = [ null ]; // No match
-      
-      // Spy on storage get
-      const storageGetSpy = sinon.spy(chromeStorageStub.local, 'get');
-      
-      // Call capture
-      await captureApi.capture(fields, matchResults);
-      
-      // Should have called storage get
-      assert.ok(storageGetSpy.called);
-      
-      // Check that container was created and added to body
-      const container = document.getElementById('resumebot-capture-container');
-      assert.ok(container, 'Capture container should be created');
-      assert.ok(container.parentElement === document.body, 'Container should be appended to body');
-      
-      // Check for shadow root
-      assert.ok(container.shadowRoot, 'Container should have shadow root');
-      
-      // Check for header
-      const header = container.shadowRoot.querySelector('.header');
-      assert.ok(header, 'Header should exist');
-      
-      // Check for title
-      const title = container.shadowRoot.querySelector('.header h2');
-      assert.ok(title, 'Title should exist');
-      assert.strictEqual(title.textContent, 'Review unmatched fields');
-      
-      // Check for close button
-      const closeBtn = container.shadowRoot.querySelector('.close-btn');
-      assert.ok(closeBtn, 'Close button should exist');
-      
-      // Check for fields container
-      const fieldsContainer = container.shadowRoot.querySelector('.fields');
-      assert.ok(fieldsContainer, 'Fields container should exist');
-      
-      // Check for field row
-      const fieldRow = fieldsContainer.querySelector('.field-row');
-      assert.ok(fieldRow, 'Field row should exist');
-      
-      // Check for label
-      const label = fieldRow.querySelector('.field-label');
-      assert.ok(label, 'Label should exist');
-      assert.strictEqual(label.textContent, 'Custom Question');
-      
-      // Check for EEO flag (should not be present for non-EEO field)
-      const eeoFlag = label.querySelector('.eeo-flag');
-      assert.ok(!eeoFlag, 'EEO flag should not be present for non-EEO field');
-      
-      // Check for type
-      const typeDiv = fieldRow.querySelector('.field-type');
-      assert.ok(typeDiv, 'Type div should exist');
-      assert.strictEqual(typeDiv.textContent, 'text');
-      
-      // Check for answer control (should be text input for text field)
-      const answerControl = fieldRow.querySelector('.answer-control');
-      assert.ok(answerControl, 'Answer control should exist');
-      assert.strictEqual(answerControl.tagName.toLowerCase(), 'input');
-      assert.strictEqual(answerControl.type, 'text');
-      
-      // Check for toggle container
-      const toggleContainer = fieldRow.querySelector('.toggle-container');
-      assert.ok(toggleContainer, 'Toggle container should exist');
-      
-      // Check for toggle label
-      const toggleLabel = toggleContainer.querySelector('span');
-      assert.ok(toggleLabel, 'Toggle label should exist');
-      assert.strictEqual(toggleLabel.textContent, 'Save to memory');
-      
-      // Check for toggle input
-      const toggleInput = toggleContainer.querySelector('input[type="checkbox"]');
-      assert.ok(toggleInput, 'Toggle input should exist');
-      assert.strictEqual(toggleInput.checked, true, 'Toggle should be checked by default');
-      
-      // Check for submit button
-      const submitBtn = container.shadowRoot.querySelector('.submit-btn');
-      assert.ok(submitBtn, 'Submit button should exist');
-      assert.strictEqual(submitBtn.textContent, 'Save and fill');
-      
-      // Clean up
-      document.body.removeChild(textInput);
-      if (container.parentElement) {
-        container.remove();
-      }
-    });
-    
-    it('should handle select fields in capture overlay', async () => {
-      // Create a select field with no match
-      const select = document.createElement('select');
-      select.innerHTML = `
-        <option value="">--Select--</option>
-        <option value="yes">Yes</option>
-        <option value="no">No</option>
-      `;
-      document.body.appendChild(select);
-      
-      const fields = [
-        { 
-          input: select,
-          label: 'Are you authorized to work?',
-          type: 'select-one'
-        }
-      ];
-      const matchResults = [ null ]; // No match
-      
-      // Spy on storage get
-      const storageGetSpy = sinon.spy(chromeStorageStub.local, 'get');
-      
-      // Call capture
-      await captureApi.capture(fields, matchResults);
-      
-      // Should have called storage get
-      assert.ok(storageGetSpy.called);
-      
-      // Check that container was created
-      const container = document.getElementById('resumebot-capture-container');
-      assert.ok(container, 'Capture container should be created');
-      
-      // Check for field row
-      const fieldRow = container.shadowRoot.querySelector('.field-row');
-      assert.ok(fieldRow, 'Field row should exist');
-      
-      // Check for answer control (should be select for select field)
-      const answerControl = fieldRow.querySelector('.answer-control');
-      assert.ok(answerControl, 'Answer control should exist');
-      assert.strictEqual(answerControl.tagName.toLowerCase(), 'select');
-      
-      // Check that it has the right options
-      assert.strictEqual(answerControl.options.length, 4); // blank option + 3 original options
-      assert.strictEqual(answerControl.options[0].textContent, '-- Please select --');
-      assert.strictEqual(answerControl.options[1].value, '');
-      assert.strictEqual(answerControl.options[2].value, 'yes');
-      assert.strictEqual(answerControl.options[2].textContent, 'Yes');
-      assert.strictEqual(answerControl.options[3].value, 'no');
-      assert.strictEqual(answerControl.options[3].textContent, 'No');
-      
-      // Clean up
-      document.body.removeChild(select);
-      if (container.parentElement) {
-        container.remove();
-      }
-    });
-    
-    it('should handle checkbox fields in capture overlay', async () => {
-      // Create a checkbox field with no match
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      document.body.appendChild(checkbox);
-      
-      const fields = [
-        { 
-          input: checkbox,
-          label: 'I agree to the terms',
-          type: 'checkbox'
-        }
-      ];
-      const matchResults = [ null ]; // No match
-      
-      // Spy on storage get
-      const storageGetSpy = sinon.spy(chromeStorageStub.local, 'get');
-      
-      // Call capture
-      await captureApi.capture(fields, matchResults);
-      
-      // Should have called storage get
-      assert.ok(storageGetSpy.called);
-      
-      // Check that container was created
-      const container = document.getElementById('resumebot-capture-container');
-      assert.ok(container, 'Capture container should be created');
-      
-      // Check for field row
-      const fieldRow = container.shadowRoot.querySelector('.field-row');
-      assert.ok(fieldRow, 'Field row should exist');
-      
-      // Check for answer control (should be checkbox for checkbox field)
-      const answerControl = fieldRow.querySelector('.answer-control');
-      assert.ok(answerControl, 'Answer control should exist');
-      assert.strictEqual(answerControl.tagName.toLowerCase(), 'input');
-      assert.strictEqual(answerControl.type, 'checkbox');
-      
-      // Clean up
-      document.body.removeChild(checkbox);
-      if (container.parentElement) {
-        container.remove();
-      }
-    });
+
+  it('returns without a panel when nothing is unmatched', async () => {
+    const f = field('<input type="text" id="fn">', { label: 'First Name' });
+    const r = await captureApi.capture([f], [{ profilePath: 'identity.firstName', tier: 1 }], { profile: PROFILE, qaMemory: { entries: [] }, persist });
+    assert.equal(r.shown, false);
+    assert.equal(document.getElementById(captureApi.CONTAINER_ID), null);
   });
-  
-  describe('context menu function', () => {
-    it('should add context menu listener', () => {
-      // Spy on addEventListener
-      const addEventListenerSpy = sinon.spy(document, 'addEventListener');
-      
-      // Call initContextMenu
-      captureApi.initContextMenu();
-      
-      // Should have added event listener for contextmenu
-      assert.ok(addEventListenerSpy.calledWithMatch('contextmenu', sinon.match.func));
-      
-      // Clean up
-      addEventListenerSpy.restore();
-    });
+
+  it('surfaces an EEO field whose profile value is empty, flagged', async () => {
+    const f = field('<input type="text" id="g">', { label: 'Gender' });
+    const r = await captureApi.capture([f], [{ profilePath: 'eeo.gender', tier: 1 }], { profile: PROFILE, qaMemory: { entries: [] }, persist });
+    assert.equal(r.rows, 1);
+    assert.ok(r.panel.querySelector('.eeo-flag'));
+  });
+
+  it('never lists password fields or hidden inputs', async () => {
+    const pw = field('<input type="password" id="pw">', { label: 'Password' });
+    const hidden = field('<input type="text" id="hp">', { label: 'Leave blank', visible: false });
+    const real = field('<input type="text" id="q">', { label: 'Custom Question' });
+    const r = await captureApi.capture([pw, hidden, real], [null, null, null], { profile: PROFILE, qaMemory: { entries: [] }, persist });
+    assert.equal(r.rows, 1);
+    assert.equal(r.panel.querySelector('.field-label').textContent, 'Custom Question');
+  });
+
+  it('renders the panel with label, type, answer control, save toggle and submit', async () => {
+    const f = field('<input type="text" id="q">', { label: 'Custom Question' });
+    const r = await captureApi.capture([f], [null], { profile: PROFILE, qaMemory: { entries: [] }, persist });
+    const container = document.getElementById(captureApi.CONTAINER_ID);
+    assert.ok(container && container.parentElement === document.body);
+    assert.equal(container.shadowRoot, null, 'closed root is not re-exposed');
+    const panel = r.panel;
+    assert.equal(panel.querySelector('.header h2').textContent, 'Review unmatched fields');
+    assert.equal(panel.querySelector('.field-label').textContent, 'Custom Question');
+    assert.equal(panel.querySelector('.field-type').textContent, 'text');
+    const control = panel.querySelector('.answer-control');
+    assert.equal(control.tagName.toLowerCase(), 'input');
+    assert.equal(control.type, 'text');
+    const toggle = panel.querySelector('.toggle-container input[type=checkbox]');
+    assert.equal(toggle.checked, true);
+    assert.equal(panel.querySelector('.toggle-container span').textContent, 'Save to memory');
+    assert.equal(panel.querySelector('.submit-btn').textContent, 'Save and fill');
+  });
+
+  it('offers a select with a blank option plus the original options', async () => {
+    const f = field('<select id="auth"><option value="">Select</option><option value="yes">Yes</option><option value="no">No</option></select>', { label: 'Are you authorized to work?' });
+    const r = await captureApi.capture([f], [null], { profile: PROFILE, qaMemory: { entries: [] }, persist });
+    const control = r.panel.querySelector('.answer-control');
+    assert.equal(control.tagName.toLowerCase(), 'select');
+    assert.equal(control.options.length, 4);
+    assert.equal(control.options[0].textContent, '-- Please select --');
+    assert.equal(control.options[2].value, 'yes');
+  });
+
+  it('collapses a radio group into one row with its options', async () => {
+    const a = field('<input type="radio" name="r" value="Yes">', { label: 'Relocate?', groupName: 'r', value: 'Yes', optionLabel: 'Yes' });
+    const b = field('<input type="radio" name="r" value="No">', { label: 'Relocate?', groupName: 'r', value: 'No', optionLabel: 'No' });
+    const r = await captureApi.capture([a, b], [null, null], { profile: PROFILE, qaMemory: { entries: [] }, persist });
+    assert.equal(r.rows, 1);
+    const control = r.panel.querySelector('.answer-control');
+    assert.equal(control.tagName.toLowerCase(), 'select');
+    assert.deepEqual(Array.from(control.options).map(o => o.value), ['', 'Yes', 'No']);
+  });
+
+  it('an untouched checkbox is no answer: nothing saved, nothing filled', async () => {
+    const f = field('<input type="checkbox" id="agree">', { label: 'I agree to the terms' });
+    const r = await captureApi.capture([f], [null], { profile: PROFILE, qaMemory: { entries: [] }, persist });
+    assert.equal(r.panel.querySelector('.answer-control').type, 'checkbox');
+    assert.equal(captureApi.readAnswer(r.panel.querySelector('.answer-control')), '');
+    r.panel.querySelector('.submit-btn').click();
+    await new Promise(res => setTimeout(res, 20));
+    assert.equal(saved.length, 0);
+    assert.equal(document.getElementById('agree').checked, false);
+  });
+
+  it('submit persists normalized entries through the callback and fills the page', async () => {
+    const f = field('<textarea id="why"></textarea>', { label: 'Why do you want to work at Acme?' });
+    const long = field('<textarea id="essay"></textarea>', { label: 'Tell us about yourself' });
+    const r = await captureApi.capture([f, long], [null, null], { profile: PROFILE, qaMemory: { entries: [] }, persist, ats: 'greenhouse' });
+    const controls = r.panel.querySelectorAll('.answer-control');
+    controls[0].value = 'Because.';
+    controls[1].value = 'x'.repeat(250);
+    let done = null;
+    r.panel.querySelector('.submit-btn').click();
+    await new Promise(res => setTimeout(res, 50));
+    assert.equal(saved.length, 2);
+    assert.equal(saved[0].questionNormalized, 'why do you want to work at {company}');
+    assert.match(saved[0].key, /^[0-9a-f]{40}$/);
+    assert.equal(saved[0].firstSeen.ats, 'greenhouse');
+    assert.equal(saved[0].reviewBeforeFill, false);
+    assert.equal(saved[1].reviewBeforeFill, true, 'long free text defaults to review');
+    assert.equal(document.getElementById('why').value, 'Because.');
+  });
+
+  it('review rows fill on confirm and report their keys; unticked ones are left alone', async () => {
+    const a = field('<textarea id="a"></textarea>', { label: 'Q A' });
+    const b = field('<textarea id="b"></textarea>', { label: 'Q B' });
+    const entries = [
+      { key: 'ka', questionNormalized: 'q a', answer: 'stored A', reviewBeforeFill: true },
+      { key: 'kb', questionNormalized: 'q b', answer: 'stored B', reviewBeforeFill: true }
+    ];
+    const review = [
+      { index: 0, match: { qaKey: 'ka', answer: 'stored A' }, value: 'stored A' },
+      { index: 1, match: { qaKey: 'kb', answer: 'stored B' }, value: 'stored B' }
+    ];
+    let result = null;
+    const r = await captureApi.capture([a, b], [{ qaKey: 'ka' }, { qaKey: 'kb' }], { profile: PROFILE, qaMemory: { entries }, review, persist, onDone: (res) => { result = res; } });
+    assert.equal(r.rows, 2);
+    const rows = r.panel.querySelectorAll('.field-row');
+    rows[1].querySelector('.toggle-container input').checked = false;
+    r.panel.querySelector('.submit-btn').click();
+    await new Promise(res => setTimeout(res, 50));
+    assert.equal(document.getElementById('a').value, 'stored A');
+    assert.equal(document.getElementById('b').value, '');
+    assert.deepEqual(result.reviewed, ['ka']);
+    assert.equal(saved.length, 0, 'unchanged stored answer is not rewritten');
+  });
+
+  it('records the right-clicked element for the remap menu', () => {
+    captureApi.initContextMenu();
+    const el = document.createElement('input');
+    document.body.appendChild(el);
+    el.dispatchEvent(new window.MouseEvent('contextmenu', { bubbles: true }));
+    assert.equal(captureApi.getLastContextTarget(), el);
   });
 });

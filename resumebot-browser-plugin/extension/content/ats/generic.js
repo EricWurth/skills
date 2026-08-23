@@ -1,18 +1,18 @@
 // generic.js
-// Generic ATS adapter (no-op passthrough to tiers 1-2)
+// Fallback adapter for unknown sites: no selector map, no widgets. The
+// generic React-safe filler does all the work.
 (function (root) {
   "use strict";
   function generic() {
     return {
-      name: 'generic',
+      name: "generic",
       detect: () => false,
       selectorMap: {},
-      fillField: (el, value, ctx) => {
-        // No-op: let tiers 1-2 handle filling
-      },
+      fillDelayMs: 0,
       onNavigation: (cb) => {
-        // No-op, return a disconnect function
-        return () => {};
+        const common = root.ResumeBot && root.ResumeBot.common;
+        if (!common || !root.document || !root.document.body) return () => {};
+        return common.observeBigChanges(root.document.body, cb);
       }
     };
   }

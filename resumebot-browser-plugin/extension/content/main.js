@@ -7,42 +7,27 @@
 //
 // Everything here runs once per frame (all_frames: true), so a Greenhouse
 // form inside an iframe fills from inside that iframe. The service worker
-// addresses frames individually and aggregates the counts.
+// addresses frames individually and aggregates the counts. This is the
+// only content module that talks to chrome.* (besides common.sendMessage).
 (function (root) {
   "use strict";
 
   const NS = root.ResumeBot || (root.ResumeBot = {});
-  const EEO_PATHS = ["eeo.gender", "eeo.race", "eeo.veteranStatus", "eeo.disabilityStatus"];
+  const C = NS.common;
 
   const state = {
     ats: null,
     adapter: null,
-    synonyms: null,
-    disconnectNav: null,
-    lastFields: [],
-    lastMatches: []
+    synonyms: null
   };
 
-  // --- Messaging -------------------------------------------------------------
-
-  function sendMessage(message) {
-    return new Promise((resolve, reject) => {
-      try {
-        chrome.runtime.sendMessage(message, (response) => {
-          if (chrome.runtime.lastError) return reject(new Error(chrome.runtime.lastError.message));
-          resolve(response);
-        });
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
+  // --- Context -------------------------------------------------------------
 
   async function loadContext() {
     const [p, q, s] = await Promise.all([
-      sendMessage({ action: "getProfile" }),
-      sendMessage({ action: "qaList" }),
-      sendMessage({ action: "getSiteRegistry" })
+      C.sendMessage({ action: "getProfile" }),
+      C.sendMessage({ action: "qaList" }),
+      C.sendMessage({ action: "getSiteRegistry" })
     ]);
     return {
       profile: (p && p.success && p.data) || {},
@@ -56,7 +41,7 @@
   async function loadSynonyms() {
     if (state.synonyms) return state.synonyms;
     try {
-      if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.getURL) {
+      if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.getURL && typeof fetch === "function") {
         const res = await fetch(chrome.runtime.getURL("content/synonyms.json"));
         if (res.ok) state.synonyms = await res.json();
       }
@@ -93,6 +78,14 @@
 
   // --- Scan + match ------------------------------------------------------------
 
+  function scan() {
+    const fields = NS.scanner.scanFields(root.document, { frameUrl: root.document.URL });
+    for (const f of fields) {
+      if (f.label) f.questionNormalized = NS.normalize.normalizeQuestion(f.label, root.document);
+    }
+    return fields;
+  }
+
   function adapterTier0(fields, adapter) {
     const tier0 = new Array(fields.length).fill(null);
     if (!adapter || !adapter.selectorMap) return tier0;
@@ -108,60 +101,52 @@
     return tier0;
   }
 
-  async function scanAndMatch(ctx) {
-    const fields = NS.scanner.scanFields(root.document, { frameUrl: root.document.URL });
-    const normalize = NS.normalize;
-    for (const f of fields) {
-      if (f.label && normalize && normalize.normalizeQuestion) {
-        f.questionNormalized = normalize.normalizeQuestion(f.label, root.document);
-      }
-    }
+  async function match(fields, ctx) {
     const synonyms = await loadSynonyms();
     const overrides = (ctx.siteRegistry && ctx.siteRegistry.fieldOverrides && ctx.siteRegistry.fieldOverrides[state.ats || "generic"]) || {};
     const tier0 = adapterTier0(fields, state.adapter);
-    const matches = NS.matcher.matchFields(fields, ctx.profile, ctx.qaMemory, { synonyms, overrides, tier0 });
-    state.lastFields = fields;
-    state.lastMatches = matches;
+    return NS.matcher.matchFields(fields, ctx.profile, ctx.qaMemory, { synonyms, overrides, tier0 });
+  }
+
+  async function scanAndMatch(ctx) {
+    const fields = scan();
+    const matches = await match(fields, ctx);
     return { fields, matches };
   }
 
   // --- Value resolution -----------------------------------------------------------
 
-  function getNested(obj, path) {
-    let cur = obj;
-    for (const part of String(path).split(".")) {
-      if (cur === undefined || cur === null) return undefined;
-      cur = cur[part];
-    }
-    return cur;
-  }
-
-  function resolveValue(match, profile, field) {
-    if (!match) return null;
-    if (match.qaKey) return match.answer;
-    const path = match.profilePath;
+  function resolveValue(m, profile) {
+    if (!m) return null;
+    if (m.qaKey) return m.answer;
+    const path = m.profilePath;
     if (!path) return null;
     if (path.indexOf("documents.resume") === 0) {
-      const r = getNested(profile, "documents.resume");
+      const r = C.getNested(profile, "documents.resume");
       return r && r.base64 ? r : null;
     }
-    if (path === "identity.fullName") {
-      const id = profile.identity || {};
-      return `${id.firstName || ""} ${id.lastName || ""}`.trim() || null;
-    }
-    let v = getNested(profile, path);
+    if (C.DERIVED[path]) return C.DERIVED[path](profile) || null;
+    if (C.isEeoPath(path)) return C.eeoValue(profile, path) || null;
+    let v = C.getNested(profile, path);
     if (typeof v === "boolean") v = v ? "yes" : "no";
     if (v === undefined || v === null) return null;
     return v;
   }
 
-  function isEeoEmpty(match, profile) {
-    if (!match || !match.profilePath || !EEO_PATHS.includes(match.profilePath)) return false;
-    const v = getNested(profile, match.profilePath);
-    return v === "" || v === null || v === undefined;
+  function aliasesFor(m, value) {
+    const list = (m && m.selectValueAliases) ? m.selectValueAliases.slice() : [];
+    if (m && m.profilePath && C.isEeoPath(m.profilePath) && value === C.EEO_DECLINE_ALIASES[0]) {
+      list.push(...C.EEO_DECLINE_ALIASES);
+    }
+    return list;
   }
 
   // --- Fill ------------------------------------------------------------------------
+
+  function fillDelay() {
+    const a = state.adapter;
+    return a && typeof a.fillDelayMs === "number" ? a.fillDelayMs : 50;
+  }
 
   async function fillOne(field, value, ctx) {
     const el = field.input;
@@ -172,54 +157,76 @@
       return adapter.fillField(el, fileData ? fileData.filename : value, { filler: NS.filler, profile: ctx.profile, fileData });
     }
     const info = NS.filler.classify({ input: el, tag: field.tag, type: field.type });
-    return NS.filler.fillField(info, value, ctx.profile, { delayMs: 50, aliases: ctx.aliases });
+    return NS.filler.fillField(info, value, ctx.profile, { delayMs: fillDelay(), aliases: ctx.aliases });
+  }
+
+  async function persistEntries(entries) {
+    if (!entries || entries.length === 0) return;
+    await C.sendMessage({ action: "qaUpsertMany", entries });
   }
 
   async function fillPage() {
-    const ctx = await loadContext();
-    const { fields, matches } = await scanAndMatch(ctx);
+    // The DOM walk does not depend on the stores; overlap them.
+    const ctxPromise = loadContext();
+    const fields = scan();
+    const ctx = await ctxPromise;
+    const matches = await match(fields, ctx);
 
     const review = [];
     let filled = 0;
     let attempted = 0;
+    const writes = [];
 
     for (let i = 0; i < fields.length; i++) {
       const field = fields[i];
-      const match = matches[i];
-      if (!match) continue;
+      const m = matches[i];
+      if (!m) continue;
       if (field.visible === false) continue; // hidden inputs are honeypots or collapsed steps
       if (field.type === "password") continue; // hard rail: only the 1Password flow fills these
-      if (isEeoEmpty(match, ctx.profile)) continue; // surfaced in capture, never guessed
 
-      const value = resolveValue(match, ctx.profile, field);
-      if (value === null || value === "") continue;
+      const value = resolveValue(m, ctx.profile);
+      if (value === null || value === "") continue; // empty EEO lands in the capture panel, never guessed
 
-      if (match.qaKey && match.reviewBeforeFill) {
-        review.push({ index: i, match, value });
+      if (m.qaKey && m.reviewBeforeFill) {
+        review.push({ index: i, match: m, value });
         continue;
       }
 
       attempted++;
       let ok = false;
       try {
-        ok = await fillOne(field, value, { profile: ctx.profile, aliases: match.selectValueAliases });
+        ok = await fillOne(field, value, { profile: ctx.profile, aliases: aliasesFor(m, value) });
       } catch (e) {
         console.error("[resumebot] fill error", field.label, e);
       }
       if (ok) {
         filled++;
-        if (match.qaKey) {
-          sendMessage({ action: "incrementTimesUsed", key: match.qaKey, wasReviewed: false }).catch(() => {});
-          if (ok && typeof ok === "object" && ok.aliasUsed) {
-            sendMessage({ action: "qaAddAlias", key: match.qaKey, alias: ok.aliasUsed }).catch(() => {});
+        if (m.qaKey) {
+          writes.push(C.sendMessage({ action: "incrementTimesUsed", key: m.qaKey, wasReviewed: false }).catch(() => {}));
+          if (typeof ok === "object" && ok.aliasUsed) {
+            writes.push(C.sendMessage({ action: "qaAddAlias", key: m.qaKey, alias: ok.aliasUsed }).catch(() => {}));
           }
         }
       }
     }
+    // Let the service worker land these before the capture panel can write.
+    await Promise.all(writes);
 
     let captured = 0;
     if (NS.capture && NS.capture.capture) {
-      const r = await NS.capture.capture(fields, matches, { review, ats: state.ats });
+      const r = await NS.capture.capture(fields, matches, {
+        profile: ctx.profile,
+        qaMemory: ctx.qaMemory,
+        review,
+        ats: state.ats,
+        domain: root.location.hostname,
+        persist: persistEntries,
+        onDone: (res) => {
+          for (const key of (res && res.reviewed) || []) {
+            C.sendMessage({ action: "incrementTimesUsed", key, wasReviewed: true }).catch(() => {});
+          }
+        }
+      });
       captured = (r && r.rows) || 0;
     }
 
@@ -231,43 +238,48 @@
 
   function findCredentialInputs() {
     const doc = root.document;
-    const passwords = Array.from(doc.querySelectorAll("input[type='password']")).filter(isUsable);
+    const usable = (el) => el && !el.disabled && el.type !== "hidden";
+    const passwords = Array.from(doc.querySelectorAll("input[type='password']")).filter(usable);
     const userSel = "input[type='email'], input[autocomplete='username'], input[autocomplete='email'], input[name*='user' i], input[name*='email' i], input[id*='user' i], input[id*='email' i]";
-    const users = Array.from(doc.querySelectorAll(userSel)).filter(isUsable);
+    const users = Array.from(doc.querySelectorAll(userSel)).filter(usable);
     return { passwords, username: users[0] || null };
   }
 
-  function isUsable(el) {
-    return el && !el.disabled && el.type !== "hidden";
+  // Only the frame whose origin is the site the credential belongs to gets
+  // it; a third-party iframe with a login form on the same page does not.
+  function frameMatchesHost(hostname) {
+    if (!hostname) return false;
+    const here = (root.location && root.location.hostname || "").toLowerCase();
+    const want = String(hostname).toLowerCase();
+    return here === want || here.endsWith("." + want) || want.endsWith("." + here);
   }
 
-  async function fillCredentials(username, password) {
+  async function fillCredentials(username, password, hostname) {
+    if (hostname && !frameMatchesHost(hostname)) return { filled: 0, passwordFields: 0, skipped: "origin" };
     const { passwords, username: userEl } = findCredentialInputs();
     let count = 0;
     if (userEl && username) {
       const info = NS.filler.classify({ input: userEl });
-      if (await NS.filler.fillField(info, username, {}, { delayMs: 50 })) count++;
+      if (await NS.filler.fillField(info, username, {}, { delayMs: fillDelay() })) count++;
     }
     for (const pw of passwords) {
       const info = NS.filler.classify({ input: pw });
       info.type = "password";
-      if (await NS.filler.fillField(info, password, {}, { allowPassword: true, delayMs: 50 })) count++;
+      if (await NS.filler.fillField(info, password, {}, { allowPassword: true, delayMs: fillDelay() })) count++;
     }
     return { filled: count, passwordFields: passwords.length };
   }
 
   function pageInfo() {
-    const fields = NS.scanner.scanFields(root.document, { frameUrl: root.document.URL });
+    const fields = scan();
     const { passwords, username } = findCredentialInputs();
-    const text = fields.map(f => f.label || "").join(" ").toLowerCase();
-    const isAccountCreation = passwords.length >= 2 || /create.{0,20}account|sign.{0,5}up|register/i.test(text);
     return {
       ats: state.ats,
       hostname: root.location.hostname,
       fieldCount: fields.length,
       hasPasswordField: passwords.length > 0,
       hasUsernameField: !!username,
-      isAccountCreation
+      isAccountCreation: C.isAccountCreationPage(fields)
     };
   }
 
@@ -279,7 +291,7 @@
       return { success: false, error: "Right-click a form field first" };
     }
     const ctx = await loadContext();
-    const { fields } = await scanAndMatch(ctx);
+    const fields = scan();
     const idx = fields.findIndex(f => f.input === target);
     if (idx < 0) return { success: false, error: "That element is not a fillable field" };
     const field = fields[idx];
@@ -294,16 +306,16 @@
     const atsKey = state.ats || "generic";
     reg.fieldOverrides[atsKey] = reg.fieldOverrides[atsKey] || {};
     reg.fieldOverrides[atsKey][key] = choice;
-    await sendMessage({ action: "setSiteRegistry", data: reg });
+    await C.sendMessage({ action: "setSiteRegistry", data: reg });
 
     // Fill it right away with the new mapping so the correction is visible.
-    const match = typeof choice === "string"
+    const m = typeof choice === "string"
       ? { profilePath: choice }
       : (() => { const e = ctx.qaMemory.entries.find(x => x.key === choice.qaKey); return e ? { qaKey: e.key, answer: e.answer, selectValueAliases: e.selectValueAliases } : null; })();
-    const value = resolveValue(match, ctx.profile, field);
+    const value = resolveValue(m, ctx.profile);
     let filled = false;
     if (value !== null && value !== "") {
-      filled = !!(await fillOne(field, value, { profile: ctx.profile, aliases: match && match.selectValueAliases }));
+      filled = !!(await fillOne(field, value, { profile: ctx.profile, aliases: aliasesFor(m, value) }));
     }
     return { success: true, key, ats: atsKey, choice, filled };
   }
@@ -331,9 +343,8 @@
       sel.style.padding = "6px";
       const og1 = doc.createElement("optgroup");
       og1.label = "Profile";
-      const paths = Object.keys((NS.matcher && NS.matcher.SYNONYMS) || {});
-      if (!paths.includes("identity.fullName")) paths.push("identity.fullName");
-      for (const p of paths.sort()) {
+      const paths = new Set([...Object.keys((NS.matcher && NS.matcher.SYNONYMS) || {}), ...Object.keys(C.DERIVED)]);
+      for (const p of Array.from(paths).sort()) {
         const o = doc.createElement("option");
         o.value = "profile:" + p;
         o.textContent = p;
@@ -386,7 +397,7 @@
     reportTimer = setTimeout(() => {
       try {
         const fields = NS.scanner.scanFields(root.document, { frameUrl: root.document.URL });
-        sendMessage({ action: "scanResult", fields: fields.map(f => ({ label: f.label, type: f.type })), ats: state.ats }).catch(() => {});
+        C.sendMessage({ action: "scanResult", count: fields.length, ats: state.ats }).catch(() => {});
       } catch (e) { /* ignore */ }
     }, 150);
   }
@@ -396,7 +407,7 @@
 
     let siteRegistry = null;
     try {
-      const s = await sendMessage({ action: "getSiteRegistry" });
+      const s = await C.sendMessage({ action: "getSiteRegistry" });
       siteRegistry = s && s.success ? s.data : null;
     } catch (e) { /* service worker may be asleep; detection still works from the URL */ }
 
@@ -407,7 +418,7 @@
 
     reportBadge();
     if (state.adapter && typeof state.adapter.onNavigation === "function") {
-      try { state.disconnectNav = state.adapter.onNavigation(reportBadge); } catch (e) { /* ignore */ }
+      try { state.adapter.onNavigation(reportBadge); } catch (e) { /* ignore */ }
     }
   }
 
@@ -416,6 +427,9 @@
     const respond = (p) => p.then(sendResponse).catch(err => sendResponse({ success: false, error: err && err.message || String(err) }));
 
     switch (action) {
+      case "scanFromContent":
+        try { sendResponse({ success: true, fields: scan() }); } catch (e) { sendResponse({ success: false, error: e.message }); }
+        return false;
       case "scanAndMatchFromContent": {
         const ctx = {
           profile: message.profile || {},
@@ -429,7 +443,7 @@
         respond(fillPage().then(r => ({ success: true, ...r })));
         return true;
       case "fillCredentials":
-        respond(fillCredentials(message.username, message.password).then(r => ({ success: true, ...r })));
+        respond(fillCredentials(message.username, message.password, message.hostname).then(r => ({ success: true, ...r })));
         return true;
       case "pageInfo":
         try { sendResponse({ success: true, ...pageInfo() }); } catch (e) { sendResponse({ success: false, error: e.message }); }
@@ -442,7 +456,7 @@
     }
   }
 
-  const api = { init, handleMessage, loadContext, scanAndMatch, fillPage, fillCredentials, pageInfo, remapField, resolveValue, adapterTier0, detectAts, state };
+  const api = { init, handleMessage, loadContext, scan, scanAndMatch, fillPage, fillCredentials, pageInfo, remapField, resolveValue, adapterTier0, detectAts, frameMatchesHost, state };
   root.ResumeBot = Object.assign(root.ResumeBot || {}, { main: api });
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 

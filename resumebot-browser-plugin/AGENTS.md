@@ -8,7 +8,7 @@ Read this before changing anything under `resumebot-browser-plugin/`. These rule
 
 ## Every commit runs the full suite green
 
-`npm test` (node --test, jsdom) must pass in full before a commit. There is
+`npm test` (node --test, jsdom) must pass in full before a commit; the repo's CI (`.github/workflows/build.yml`, job `browser-plugin`) runs it on every push. There is
 no hook enforcing it any more (the original repo's pre-commit guard did not
 survive the move into this repository), so it is on you. A second standing
 check from that guard is worth keeping by hand: a tracked `.js`/`.html` file
@@ -30,8 +30,8 @@ Chrome content scripts CANNOT use ES `import`/`export` (they are classic scripts
 })(typeof window !== "undefined" ? window : globalThis);
 ```
 
-- In Chrome: everything hangs off `window.ResumeBot.<module>`. List content scripts in the manifest in dependency order; `content/main.js` must stay last — it is the orchestrator that wires the others together and owns the message handlers (except `scanFromContent`, which scanner.js answers).
-- ATS adapters register under `window.ResumeBot.adapters.<name>` (a factory returning `{ name, detect, handles, selectorMap, fillField, onNavigation }`). Do not write to a shared key; four adapters once overwrote each other that way.
+- In Chrome: everything hangs off `window.ResumeBot.<module>`. List content scripts in the manifest in dependency order; `content/common.js` must stay first (shared ATS table, profile-path helpers, EEO rules; the service worker `importScripts` the same file) and `content/main.js` last — it is the orchestrator that wires the others together and is the only content module that talks to `chrome.*`. capture.js gets its data and a `persist` callback from main.js; scanner/matcher/filler/normalize are pure.
+- ATS adapters register under `window.ResumeBot.adapters.<name>`, a factory returning `{ name, detect, selectorMap, fillDelayMs, onNavigation }` plus, only when the platform has widgets the generic filler cannot drive, `handles(el)` and `fillField(el, value, ctx)`. main.js routes to `fillField` only when `handles` says so; an adapter must not carry a `fillField` that can never run (two did, and drifted from the real filler). Use `common.observeBigChanges` for `onNavigation`; never call back on every mutation.
 - In tests: `const scanner = require("../extension/content/scanner.js")`.
 - The service worker may use classic script style with the same guard, or keep it self-contained.
 

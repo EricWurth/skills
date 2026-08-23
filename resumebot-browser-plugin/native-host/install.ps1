@@ -34,37 +34,34 @@ if (-not (Test-Path (Join-Path $scriptDir "node_modules\@1password\sdk")) -and -
     Write-Host "Note: @1password/sdk is not installed yet. Run: cd `"$scriptDir`"; npm install"
 }
 
-# Launcher: Chrome executes this; it execs node on host.js.
-@"
-@echo off
-"$nodeExe" "$hostJsPath"
-"@ | Set-Content -Path $launcher -Encoding ASCII
+# Files are written without a BOM: Chrome and Node both reject a BOM at the
+# start of JSON, and Windows PowerShell 5.1's -Encoding UTF8 adds one.
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
-# Manifest file (JSON) -- escape backslashes for JSON.
-$launcherJson = $launcher -replace '\', '\'
-@"
-{
-  "name": "com.resumebot.op",
-  "description": "ResumeBot 1Password host",
-  "path": "$launcherJson",
-  "type": "stdio",
-  "allowed_origins": [
-    "chrome-extension://$ExtensionId/"
-  ]
+# Launcher: Chrome executes this; it execs node on host.js.
+[IO.File]::WriteAllText($launcher, "@echo off`r`n`"$nodeExe`" `"$hostJsPath`"`r`n", $utf8NoBom)
+
+# Manifest file (JSON). ConvertTo-Json escapes the backslashes in the path.
+$manifestObj = [ordered]@{
+    name            = "com.resumebot.op"
+    description     = "ResumeBot 1Password host"
+    path            = $launcher
+    type            = "stdio"
+    allowed_origins = @("chrome-extension://$ExtensionId/")
 }
-"@ | Set-Content -Path $manifest -Encoding UTF8
+[IO.File]::WriteAllText($manifest, ($manifestObj | ConvertTo-Json), $utf8NoBom)
 
 # Registry: (Default) = path to the manifest file.
 $registryPath = "HKCU:\Software\Google\Chrome\NativeMessagingHosts\com.resumebot.op"
 if (-not (Test-Path $registryPath)) { New-Item -Path $registryPath -Force | Out-Null }
 Set-ItemProperty -Path $registryPath -Name "(Default)" -Value $manifest
 
-@"
-{
-  "accountName": "$AccountName",
-  "vaultId": "$VaultId"
+$configObj = [ordered]@{
+    accountName = $AccountName
+    vaultId     = $VaultId
+    extensionId = $ExtensionId
 }
-"@ | Set-Content -Path $configPath -Encoding UTF8
+[IO.File]::WriteAllText($configPath, ($configObj | ConvertTo-Json), $utf8NoBom)
 
 Write-Host "Installation successful:"
 Write-Host "  Launcher written to: $launcher (node: $nodeExe)"
