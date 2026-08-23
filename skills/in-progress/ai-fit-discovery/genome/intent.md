@@ -111,7 +111,14 @@ that they do not understand.
 ## Free choices [IMPLEMENTATION MAY VARY]
 
 - Question order and phrasing within each lens.
-- Inventory size; the stop rule is saturation.
+- Inventory size. The stop rule itself is no longer self-assessed prose:
+  `scripts/stop_check.py` is a countable gate run before every Phase 1
+  question, with four triggers -- an explicit stop signal from the person,
+  a stated time budget two-thirds spent, saturation (a run of answers
+  adding no new inventory item, gated on the inverse lens being closed),
+  and coverage-complete-with-a-dry-last-answer. What stays free is the
+  ledger the gate reads: what counts as a "new inventory item" per turn,
+  and how the four lenses get marked asked/assumed/open.
 - Output medium: markdown always; a page in the person's own workspace
   (Notion, Drive, a file) when a connector is present and they ask.
 - Whether to run Phase 3 in one pass or item by item with the person.
@@ -183,6 +190,9 @@ G-8: The band-aid.
 - Human-judged: whether the "start here" options are genuinely the best
   three to five; whether risk reasoning is honest rather than reflexive;
   whether the brief reads as the person's work rather than the model's.
+- The Phase 1 stop point is now mechanically checkable, not human-judged:
+  `scripts/stop_check.py` against a turn ledger, with the fixture set in
+  `scripts/stop-rule-fixtures.json` re-runnable via `scripts/run_stop_fixtures.py`.
 
 ## Failure history
 
@@ -212,3 +222,18 @@ G-8: The band-aid.
   SKILL.md and templates.md; no guidance on allocating ideas across
   several AIs; a tool named that the person never mentioned. All fixed
   in this revision.
+- 2026-08-23, skill-evolution sweep. Promoted technique #3 from the
+  technique library (executable / mechanical checks) against the free
+  choice "the stop rule is saturation". Problem: the stop rule fired late
+  in both recorded runs above -- 2026-08-17 (one question past the point
+  the inventory could have been written) and 2026-08-18 (one question past
+  a stated 25-minute budget, G-7 marginal) -- because the context deciding
+  whether to ask another question was the same context that wanted to ask
+  it. Fix: `scripts/stop_check.py`, four countable triggers, run before
+  every Phase 1 question. Proof: `scripts/stop-rule-fixtures.json` -- 7/7 fixtures pass,
+  including D-1, a replay of the 2026-08-18 run where the old
+  saturation-only rule says CONTINUE (the documented bug) and the gate
+  says STOP on budget_exhausted. Regression note worth keeping: the first
+  cut of the gate broke G-3 -- saturation fired while the inverse lens was
+  still open -- and the golden caught it before promotion; saturation is
+  now gated on the inverse being closed.

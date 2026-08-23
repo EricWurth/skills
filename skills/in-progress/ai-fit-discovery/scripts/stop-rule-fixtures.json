@@ -1,0 +1,207 @@
+{
+  "cases": [
+    {
+      "name": "D-1-stated-budget-spent",
+      "note": "DISCRIMINATION (replay of the 2026-08-18 run)",
+      "expect": "STOP",
+      "ledger": {
+        "budget_minutes": 25,
+        "elapsed_minutes": 18,
+        "lenses": {
+          "recurring": "asked",
+          "workflows": "asked",
+          "inverse": "asked",
+          "friction": "asked"
+        },
+        "turns": [
+          {
+            "new_items": 3,
+            "stop_signal": false
+          },
+          {
+            "new_items": 2,
+            "stop_signal": false
+          },
+          {
+            "new_items": 2,
+            "stop_signal": false
+          },
+          {
+            "new_items": 1,
+            "stop_signal": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "D-2-budget-not-spent",
+      "note": "DISCRIMINATION false-positive guard",
+      "expect": "CONTINUE",
+      "ledger": {
+        "budget_minutes": 25,
+        "elapsed_minutes": 5,
+        "lenses": {
+          "recurring": "asked",
+          "workflows": "asked",
+          "inverse": "asked",
+          "friction": "asked"
+        },
+        "turns": [
+          {
+            "new_items": 3,
+            "stop_signal": false
+          },
+          {
+            "new_items": 2,
+            "stop_signal": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "R-A-early-interview",
+      "note": "baseline-parity",
+      "expect": "CONTINUE",
+      "ledger": {
+        "budget_minutes": null,
+        "elapsed_minutes": 3,
+        "lenses": {
+          "recurring": "asked",
+          "workflows": "open",
+          "inverse": "open",
+          "friction": "open"
+        },
+        "turns": [
+          {
+            "new_items": 2,
+            "stop_signal": false
+          },
+          {
+            "new_items": 3,
+            "stop_signal": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "R-B-true-saturation",
+      "note": "baseline-parity",
+      "expect": "STOP",
+      "ledger": {
+        "budget_minutes": null,
+        "elapsed_minutes": 28,
+        "lenses": {
+          "recurring": "asked",
+          "workflows": "asked",
+          "inverse": "asked",
+          "friction": "asked"
+        },
+        "turns": [
+          {
+            "new_items": 4,
+            "stop_signal": false
+          },
+          {
+            "new_items": 2,
+            "stop_signal": false
+          },
+          {
+            "new_items": 0,
+            "stop_signal": false
+          },
+          {
+            "new_items": 0,
+            "stop_signal": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "R-G3-missing-inverse",
+      "note": "G-3",
+      "expect": "CONTINUE",
+      "ledger": {
+        "budget_minutes": null,
+        "elapsed_minutes": 12,
+        "lenses": {
+          "recurring": "asked",
+          "workflows": "asked",
+          "inverse": "open",
+          "friction": "asked"
+        },
+        "turns": [
+          {
+            "new_items": 3,
+            "stop_signal": false
+          },
+          {
+            "new_items": 2,
+            "stop_signal": false
+          },
+          {
+            "new_items": 0,
+            "stop_signal": false
+          },
+          {
+            "new_items": 0,
+            "stop_signal": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "R-G6-week-one",
+      "note": "G-6",
+      "expect": "CONTINUE",
+      "ledger": {
+        "budget_minutes": null,
+        "elapsed_minutes": 6,
+        "lenses": {
+          "recurring": "asked",
+          "workflows": "open",
+          "inverse": "open",
+          "friction": "open"
+        },
+        "turns": [
+          {
+            "new_items": 2,
+            "stop_signal": false
+          },
+          {
+            "new_items": 1,
+            "stop_signal": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "R-G7-enough-already",
+      "note": "G-7",
+      "expect": "STOP",
+      "ledger": {
+        "budget_minutes": null,
+        "elapsed_minutes": 20,
+        "lenses": {
+          "recurring": "asked",
+          "workflows": "asked",
+          "inverse": "open",
+          "friction": "asked"
+        },
+        "turns": [
+          {
+            "new_items": 3,
+            "stop_signal": false
+          },
+          {
+            "new_items": 1,
+            "stop_signal": false
+          },
+          {
+            "new_items": 1,
+            "stop_signal": true
+          }
+        ]
+      }
+    }
+  ]
+}

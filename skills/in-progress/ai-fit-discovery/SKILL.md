@@ -1,5 +1,16 @@
 ---
 name: ai-fit-discovery
+spec: genome/intent.md
+version: 1.1.0
+changelog: >
+  1.1.0: the Phase 1 stop rule moves from self-assessed prose to a countable
+  gate (`scripts/stop_check.py`) run before every question -- explicit stop
+  signal, stated budget two-thirds spent, saturation (gated on the inverse
+  lens being closed), coverage-complete-with-a-dry-last-answer. Adopted from
+  the skill-evolution technique library (#3, executable checks) against the
+  documented late-stop failures of 2026-08-17 and 2026-08-18. Fixture set in
+  `scripts/stop-rule-fixtures/`.
+  1.0.0: first version.
 description: Discover where AI would genuinely add value in one person's working day by interviewing them about their real work first and reasoning about fit second. Use when someone asks "where would AI actually help me", "what should I automate", "audit my day / my workflow", "where do I start with AI", "what could I hand off", asks for an AI opportunity assessment or readiness check for themselves or one role, or wants help figuring out what to build a skill or agent for. Runs a five-phase pipeline - contract, discovery interview across four lenses (recurring work, computer workflows, the inverse: work wanted but not done, friction), a confirmed work inventory, value/risk classification into Assist / Redesign / Automate / Leave alone, and a short brief of three to five options using tools already in reach. Do not use for choosing between specific AI products, for building the thing once the opportunity is known, or for organisation-wide process redesign.
 ---
 
@@ -13,7 +24,8 @@ desk. It stops short of building anything or naming any product.
 Read `references/interview-guide.md` before Phase 1 and
 `references/scoring-rubric.md` before Phase 3. `references/pattern-catalog.md`
 helps recognise what an item is; `references/templates.md` fixes the two
-output formats.
+output formats. `scripts/stop_check.py` is the Phase 1 stop gate -- run it,
+do not eyeball it.
 
 ## Stance
 
@@ -47,8 +59,9 @@ matters, and they agree.
 **If they name a time budget** ("I've got 25 minutes"), plan to it: fewer
 questions per lens, the say-back and the inventory in one turn, ratings
 riding along with the brief rather than offered separately. Reserve the
-last third for writing. Running over a stated budget is a failure even if
-every lens got asked.
+last third for writing -- record the budget in the Phase 1 ledger so the
+stop gate enforces it rather than leaving it to memory. Running over a
+stated budget is a failure even if every lens got asked.
 
 If they open with "just tell me where AI could help someone in my role",
 acknowledge in a sentence and start here anyway. A role-generic list is
@@ -90,12 +103,36 @@ not observed.
 Do not suggest AI applications during this phase, even obvious ones. Note
 them privately. Do not fill gaps from what the role "usually" involves.
 
-Stop at saturation -- the last few answers restate items already captured
--- or earlier, the moment you could write the inventory. Before each
-question ask yourself whether the answer would change the brief; if not,
-do not ask it. If the person asks why you are still asking, you have
-already gone one question too far: write the inventory now. Then say it
-back and ask what is missing.
+**The stop gate.** Do not decide by feel whether to ask another question.
+Keep a running ledger of the interview -- minutes elapsed, any budget they
+stated, each lens marked `asked` / `assumed` / `open`, and how many new
+inventory items each answer produced -- and run the gate before every
+Phase 1 question:
+
+```bash
+python scripts/stop_check.py <ledger.json>
+```
+
+It returns STOP with the trigger that fired, or CONTINUE with what is
+still open. Four triggers stop the interview:
+
+- **explicit_signal** -- they said "just write it", "you have enough", or
+  asked why you are still asking. That is one question too late already.
+- **budget_exhausted** -- they named a time budget and two-thirds of it is
+  spent. The last third is for writing.
+- **saturation** -- two answers running added no new inventory item. Gated
+  on the inverse lens being closed; saturation on the other three never
+  short-circuits the inverse.
+- **coverage_complete** -- all four lenses closed and the last answer
+  added nothing.
+
+On STOP, write the inventory in the next turn with any unanswered lens
+marked *assumed*. Then say it back and ask what is missing. The gate
+exists because this rule was self-assessed prose twice and fired late both
+times -- the context deciding whether to ask another question is the same
+context that wants to ask it. `scripts/run_stop_fixtures.py` re-runs the
+fixture set in `scripts/stop-rule-fixtures.json` that proves the gate
+discriminates.
 
 ## Phase 2 -- Inventory
 

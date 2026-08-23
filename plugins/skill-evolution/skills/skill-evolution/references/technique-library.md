@@ -6,7 +6,8 @@ and which free-choice category it occupies. This file is read at the start
 of every evolution run and is meant to grow -- new techniques get appended
 with a dated entry, not inserted by rewriting history.
 
-Research pass: 2026-07-14. Sources at bottom of each entry.
+Research pass: 2026-07-14; refreshed 2026-08-23 (added #15 plan-and-execute,
+#16 trajectory/per-turn evaluation, plus dated notes at the bottom of this file). Sources at bottom of each entry.
 
 ---
 
@@ -408,3 +409,167 @@ Sources: [The ReAct Pattern for Reasoning and Acting](https://apxml.com/courses/
 3. If the research turns up a technique that's a **rename or minor variant**
    of one already here, don't duplicate it -- add a "see also" note to the
    existing entry instead.
+
+---
+
+## 15. Plan-and-execute (plan-then-act, separated from execution)
+
+*Added 2026-08-23 (research pass).*
+
+**What it is:** the agent produces a full multi-step plan up front, then a
+separate execution phase carries out each step -- often with a cheaper model
+or plain tool calls -- rather than re-consulting the model after every
+observation the way ReAct (#14) does. Dependency-aware variants stream the
+plan as a DAG so independent steps run in parallel.
+
+**Signal to use it:** the task decomposes into steps that are knowable
+before execution starts (the sequence isn't discovered from tool results),
+and the skill currently interleaves deciding-what-to-do-next with doing it
+in a way that makes the run hard to audit or restart mid-way.
+
+**Benefit:** reported ~92% task completion vs ~85% for ReAct on the same
+comparisons, and ~3.6x speedup over sequential ReAct-style execution when
+the plan's independent steps are run in parallel. The plan is also an
+artifact: it can be reviewed, diffed, or gated before anything executes.
+
+**Cost / risk:** a plan made before any observation is brittle when reality
+diverges from it -- replanning logic is required, and a skill whose steps
+genuinely depend on what earlier steps found is a bad fit (that's ReAct's
+territory). Also: many skills in this repo are *already* fixed-sequence
+prose pipelines, which is plan-and-execute with a hand-written plan; for
+those the technique offers nothing new and adopting it is pure ceremony.
+
+**Free-choice mapping:** "whether the skill's steps run as a fixed prose
+sequence or as a generated, revisable plan" -- only a real free choice for
+skills whose step sequence varies by input.
+
+Sources: [ReAct vs. Plan-and-Execute: Agent Architecture Guide (2026)](https://atlan.com/know/ai-agent/react-vs-plan-and-execute-agent-architecture/), [5 Agent Design Patterns Every Developer Needs to Know in 2026](https://dev.to/ljhao/5-agent-design-patterns-every-developer-needs-to-know-in-2026-17d8), [Architecting Resilient LLM Agents: Secure Plan-then-Execute](https://arxiv.org/pdf/2509.08646)
+
+---
+
+## 16. Trajectory / per-turn evaluation (process verification, not just output)
+
+*Added 2026-08-23 (research pass).*
+
+**What it is:** evaluate a run at three layers instead of one -- final-answer
+scoring (did the output meet the criteria), trajectory scoring (was the
+sequence of steps and tool calls the right sequence), and per-turn scoring
+(what each individual turn actually did: looped, called the wrong tool and
+recovered, skipped a required step, violated a policy). Verification is
+execution-based -- it reads what the run actually did, not what the run says
+it did.
+
+**Signal to use it:** the skill's own success criteria are about *process
+compliance*, not output shape -- "step N must happen before step M," "this
+step must actually execute rather than be asserted," "the skill must refuse
+rather than invent." Final-output checks structurally cannot see those; a
+skill whose spec says "Replayable: partially -- golden examples test process
+compliance, not exact output" is describing a trajectory-eval need in
+so many words.
+
+**Benefit:** catches the failure class where the output looks right but the
+run cheated to get there -- the skipped step, the self-asserted gate, the
+loop that resolved by accident. Final-answer scoring is blind to all of it
+by construction. This is the direct fix for a skill with a documented
+history of narratively-asserting a step it did not perform.
+
+**Cost / risk:** requires the run to leave an inspectable trace (a log, a
+transcript, a set of artifacts with timestamps) -- a skill that produces
+only one file at the end has nothing to score a trajectory against, so this
+technique presupposes instrumentation that may not exist yet. Per-turn
+rubrics that look fine in isolation can still miss a session that talked
+itself in circles, so the trajectory layer is not optional on top of the
+per-turn one. Adds real evaluation cost and log volume.
+
+**Free-choice mapping:** "verification mechanism" for process-shaped
+criteria -- the layer above #3 (executable checks on the *output*) and #2
+(independent judgment of the *output*).
+
+Sources: [LLM Agent Evaluation Metrics in 2026: Tool Calling, Task Completion, Reasoning, and Trace-Based Evals](https://www.confident-ai.com/blog/llm-agent-evaluation-complete-guide), [AI Agent Evaluation (2026): Metrics, Frameworks, and Production Failures](https://www.morphllm.com/ai-agent-evaluation), [The Definitive Guide to AI Agent Evaluation (2026)](https://futureagi.com/blog/definitive-guide-ai-agent-evaluation-2026/)
+
+---
+
+## Dated notes on existing entries
+
+*2026-08-23:* Entry #14 (ReAct) -- see also #15 (plan-and-execute), which
+the 2026 sources position as its direct counterpart rather than a variant:
+ReAct decides after each observation, plan-and-execute decides once up
+front. Choose by whether the step sequence is discoverable in advance.
+
+*2026-08-23:* Library-wide selection note. The 2026 pattern-catalog sources
+converge on a selection rule worth stating once here rather than per entry:
+**match the observed failure mode to the minimum control mechanism that
+resolves it**, because every additional pattern adds latency, cost, or
+coordination overhead. This is the same discipline this skill's Step 3
+already enforces (a named, skill-specific problem before a candidate is
+fit), now with external corroboration -- it is a reason to keep rejecting
+well-regarded-but-ungrounded candidates, not a new technique.
+
+Sources: [What Are Agentic Design Patterns? 2026 Pattern Catalog](https://www.augmentcode.com/guides/agentic-design-patterns), [Agentic Design Patterns: The 2026 Guide](https://www.sitepoint.com/the-definitive-guide-to-agentic-design-patterns-in-2026/)
+
+---
+
+## Free-choice mapping notes: evaluated-and-rejected candidates
+
+Appended per sweep. A candidate here was genuinely considered against a
+real target and did not clear fitness -- so the next sweep can see it was
+looked at rather than re-deriving it from scratch.
+
+### Sweep 2026-08-23 (23 targets: everything with a `genome/intent.md`
+except skill-evolution's own two skills)
+
+**Promoted:** #3 executable / mechanical checks -> `ai-fit-discovery`, free
+choice "the stop rule is saturation". See that skill's genome failure
+history for the fixture that proves it.
+
+**Rejected as speculative -- no documented, skill-specific failure instance
+(Step 3's "full stop, regardless of how well-regarded"):**
+
+- #2 maker-checker -> `build-packets`, free choice "order and depth of
+  QA-gate re-reading". The strongest near-miss of the sweep: the free
+  choice is a genuine verification slot, and the skill's own eval notes
+  name the exact maker-checker signal ("whether variant-conformance drift
+  was actually caught on a fresh read rather than rubber-stamped by the
+  pass that wrote it"). But that is a named *watch-for*, not a recorded
+  occurrence -- no run has been logged where the rubber-stamp actually
+  happened. Revisit the moment one is. Nothing else in this sweep was
+  this close.
+- #7 parallelization (sectioning) -> `storm-research`, free choice
+  "exact cluster count for citation verification (~4-6)". No failure
+  history; the skill's own notes say no known-bad fixture exists yet.
+- #5/#7 decomposition -> `document-forge`, free choices "persona count"
+  and "section decomposition at draft time". Documented failure exists
+  (brevity-vs-completeness, three under-scoped template documents) but
+  neither free choice addresses it -- the failure is in Stage 1 brief
+  scoping, upstream of both personas and draft decomposition.
+- #6 routing -> `critical-thinking` ("depth/scale of apparatus"),
+  `rules-audit` ("fast mode vs full re-audit"), `job-scan` ("which of the
+  two modes runs"). All three are real routing free choices with no
+  recorded misroute.
+- #16 trajectory / per-turn evaluation -> `ai-fit-discovery`. Genuinely
+  relevant: the documented failure ("one question too many") is a
+  process failure invisible to output checks. Not selected because Step 4
+  caps a pass at one candidate, and because it *layers on top of* the
+  promoted #3 rather than competing with it -- #3 enforces the stop
+  point, #16 would measure whether the enforcement held across a real
+  run. Carry it as the next pass's candidate for this target, not a
+  rival to what was promoted.
+
+**Not candidates at all -- no declared free choice for any library
+technique to occupy:** `delegate-status`, `vault-capture`,
+`vault-conventions`, `vault-init`, `vault-review`, `rule-compiler`,
+`rulegate-setup`, `tracker`, `apply-tabs`, `email-sync`, `job-profile`,
+`master-resume`, `setup`, `problem-hunt`, `framework-forge`,
+`interview-prep`, `survey-feedback-report`. Their free-choice lists are
+wording, pacing, ordering, and judgment-depth slots. A technique aimed at
+any of them would touch an invariant, which per the adoption rule is a
+spec-change proposal to the user, not something a sweep applies.
+
+**Structural note for the owner, not a candidate:** ten of these targets
+record "No failure history yet -- this genome is the baseline," and six
+more record "no known-bad fixture yet." Fitness under Step 3 requires a
+documented, skill-specific failure, so those sixteen skills are
+structurally un-evolvable by this process until they are actually run and
+their results recorded. That is the process working as designed -- but it
+means sweep yield is bounded by how much of the collection gets used, not
+by how good the technique library is.
