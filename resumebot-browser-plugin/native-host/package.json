@@ -1,0 +1,11 @@
+{
+  "name": "resumebot-1password-host",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Chrome native messaging host bridging the ResumeBot browser plugin to the 1Password desktop app via @1password/sdk (DesktopAuth).",
+  "main": "host.js",
+  "license": "MIT",
+  "dependencies": {
+    "@1password/sdk": "^0.4.0"
+  }
+}

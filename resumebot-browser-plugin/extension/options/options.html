@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ResumeBot Browser Plugin – Options</title>
+  <style>
+    body {
+      width: 500px;
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ecf0f1;
+      border-radius: 5px;
+    }
+    h2 {
+      color: #34495e;
+      margin-top: 0;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #bdc3c7;
+      border-radius: 3px;
+      box-sizing: border-box;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .row > * {
+      flex: 1;
+    }
+    .button-group {
+      text-align: center;
+      margin-top: 20px;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .saved {
+      color: #27ae60;
+      margin-top: 10px;
+      display: none;
+    }
+    .repeatable-group {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 3px;
+    }
+    .repeatable-group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .remove-row {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .remove-row:hover {
+      background-color: #c0392b;
+    }
+    .add-row {
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .add-row:hover {
+      background-color: #27ae60;
+    }
+    .file-info {
+      margin-top: 5px;
+      font-size: 0.9em;
+      color: #555;
+    }
+    .eeo-field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .eeo-field label {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    .eeo-field input {
+      flex: 2;
+    }
+    .eeo-field .prefer-not-answer {
+      flex: 1;
+    }
+    .storage-note {
+      font-size: 0.8em;
+      color: #7f8c8d;
+      font-style: italic;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #ecf0f1;
+    }
+    /* QA Memory Browser Styles */
+    .qa-section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ecf0f1;
+      border-radius: 5px;
+    }
+    .qa-section h2 {
+      color: #34495e;
+      margin-top: 0;
+    }
+    .qa-search-container {
+      margin-bottom: 15px;
+    }
+    .qa-search-container input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #bdc3c7;
+      border-radius: 3px;
+      box-sizing: border-box;
+    }
+    .qa-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 15px;
+    }
+    .qa-table th,
+    .qa-table td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    .qa-table th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .qa-table tr:hover {
+      background-color: #f5f5f5;
+    }
+    .qa-table tr.editing {
+      background-color: #e3f2fd;
+    }
+    .qa-table .edit-btn,
+    .qa-table .save-btn,
+    .qa-table .cancel-btn {
+      padding: 2px 6px;
+      font-size: 0.9em;
+      margin-right: 5px;
+    }
+    .qa-table .edit-btn {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .qa-table .edit-btn:hover {
+      background-color: #2980b9;
+    }
+    .qa-table .save-btn {
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .qa-table .save-btn:hover {
+      background-color: #27ae60;
+    }
+    .qa-table .cancel-btn {
+      background-color: #95a5a6;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .qa-table .cancel-btn:hover {
+      background-color: #7f8c8d;
+    }
+    .qa-table .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 2px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .qa-table .delete-btn:hover {
+      background-color: #c0392b;
+    }
+    .qa-table input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+    }
+    .qa-table input[type="text"],
+    .qa-table select {
+      width: 100%;
+      padding: 4px;
+      box-sizing: border-box;
+    }
+    .qa-preview-cell {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .qa-actions-cell {
+      white-space: nowrap;
+    }
+    /* ATS Overrides Styles */
+    .ats-override-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: end;
+    }
+    .ats-override-row > * {
+      flex: 1;
+    }
+    .ats-override-row select,
+    .ats-override-row input {
+      margin-bottom: 0;
+    }
+    .ats-override-actions {
+      display: flex;
+      gap: 5px;
+      align-items: end;
+    }
+  </style>
+</head>
+<body>
+  <h1>ResumeBot Options</h1>
+  <p>Everything on this page stays in this browser's local extension storage (never Chrome sync, never a server). This is personal data; treat the export file the same way.</p>
+  
+  <div class="section">
+    <h2>Identity</h2>
+    <label for="identity-firstName">First Name</label>
+    <input type="text" id="identity-firstName" placeholder="First Name">
+    
+    <label for="identity-lastName">Last Name</label>
+    <input type="text" id="identity-lastName" placeholder="Last Name">
+    
+    <label for="identity-email">Email</label>
+    <input type="email" id="identity-email" placeholder="Email">
+    
+    <label for="identity-phone">Phone</label>
+    <input type="tel" id="identity-phone" placeholder="Phone">
+    
+    <label for="identity-linkedin">LinkedIn</label>
+    <input type="url" id="identity-linkedin" placeholder="LinkedIn URL">
+    
+    <label for="identity-website">Website</label>
+    <input type="url" id="identity-website" placeholder="Website URL">
+  </div>
+  
+  <div class="section">
+    <h2>Address</h2>
+    <label for="address-street">Street</label>
+    <input type="text" id="address-street" placeholder="Street">
+    
+    <label for="address-city">City</label>
+    <input type="text" id="address-city" placeholder="City">
+    
+    <label for="address-state">State</label>
+    <input type="text" id="address-state" placeholder="State">
+    
+    <label for="address-zip">ZIP Code</label>
+    <input type="text" id="address-zip" placeholder="ZIP Code">
+    
+    <label for="address-country">Country</label>
+    <input type="text" id="address-country" placeholder="Country" value="US">
+  </div>
+  
+  <div class="section">
+    <h2>Work</h2>
+    <label for="work-authorized">Work Authorization</label>
+    <select id="work-authorized">
+      <option value="">-- Select --</option>
+      <option value="yes">Yes, authorized</option>
+      <option value="no">No, not authorized</option>
+      <option value="other">Other</option>
+    </select>
+    
+    <label for="work-sponsorship">Sponsorship Required?</label>
+    <select id="work-sponsorship">
+      <option value="">-- Select --</option>
+      <option value="yes">Yes, sponsorship required</option>
+      <option value="no">No, sponsorship not required</option>
+    </select>
+    
+    <label for="work-remotePreference">Remote Preference</label>
+    <select id="work-remotePreference">
+      <option value="">-- Select --</option>
+      <option value="on-site">On-site</option>
+      <option value="remote">Remote</option>
+      <option value="hybrid">Hybrid</option>
+    </select>
+    
+    <label for="work-salaryExpectation">Salary Expectation</label>
+    <input type="text" id="work-salaryExpectation" placeholder="Salary Expectation">
+    
+    <label for="work-startDate">Available Start Date</label>
+    <input type="date" id="work-startDate">
+    
+    <label for="work-noticePeriod">Notice Period</label>
+    <input type="text" id="work-noticePeriod" placeholder="Notice Period (e.g., 2 weeks)">
+  </div>
+  
+  <div class="section">
+    <h2>EEO Information (Voluntary)</h2>
+    <p><small>EEO fields are voluntary. If left unset, they will not be guessed at fill time.</small></p>
+    
+    <div class="eeo-field">
+      <label for="eeo-gender">Gender</label>
+      <input type="text" id="eeo-gender" placeholder="Gender">
+      <label class="prefer-not-answer">
+        <input type="checkbox" id="eeo-gender-prefer"> Prefer not to answer
+      </label>
+    </div>
+    
+    <div class="eeo-field">
+      <label for="eeo-race">Race/Ethnicity</label>
+      <input type="text" id="eeo-race" placeholder="Race/Ethnicity">
+      <label class="prefer-not-answer">
+        <input type="checkbox" id="eeo-race-prefer"> Prefer not to answer
+      </label>
+    </div>
+    
+    <div class="eeo-field">
+      <label for="eeo-veteranStatus">Veteran Status</label>
+      <input type="text" id="eeo-veteranStatus" placeholder="Veteran Status">
+      <label class="prefer-not-answer">
+        <input type="checkbox" id="eeo-veteranStatus-prefer"> Prefer not to answer
+      </label>
+    </div>
+    
+    <div class="eeo-field">
+      <label for="eeo-disabilityStatus">Disability Status</label>
+      <input type="text" id="eeo-disabilityStatus" placeholder="Disability Status">
+      <label class="prefer-not-answer">
+        <input type="checkbox" id="eeo-disabilityStatus-prefer"> Prefer not to answer
+      </label>
+    </div>
+  </div>
+  
+  <div class="section">
+    <h2>Education</h2>
+    <div id="education-container">
+      <!-- Education rows will be inserted here -->
+    </div>
+    <button type="button" id="add-education" class="add-row">Add Education</button>
+  </div>
+  
+  <div class="section">
+    <h2>Employment</h2>
+    <div id="employment-container">
+      <!-- Employment rows will be inserted here -->
+    </div>
+    <button type="button" id="add-employment" class="add-row">Add Employment</button>
+  </div>
+  
+  <div class="section">
+    <h2>Documents</h2>
+    <label for="documents-resume">Resume</label>
+    <input type="file" id="documents-resume" accept=".pdf,.doc,.docx,.txt">
+    <div id="resume-info" class="file-info">No file selected</div>
+    <button type="button" id="remove-resume" class="remove-row">Remove Resume</button>
+    
+    <label for="documents-coverLetterTemplate">Cover Letter Template</label>
+    <textarea id="documents-coverLetterTemplate" rows="4" placeholder="Cover letter template (use {firstName}, {company}, etc.)"></textarea>
+  </div>
+  
+  <div class="section">
+    <h2>ATS Overrides</h2>
+    <p><small>Override automatic ATS detection for specific domains</small></p>
+    <div id="ats-overrides-container">
+      <!-- ATS override rows will be inserted here -->
+    </div>
+    <div>
+      <select id="ats-type-select">
+        <option value="">-- Select ATS Type --</option>
+        <option value="workday">Workday</option>
+        <option value="greenhouse">Greenhouse</option>
+        <option value="lever">Lever</option>
+        <option value="icims">ICIMS</option>
+      </select>
+      <input type="text" id="ats-domain-input" placeholder="Domain pattern (e.g., company.myworkdayjobs.com)">
+      <button type="button" id="add-ats-override" class="add-row">Add Override</button>
+    </div>
+  </div>
+  
+  <div class="section storage-note">
+    <h2>Storage Information</h2>
+    <p>Profile data is stored locally in your browser.</p>
+  </div>
+<div class="section">
+  <h2>Export/Import</h2>
+  <p>Storage is local-only by design, so export/import is how you move to another machine or keep a backup. The file holds your profile, every saved answer (QA memory), ATS overrides and field remaps as plain JSON; your resume is embedded in it.</p>
+  <div class="button-group">
+    <button type="button" id="export-button">Export Profile</button>
+    <button type="button" id="import-button">Import Profile</button>
+    <input type="file" id="import-file-input" accept=".json" style="display:none">
+  </div>
+</div>
+  
+  <div class="qa-section">
+    <h2>Q&A Memory Browser</h2>
+    <div class="qa-search-container">
+      <input type="text" id="qa-search-input" placeholder="Search questions...">
+    </div>
+    <table class="qa-table" id="qa-table">
+      <thead>
+        <tr>
+          <th>Question</th>
+          <th>Answer Preview</th>
+          <th>Type</th>
+          <th>Times Used</th>
+          <th>First Seen</th>
+          <th>Review Before Fill</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="qa-table-body">
+        <!-- Rows will be inserted here by JavaScript -->
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="button-group">
+    <button type="submit" id="save-button">Save Profile</button>
+    <div class="saved" id="saved-message">Saved!</div>
+  </div>
+  
+  <script src="options.js"></script>
+</body>
+</html>

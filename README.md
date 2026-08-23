@@ -136,6 +136,15 @@ Some skills add more: `document-forge` also carries `references/`, `scripts/`,
 `agents/`, and `evals/`. None of that is required; the two files above are
 the whole contract.
 
+One thing here is neither a skill nor a plugin:
+[`resumebot-browser-plugin/`](resumebot-browser-plugin/) is a Chrome
+extension (plus a 1Password native messaging host) that fills job
+applications from a local profile and a growing answer memory. It is the
+browser half of `resumebot`: the plugin finds roles and builds packets, the
+extension takes the typing out of the apply step and never submits. It is
+installed by loading `extension/` unpacked in Chrome, not through the
+marketplace; see its README.
+
 A skill that is only instructions stays in `skills/`, where it can be
 copied or uploaded directly. Wrapping it in a plugin would add a manifest
 and two directory levels and buy nothing.

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Workday SPA Job Application Simulation</title>
+</head>
+<body>
+  <!-- Step 1: Personal Information -->
+  <div id="step1" data-step="1">
+    <h2>Personal Information</h2>
+    <input type="text" data-automation-id="legalNameSection_firstName" placeholder="First Name" />
+    <input type="text" data-automation-id="legalNameSection_lastName" placeholder="Last Name" />
+    <input type="email" data-automation-id="email" placeholder="Email" />
+    <input type="tel" data-automation-id="phoneNumber" placeholder="Phone" />
+    
+    <!-- Fake dropdown for job category -->
+    <button data-automation-id="jobCategory" aria-haspopup="listbox">Select Job Category</button>
+    
+    <!-- Segmented date -->
+    <input type="text" data-automation-id="dateSectionMonth-input" placeholder="MM" />
+    <input type="text" data-automation-id="dateSectionDay-input" placeholder="DD" />
+    <input type="text" data-automation-id="dateSectionYear-input" placeholder="YYYY" />
+    
+    <!-- Progress bar to indicate step -->
+    <div data-automation-id="progressBar" data-step="1"></div>
+    
+    <!-- Button to go to next step (simulated) -->
+    <button id="nextStepBtn">Next Step</button>
+  </div>
+
+  <!-- Step 2: Work Experience -->
+  <div id="step2" data-step="2" style="display: none;">
+    <h2>Work Experience</h2>
+    <input type="text" data-automation-id="workExperience_company1" placeholder="Company" />
+    <input type="text" data-automation-id="workExperience_title1" placeholder="Title" />
+    
+    <!-- Skills chip input (multi-select) -->
+    <input type="text" data-automation-id="skillsInput" placeholder="Add skills" />
+    
+    <!-- Progress bar to indicate step -->
+    <div data-automation-id="progressBar" data-step="2"></div>
+    
+    <!-- Button to go to next step (simulated) -->
+    <button id="nextStepBtn2">Next Step</button>
+  </div>
+
+  <!-- Step 3: Resume Upload -->
+  <div id="step3" data-step="3" style="display: none;">
+    <h2>Resume Upload</h2>
+    <div data-automation-id="resumeDropZone" class="drop-zone">
+      Drop resume here or <input type="file" data-automation-id="fileUpload" />
+    </div>
+    
+    <!-- Progress bar to indicate step -->
+    <div data-automation-id="progressBar" data-step="3"></div>
+    
+    <!-- Submit button -->
+    <button id="submitBtn">Submit Application</button>
+  </div>
+
+  <script>
+    // Simulate Workday SPA behavior
+    document.addEventListener('DOMContentLoaded', function() {
+      const nextStepBtn = document.getElementById('nextStepBtn');
+      const nextStepBtn2 = document.getElementById('nextStepBtn2');
+      const submitBtn = document.getElementById('submitBtn');
+      
+      // Simulate clicking next step buttons to transition between steps
+      if (nextStepBtn) {
+        nextStepBtn.addEventListener('click', function() {
+          document.getElementById('step1').style.display = 'none';
+          document.getElementById('step2').style.display = 'block';
+          // Update progress bar
+          document.querySelector('[data-automation-id="progressBar"]').setAttribute('data-step', '2');
+        });
+      }
+      
+      if (nextStepBtn2) {
+        nextStepBtn2.addEventListener('click', function() {
+          document.getElementById('step2').style.display = 'none';
+          document.getElementById('step3').style.display = 'block';
+          // Update progress bar
+          document.querySelector('[data-automation-id="progressBar"]').setAttribute('data-step', '3');
+        });
+      }
+      
+      if (submitBtn) {
+        submitBtn.addEventListener('click', function() {
+          alert('Application submitted!');
+        });
+      }
+      
+      // Simulate dynamic listbox appearance for dropdowns
+      document.addEventListener('click', function(e) {
+        if (e.target.getAttribute('aria-haspopup') === 'listbox') {
+          // Simulate listbox appearing after button click
+          setTimeout(function() {
+            // Create listbox if it doesn't exist
+            if (!document.querySelector('[role="listbox"]')) {
+              const listbox = document.createElement('div');
+              listbox.setAttribute('role', 'listbox');
+              
+              // Add options based on the button clicked
+              if (e.target.getAttribute('data-automation-id') === 'jobCategory') {
+                const categories = ['Engineering', 'Marketing', 'Sales', 'HR'];
+                categories.forEach(cat => {
+                  const option = document.createElement('div');
+                  option.setAttribute('role', 'option');
+                  option.textContent = cat;
+                  listbox.appendChild(option);
+                });
+              } else if (e.target.getAttribute('data-automation-id') === 'country') {
+                const countries = ['USA', 'Canada', 'UK', 'Germany'];
+                countries.forEach(country => {
+                  const option = document.createElement('div');
+                  option.setAttribute('role', 'option');
+                  option.textContent = country;
+                  listbox.appendChild(option);
+                });
+              }
+              
+              document.body.appendChild(listbox);
+            }
+          }, 100);
+        }
+      });
+      
+      // Simulate suggestion list for chip input
+      document.addEventListener('input', function(e) {
+        if (e.target.getAttribute('data-automation-id') === 'skillsInput') {
+          // Simulate suggestion list appearing after typing
+          setTimeout(function() {
+            // Remove any existing suggestion list
+            const existingList = document.querySelector('[role="listbox"]');
+            if (existingList) existingList.remove();
+            
+            // Create suggestion list
+            const listbox = document.createElement('div');
+            listbox.setAttribute('role', 'listbox');
+            
+            // Add suggestions based on input value
+            const inputValue = e.target.value.toLowerCase();
+            const skills = ['JavaScript', 'Python', 'Java', 'React', 'Node.js', 'SQL', 'AWS'];
+            const filteredSkills = skills.filter(skill => skill.toLowerCase().includes(inputValue));
+            
+            filteredSkills.forEach(skill => {
+              const option = document.createElement('div');
+              option.setAttribute('role', 'option');
+              option.textContent = skill;
+              listbox.appendChild(option);
+            });
+            
+            if (filteredSkills.length > 0) {
+              document.body.appendChild(listbox);
+              
+              // Handle clicking on suggestions
+              listbox.addEventListener('click', function(e) {
+                if (e.target.getAttribute('role') === 'option') {
+                  // Fill the input with the selected skill
+                  e.target.closest('[role="listbox"]').previousElementSibling.value = e.target.textContent;
+                  // Clear the input for next chip
+                  e.target.closest('[role="listbox"]').previousElementSibling.value = '';
+                  e.target.closest('[role="listbox"]').previousElementSibling.dispatchEvent(new Event('input', { bubbles: true }));
+                  // Remove the listbox
+                  listbox.remove();
+                }
+              });
+            }
+          }, 200);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

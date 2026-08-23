@@ -1,0 +1,7 @@
+node_modules
+*.zip
+# Written by native-host/install.* for this machine only
+native-host/config.json
+native-host/run-host.sh
+native-host/run-host.cmd
+native-host/com.resumebot.op.json

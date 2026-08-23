@@ -69,6 +69,15 @@ Setup offers to register four recurring tasks (nightly scan, packet build, morni
 apply-tabs, daily email sync). Each scheduled prompt is one line invoking the
 corresponding skill, so logic never forks between the schedule and the skill.
 
+## Companion: the browser plugin
+
+The apply step itself is still typing. The
+[resumebot-browser-plugin](../../resumebot-browser-plugin/) is a Chrome
+extension that fills applications from a profile you enter once and an
+answer memory that grows with every application, then stops so you can
+submit. It is a separate install (load unpacked in Chrome), not part of this
+plugin, and the rule above still holds: nothing here fills or submits.
+
 ## Requirements
 
 - Claude Code with browser access (for scans and apply-tabs)

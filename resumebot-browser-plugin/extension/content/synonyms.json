@@ -1,0 +1,323 @@
+{
+  "identity.firstName": [
+    "fname",
+    "first_name",
+    "firstname",
+    "first-name",
+    "givenname",
+    "given-name",
+    "legalname--firstname",
+    "given name",
+    "legal first name"
+  ],
+  "identity.lastName": [
+    "lname",
+    "last_name",
+    "lastname",
+    "last-name",
+    "surname",
+    "familyname",
+    "family-name",
+    "legalname--lastname",
+    "family name",
+    "legal last name"
+  ],
+  "identity.fullName": [
+    "fullname",
+    "full-name",
+    "full_name",
+    "your-name",
+    "yourname",
+    "applicant-name",
+    "candidate-name"
+  ],
+  "identity.email": [
+    "email",
+    "e-mail",
+    "emailaddress",
+    "email-address"
+  ],
+  "identity.phone": [
+    "phone",
+    "telephone",
+    "tel",
+    "telephone-number",
+    "phone-number",
+    "mobile",
+    "cell",
+    "cellphone"
+  ],
+  "identity.linkedin": [
+    "linkedin",
+    "linkedin-url",
+    "linkedinprofile",
+    "linkedin profile"
+  ],
+  "identity.website": [
+    "website",
+    "personal-website",
+    "website-url",
+    "homepage",
+    "personal website"
+  ],
+  "address.street": [
+    "street",
+    "street-address",
+    "addressline1",
+    "address-line-1",
+    "addrline1",
+    "addr line 1",
+    "address1",
+    "address line 1"
+  ],
+  "address.addressline2": [
+    "addressline2",
+    "address-line-2",
+    "addrline2",
+    "addr line 2",
+    "address2",
+    "address line 2",
+    "street address 2"
+  ],
+  "address.city": [
+    "city",
+    "town",
+    "locality",
+    "municipality"
+  ],
+  "address.state": [
+    "state",
+    "province",
+    "region",
+    "stateprovince",
+    "state-province"
+  ],
+  "address.zip": [
+    "zip",
+    "zipcode",
+    "zip-code",
+    "postalcode",
+    "postal-code",
+    "postcode"
+  ],
+  "address.country": [
+    "country",
+    "countrycode",
+    "country-code",
+    "nation"
+  ],
+  "work.authorized": [
+    "authorized",
+    "workauthorized",
+    "work-authorized",
+    "eligible",
+    "eligibility",
+    "workeligibility",
+    "work-eligibility",
+    "authorizedtowork",
+    "authorized-to-work",
+    "workauthorization",
+    "work-authorization"
+  ],
+  "work.sponsorship": [
+    "sponsorship",
+    "visasponsorship",
+    "visa-sponsorship",
+    "requiresponsorship",
+    "requires-sponsorship",
+    "sponsorshiprequired",
+    "sponsorship-required",
+    "h1b",
+    "h1-b",
+    "h1bvisa",
+    "h1b visa"
+  ],
+  "work.remotePreference": [
+    "remote",
+    "remotepreference",
+    "remote-preference",
+    "remotework",
+    "remote-work",
+    "telecommute",
+    "telecommuting",
+    "workfromhome",
+    "work-from-home"
+  ],
+  "work.salaryExpectation": [
+    "salary",
+    "salaryexpectation",
+    "salary-expectation",
+    "expectedsalary",
+    "expected-salary",
+    "compensation",
+    "compensationexpectation",
+    "compensation-expectation",
+    "salaryrange",
+    "salary-range"
+  ],
+  "work.startDate": [
+    "startdate",
+    "start-date",
+    "dateavailable",
+    "date-available",
+    "availablefrom",
+    "available-from",
+    "start",
+    "availability"
+  ],
+  "work.noticePeriod": [
+    "notice",
+    "noticeperiod",
+    "notice-period",
+    "terminationnotice",
+    "termination-notice"
+  ],
+  "eeo.gender": [
+    "gender",
+    "sex",
+    "genderidentity",
+    "gender-identity"
+  ],
+  "eeo.race": [
+    "race",
+    "ethnicity",
+    "ethnicorigin",
+    "ethnic-origin",
+    "racialbackground",
+    "racial-background"
+  ],
+  "eeo.veteranStatus": [
+    "veteran",
+    "veteranstatus",
+    "veteran-status",
+    "militaryservice",
+    "military-service",
+    "protectedveteran",
+    "protected-veteran"
+  ],
+  "eeo.disabilityStatus": [
+    "disability",
+    "disabilitystatus",
+    "disability-status",
+    "handicap",
+    "disabled"
+  ],
+  "education.0.school": [
+    "school",
+    "schoolname",
+    "school-name",
+    "institution",
+    "college",
+    "university"
+  ],
+  "education.0.degree": [
+    "degree",
+    "degreetype",
+    "degree-type",
+    "educationlevel",
+    "education-level"
+  ],
+  "education.0.field": [
+    "field",
+    "fieldofstudy",
+    "field-of-study",
+    "major",
+    "majors",
+    "subject",
+    "courseofstudy",
+    "course-of-study"
+  ],
+  "education.0.startYear": [
+    "startyear",
+    "start-year",
+    "fromyear",
+    "from-year",
+    "startdate",
+    "start-date"
+  ],
+  "education.0.endYear": [
+    "endyear",
+    "end-year",
+    "yearto",
+    "year-to",
+    "enddate",
+    "end-date"
+  ],
+  "employment.0.company": [
+    "company",
+    "companyname",
+    "company-name",
+    "employer",
+    "employername",
+    "employer-name",
+    "organization"
+  ],
+  "employment.0.title": [
+    "title",
+    "jobtitle",
+    "job-title",
+    "position",
+    "jobposition",
+    "job-position",
+    "role",
+    "designation"
+  ],
+  "employment.0.location": [
+    "location",
+    "joblocation",
+    "job-location",
+    "worklocation",
+    "work-location",
+    "place",
+    "citystate"
+  ],
+  "employment.0.startDate": [
+    "startdate",
+    "start-date",
+    "fromdate",
+    "from-date",
+    "start",
+    "begin"
+  ],
+  "employment.0.endDate": [
+    "enddate",
+    "end-date",
+    "todate",
+    "to-date",
+    "end",
+    "finish"
+  ],
+  "employment.0.current": [
+    "current",
+    "currentlyemployed",
+    "currently-employed",
+    "present",
+    "stillworking",
+    "still-working"
+  ],
+  "employment.0.description": [
+    "description",
+    "jobdescription",
+    "job-description",
+    "responsibilities",
+    "duties",
+    "workexperience",
+    "work-experience"
+  ],
+  "documents.resume.filename": [
+    "resume",
+    "cv",
+    "curriculumvitae",
+    "curriculum-vitae",
+    "resumefile",
+    "cvfile"
+  ],
+  "documents.coverLetterTemplate": [
+    "coverletter",
+    "cover-letter",
+    "coverlettertemplate",
+    "cover-letter-template",
+    "coverletterdoc",
+    "cover-letter-doc"
+  ]
+}

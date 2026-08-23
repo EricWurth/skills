@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Scanner Test Fixture</title>
+</head>
+<body>
+    <form id="test-form">
+        <!-- labeled input with label-for -->
+        <label for="first-name">First Name:</label>
+        <input type="text" id="first-name" name="firstName">
+
+        <!-- labeled input with wrapping label -->
+        <label>
+            Last Name:
+            <input type="text" name="lastName">
+        </label>
+
+        <!-- aria-label field -->
+        <input type="email" aria-label="Email Address" name="email">
+
+        <!-- aria-labelledby field -->
+        <div id="email-label">Email:</div>
+        <input type="email" aria-labelledby="email-label" name="email2">
+
+        <!-- select -->
+        <select name="department">
+            <option value="">Select Department</option>
+            <option value="eng">Engineering</option>
+            <option value="mkt">Marketing</option>
+        </select>
+
+        <!-- textarea -->
+        <textarea name="bio" placeholder="Tell us about yourself"></textarea>
+
+        <!-- radios in a fieldset with legend -->
+        <fieldset>
+            <legend>Gender</legend>
+            <label><input type="radio" name="gender" value="male"> Male</label>
+            <label><input type="radio" name="gender" value="female"> Female</label>
+            <label><input type="radio" name="gender" value="other"> Other</label>
+        </fieldset>
+
+        <!-- open shadow root containing an input -->
+        <div id="shadow-host"></div>
+
+        <!-- unlabeled input following a text node -->
+        <p>Preferred Start Date:</p>
+        <input type="date" name="startDate">
+    </form>
+</body>
+</html>

@@ -1,0 +1,74 @@
+{
+  "manifest_version": 3,
+  "name": "ResumeBot Browser Plugin",
+  "version": "1.1.0",
+  "description": "Fills job applications from a local profile and a growing answer memory. Never submits. Nothing leaves your machine.",
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "nativeMessaging",
+    "activeTab",
+    "scripting",
+    "webNavigation"
+  ],
+  "host_permissions": [
+    "*://*.myworkdayjobs.com/*",
+    "*://boards.greenhouse.io/*",
+    "*://*.greenhouse.io/*",
+    "*://jobs.lever.co/*",
+    "*://*.icims.com/*"
+  ],
+  "optional_host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "ResumeBot"
+  },
+  "options_page": "options/options.html",
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.myworkdayjobs.com/*",
+        "*://boards.greenhouse.io/*",
+        "*://*.greenhouse.io/*",
+        "*://jobs.lever.co/*",
+        "*://*.icims.com/*"
+      ],
+      "all_frames": true,
+      "run_at": "document_idle",
+      "js": [
+        "content/normalize.js",
+        "content/scanner.js",
+        "content/matcher.js",
+        "content/filler.js",
+        "content/capture.js",
+        "content/ats/detect.js",
+        "content/ats/generic.js",
+        "content/ats/workday.js",
+        "content/ats/greenhouse.js",
+        "content/ats/lever.js",
+        "content/ats/icims.js",
+        "content/main.js"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["content/synonyms.json"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "commands": {
+    "fill": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F",
+        "mac": "Command+Shift+F"
+      },
+      "description": "Fill the application form on this page"
+    }
+  }
+}
