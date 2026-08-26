@@ -31,7 +31,14 @@ import sys
 from pathlib import Path
 
 EM_DASH = re.compile(r"—|–| - ")
-CERT_WORDS = re.compile(r"\b(PMP|CISA|CISSP|CPA|CSM|SAFe|AIGP|Six Sigma Black Belt|certified)\b", re.I)
+# en dash between two date-ish tokens (Jan 2022 – Jul 2026, 2012–2020) is
+# legitimate range typography, not prose punctuation — neutralize before R1
+DATE_TOKEN = r"(?:(?:19|20)\d{2}|Jan\w*|Feb\w*|Mar\w*|Apr\w*|May|Jun\w*|Jul\w*|Aug\w*|Sep\w*|Oct\w*|Nov\w*|Dec\w*|[Pp]resent)"
+DATE_RANGE_DASH = re.compile(rf"({DATE_TOKEN})\s*–\s*(?={DATE_TOKEN})")
+CERT_WORDS = re.compile(r"\b(PMP|CISA|CISSP|CPA|CSM|SAFe|AIGP|Six Sigma Black Belt)\b")
+# the bare word "certified" is only a personal-credential claim in these shapes;
+# "a CMS certified platform" is a fact about the system, not the person
+CERT_CLAIM = re.compile(r"\b(?:am|is|being)\s+certified\b|\bcertified\s+(?:professional|practitioner|scrum|project|information|associate)\b", re.I)
 EDU_YEAR = re.compile(r"\b(19|20)\d{2}\b")
 DEGREE_WORDS = re.compile(r"\b(B\.?A\.?|B\.?S\.?|M\.?A\.?|M\.?S\.?|MBA|Ph\.?D|Bachelor|Master|degree|university|college)\b", re.I)
 PRECONCEDE = re.compile(r"\b(although I lack|despite not having|while I don'?t have|I may not have|even though I have not)\b", re.I)
@@ -52,10 +59,13 @@ def load_forbidden(names_file, content_rules):
 
 def lint_text_line(line, forbidden, certs_ok):
     hits = []
-    if EM_DASH.search(line):
+    dash_line = DATE_RANGE_DASH.sub(r"\1 ", line)
+    if EM_DASH.search(dash_line):
         hits.append(("R1", "em dash (or spaced hyphen used as one)"))
-    if not certs_ok and CERT_WORDS.search(line):
-        hits.append(("R3", f"certification claim: {CERT_WORDS.search(line).group(0)!r}"))
+    if not certs_ok:
+        cert_hit = CERT_WORDS.search(line) or CERT_CLAIM.search(line)
+        if cert_hit:
+            hits.append(("R3", f"certification claim: {cert_hit.group(0)!r}"))
     for term in forbidden:
         if re.search(rf"\b{re.escape(term)}\b", line, re.I):
             hits.append(("R4", f"forbidden name: {term!r}"))
@@ -78,11 +88,26 @@ def lint_docx(path, forbidden, certs_ok, allow_bold):
             continue
         for rule, msg in lint_text_line(text, forbidden, certs_ok):
             problems.append((f"para {i}", rule, msg, text[:70]))
-        if not allow_bold and not para.style.name.lower().startswith("heading"):
+        style_name = para.style.name if para.style is not None else ""
+        if not allow_bold and not style_name.lower().startswith("heading"):
             runs = [r for r in para.runs if r.text.strip()]
             bold_runs = [r for r in runs if r.bold]
-            if bold_runs and len(bold_runs) < len(runs):  # partial bold = inline bold
-                problems.append((f"para {i}", "R2", "mid-sentence inline bold", text[:70]))
+            if bold_runs and len(bold_runs) < len(runs):  # partial bold
+                # a bold label opening the line and ending with ':' (e.g. a
+                # competency category) is a leading label, not mid-sentence bold
+                leading = []
+                for r in runs:
+                    if r.bold:
+                        leading.append(r)
+                    else:
+                        break
+                label_ok = (
+                    leading
+                    and len(leading) == len(bold_runs)
+                    and "".join(r.text for r in leading).rstrip().endswith(":")
+                )
+                if not label_ok:
+                    problems.append((f"para {i}", "R2", "mid-sentence inline bold", text[:70]))
     return problems
 
 
