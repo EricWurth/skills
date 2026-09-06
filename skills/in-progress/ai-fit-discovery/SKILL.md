@@ -1,15 +1,23 @@
 ---
 name: ai-fit-discovery
 spec: genome/intent.md
-version: 1.1.0
+version: 1.2.0
 changelog: >
+  1.2.0: running the stop gate stops being self-attested. The Phase 1 ledger
+  now records, per turn, whether a question was asked and what verdict was in
+  hand before asking it, and `scripts/trajectory_check.py` re-derives every
+  verdict from the state that preceded that turn. Adopted from the
+  skill-evolution technique library (#16, trajectory / per-turn evaluation)
+  because `stop_check.py` reads only the ledger's final state, so a run that
+  asked one question too many and a run that stopped correctly end
+  indistinguishable. Fixture set in `scripts/trajectory-fixtures.json`.
   1.1.0: the Phase 1 stop rule moves from self-assessed prose to a countable
   gate (`scripts/stop_check.py`) run before every question -- explicit stop
   signal, stated budget two-thirds spent, saturation (gated on the inverse
   lens being closed), coverage-complete-with-a-dry-last-answer. Adopted from
   the skill-evolution technique library (#3, executable checks) against the
   documented late-stop failures of 2026-08-17 and 2026-08-18. Fixture set in
-  `scripts/stop-rule-fixtures/`.
+  `scripts/stop-rule-fixtures.json`.
   1.0.0: first version.
 description: Discover where AI would genuinely add value in one person's working day by interviewing them about their real work first and reasoning about fit second. Use when someone asks "where would AI actually help me", "what should I automate", "audit my day / my workflow", "where do I start with AI", "what could I hand off", asks for an AI opportunity assessment or readiness check for themselves or one role, or wants help figuring out what to build a skill or agent for. Runs a five-phase pipeline - contract, discovery interview across four lenses (recurring work, computer workflows, the inverse: work wanted but not done, friction), a confirmed work inventory, value/risk classification into Assist / Redesign / Automate / Leave alone, and a short brief of three to five options using tools already in reach. Do not use for choosing between specific AI products, for building the thing once the opportunity is known, or for organisation-wide process redesign.
 ---
@@ -25,7 +33,8 @@ Read `references/interview-guide.md` before Phase 1 and
 `references/scoring-rubric.md` before Phase 3. `references/pattern-catalog.md`
 helps recognise what an item is; `references/templates.md` fixes the two
 output formats. `scripts/stop_check.py` is the Phase 1 stop gate -- run it,
-do not eyeball it.
+do not eyeball it -- and `scripts/trajectory_check.py` checks afterwards that
+you did.
 
 ## Stance
 
@@ -133,6 +142,28 @@ times -- the context deciding whether to ask another question is the same
 context that wants to ask it. `scripts/run_stop_fixtures.py` re-runs the
 fixture set in `scripts/stop-rule-fixtures.json` that proves the gate
 discriminates.
+
+**Record the verdict, not just the answer.** Each turn in the ledger carries
+two more fields: `asked` (did this turn put a question to the person) and
+`gate` (the verdict that was in hand before asking it). Write them as you go.
+At the end of Phase 1, run:
+
+```bash
+python scripts/trajectory_check.py <ledger.json>
+```
+
+It re-derives each turn's verdict from the state that preceded that turn and
+reports three things: a question asked with no verdict behind it, a question
+asked on a turn whose verdict was STOP, and a recorded verdict that does not
+survive replay. The third is the point. `stop_check.py` only ever sees the
+ledger's final state, so an interview that ran one question past a trigger
+and one that stopped where it should end up with the same ledger and the same
+STOP -- the snapshot cannot tell them apart, and the replay can.
+`scripts/run_trajectory_fixtures.py` re-runs the fixture set that proves it,
+including a replay of the 2026-08-18 run.
+
+Two turns of housekeeping is the whole cost, and it is the difference between
+having run the gate and saying you did.
 
 ## Phase 2 -- Inventory
 
