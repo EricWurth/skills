@@ -43,7 +43,8 @@ JobSearch/
   Variants/        standing tailored variants
   Applications/    one folder per application packet
   Tracker/         JobSearchTracker.xlsx  (+ backups/)
-  Profile/         match-profile, content-rules, preferences, form answers
+  Profile/         match-profile, content-rules, preferences, form answers,
+                   LinkedIn profile draft
   Reference/       recommendation letters etc., attached as-is
   Archive/         retired files, dated
 ```
