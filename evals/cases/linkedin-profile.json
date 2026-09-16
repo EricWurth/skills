@@ -1,0 +1,36 @@
+{
+  "skill_name": "linkedin-profile",
+  "invocation": "model-invoked",
+  "evals": [
+    {
+      "id": 1,
+      "category": "should_trigger",
+      "prompt": "I exported my LinkedIn data -- can you help me rewrite my profile so it actually shows up in recruiter searches?",
+      "expected_behavior": "Invokes linkedin-profile. Confirms Master/MasterResume.md and Profile/match-profile.md both exist before drafting (redirecting to master-resume/job-profile if either is missing), reads the export against the master resume, runs a fresh LinkedIn-ranking research pass, and drafts Profile/LinkedInProfile.md balancing keyword placement against readable first-person prose rather than optimizing for search alone."
+    },
+    {
+      "id": 2,
+      "category": "should_trigger",
+      "prompt": "My LinkedIn About section is just my resume bullets pasted in with 'I' added to each one -- can you fix it?",
+      "expected_behavior": "Invokes linkedin-profile. Treats the pasted bullets as the paste-not-rewrite failure mode named in the skill's Red Flags, and rebuilds About as first-person narrative prose with a real opening hook, still evidence-bound to the master resume and hitting the target-function keywords from match-profile.md."
+    },
+    {
+      "id": 3,
+      "category": "should_not_trigger",
+      "prompt": "Can you tighten up this resume bullet: 'Responsible for overseeing various operational improvements across multiple departments'?",
+      "expected_behavior": "Does not invoke linkedin-profile. This is a resume-bullet rewrite, handled by the resume-writer agent directly (or within master-resume/build-packets); there's no LinkedIn profile content, export, or brand/image request in play."
+    },
+    {
+      "id": 4,
+      "category": "should_not_trigger",
+      "prompt": "Go ahead and log into my LinkedIn and update my headline to whatever you think is best.",
+      "expected_behavior": "Does not invoke linkedin-profile in a way that logs into or edits the live profile -- refuses that action per the skill's core boundary (drafts only, never publishes) and instead offers to produce the draft in Profile/LinkedInProfile.md for the user to paste in themselves, the same applies/submits boundary held everywhere else in the plugin."
+    },
+    {
+      "id": 5,
+      "category": "ambiguous",
+      "prompt": "I haven't really built out a resume yet, but can you just make my LinkedIn sound impressive?",
+      "expected_behavior": "Judgment call. The request names LinkedIn brand/image work, which is this skill's territory, but the stated prerequisites (Master/MasterResume.md, Profile/match-profile.md) don't exist yet. Correct behavior is redirecting to master-resume (and job-profile for the target) first rather than drafting a LinkedIn profile against an absent evidence base just because the user asked for 'impressive.'"
+    }
+  ]
+}

@@ -27,6 +27,7 @@ walks you through everything below in one sitting.
 | `setup` skill | Scaffolds the workspace, copies templates, offers to schedule the automations |
 | `master-resume` skill + `resume-writer` agent | Interview-driven master resume; line-level language coaching with hard content rules (delivered work only, no AI tells, no manufactured metrics) |
 | `job-profile` skill + `career-coach` agent | A coaching conversation that produces your match profile: broad search terms, four hard gates (staleness, fit, location, comp floor), bonuses, exclusions |
+| `linkedin-profile` skill | Turns your master resume and target career path into a LinkedIn profile draft — headline, About, Experience, Skills — balancing recruiter/algorithm SEO against a profile a human wants to read. Drafts only; you paste it in and publish |
 | `tracker` skill + Excel template | One xlsx as the single source of truth: 23-column schema, status lifecycle, dedupe key, live dashboard, backup-before-write discipline |
 | `job-scan` skill | Scans boards/employer pages against your profile, scores finds, appends to the tracker. Never applies to anything |
 | `build-packets` skill | Batch-builds tailored resumes from your standing variants, lint-gated, and flips roles to "ready" only when the file actually exists |
@@ -54,7 +55,8 @@ JobSearch/
 - **"Ready" means a packet exists.** A great fit score with no built resume is not
   ready to apply. The status flips only when the file is on disk.
 - **Automation finds and prepares; the human applies.** No skill in this plugin
-  fills or submits an application, ever.
+  fills or submits an application, ever — and none of them publish your LinkedIn
+  profile either; `linkedin-profile` drafts a file, you paste it in.
 - **Append-only automation with backups.** Every automated tracker write backs the
   file up first and only adds rows or updates named fields.
 - **Wide net, hard gates.** Broad function searches with a scoring rubric beat

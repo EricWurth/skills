@@ -50,6 +50,10 @@ it; otherwise run the full interview. Output: `Master/MasterResume.md`.
 Invoke the `job-profile` skill (career-coach conversation). Output:
 `Profile/match-profile.md` plus filled-in preferences.
 
+Once both exist, mention the `linkedin-profile` skill is available — it turns the
+master resume and target functions into a LinkedIn profile draft. Optional, not part
+of the guided flow; the user invokes it whenever they're ready.
+
 ## Stage 3 — Tracker orientation
 
 Open the tracker template briefly and explain: one row per job, `matchKey` is the
