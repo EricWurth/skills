@@ -61,6 +61,64 @@ def parse_frontmatter(text: str) -> Frontmatter:
     return Frontmatter(fields=fields, present=True)
 
 
+_BLOCK_SCALAR_OPENERS = {"|", ">", "|-", ">-", "|+", ">+"}
+
+
+def check_frontmatter_yaml(text: str) -> list[str]:
+    """Flag frontmatter a *real* YAML parser would reject, without depending
+    on one -- `parse_frontmatter` above is deliberately a dumb key:value scan
+    (see module docstring) and silently tolerates both failure modes below,
+    which is exactly how they shipped unnoticed until a strict external
+    uploader rejected them:
+
+    1. A raw line sitting at column 0 inside the frontmatter block that
+       isn't a `key: value` line and isn't an indented continuation of a
+       block scalar -- e.g. an `<example>...</example>` block pasted
+       straight into the frontmatter instead of after the closing `---`.
+    2. An unquoted scalar value containing `: ` (colon-space) -- YAML
+       reads that as the start of a nested mapping and refuses to parse
+       the line, even though this repo's own dumb scanner just carries the
+       text through as-is.
+
+    Both are checkable with plain string rules, no YAML engine needed, and
+    both are the two real bugs found in the wild that motivated this
+    function -- it isn't a general YAML validator and doesn't try to be.
+    """
+    problems: list[str] = []
+    if not text.startswith("---"):
+        return problems
+    end = text.find("\n---", 3)
+    if end == -1:
+        return problems
+    block = text[3:end]
+
+    for lineno, raw in enumerate(block.splitlines(), start=1):
+        if not raw.strip() or raw.lstrip().startswith("#"):
+            continue
+        if raw.startswith((" ", "\t")):
+            continue  # indented continuation of a value or block scalar body
+        m = re.match(r"^([A-Za-z_][A-Za-z0-9_-]*):\s*(.*)$", raw)
+        if not m:
+            problems.append(
+                f"frontmatter line {lineno}: {raw[:60]!r} is not `key: value` "
+                "and not an indented continuation -- a strict YAML parser "
+                "rejects this block (move it after the closing `---`?)"
+            )
+            continue
+        key, value = m.group(1), m.group(2).strip()
+        if value in _BLOCK_SCALAR_OPENERS or not value:
+            continue
+        quoted = (value[0] == value[-1] == '"') or (value[0] == value[-1] == "'")
+        if not quoted and ": " in value:
+            problems.append(
+                f"frontmatter line {lineno}: key '{key}' has an unquoted "
+                "value containing ': ' -- YAML reads that as a nested "
+                "mapping and rejects the line; quote the value or convert "
+                "it to a `|` block scalar"
+            )
+    return problems
+
+
 @dataclass
 class Skill:
     path: Path          # the skill directory

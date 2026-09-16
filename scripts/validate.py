@@ -28,6 +28,12 @@ Checks, in rough order of how badly they bite:
      (model-invoked) or explicit_invocation / should_not_auto_trigger
      (user-invoked) cases to have actually tested triggering, not just
      asserted a file exists.
+ 12. Every SKILL.md and agents/*.md frontmatter block would survive a real
+     YAML parser, not just this repo's own dumb key:value scan -- two
+     specific failure modes (an `<example>` block pasted inside the
+     frontmatter delimiters, an unquoted value containing ': '). Both
+     shipped unnoticed once before a strict external uploader rejected
+     them; see skillmodel.check_frontmatter_yaml.
 
 Exit code is 1 if any error fired, 0 otherwise. Warnings never fail the run.
 
@@ -45,6 +51,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
 from skillmodel import (  # noqa: E402
     SKILL_NAME_RE,
+    check_frontmatter_yaml,
     find_skills,
     load_json,
     parse_frontmatter,
@@ -72,6 +79,13 @@ def check_skills(root: Path):
         if not s.fm.present:
             err(f"{s.rel}/SKILL.md: no YAML frontmatter block")
             continue
+
+        for problem in check_frontmatter_yaml(s.text):
+            # This repo's own frontmatter reader is a deliberately dumb
+            # key:value scan and tolerates both failure modes this catches;
+            # a strict external YAML parser (Cowork's plugin uploader, for
+            # one) does not, and rejects the whole plugin at install time.
+            err(f"{s.rel}/SKILL.md: {problem}")
 
         name = s.name
         if not name:
@@ -303,6 +317,10 @@ def check_agent_file(path: Path, context_text: str, label: str) -> None:
         err(f"{label}: no frontmatter (name/description) and never named "
             "in a SKILL.md -- not discoverable as a registered subagent, "
             "and not usable as dispatched prompt text either")
+
+    if has_frontmatter:
+        for problem in check_frontmatter_yaml(text):
+            err(f"{label}: {problem}")
 
 
 def check_organization(root: Path, skills) -> None:
