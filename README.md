@@ -52,7 +52,7 @@ edits to apply live.
 
 <!-- catalog:start -->
 
-6 standalone skills and 5 plugins (19 skills). Skills are copied; plugins are installed.
+6 standalone skills and 5 plugins (20 skills). Skills are copied; plugins are installed.
 
 They split on one axis: who can invoke them. **User-invoked** skills are reachable only when you type them, and they do the orchestrating. **Model-invoked** skills can be typed *or* reached for automatically when the task fits; they hold the reusable discipline. A user-invoked skill may call a model-invoked one, never another user-invoked one.
 
@@ -108,7 +108,7 @@ Installed through the marketplace. Each carries more than instructions: extra sk
 **resumebot**
 
 - *You type*: `/setup`
-- *Automatic*: `apply-tabs`, `build-packets`, `email-sync`, `interview-prep`, `job-profile`, `job-scan`, `master-resume`, `tracker`
+- *Automatic*: `apply-tabs`, `build-packets`, `email-sync`, `interview-prep`, `job-profile`, `job-scan`, `linkedin-profile`, `master-resume`, `tracker`
 
 <!-- catalog:end -->
 

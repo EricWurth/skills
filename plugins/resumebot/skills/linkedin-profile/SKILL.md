@@ -7,7 +7,8 @@ description: Turn the master resume and target career path into a LinkedIn profi
 
 Produces `Profile/LinkedInProfile.md`: a section-by-section draft the user copies into
 LinkedIn's own editor by hand. Same division of labor as the rest of this plugin —
-this skill drafts, it never opens a browser and edits the live profile itself.
+this skill drafts, it never opens a browser and edits the live profile itself. See
+`Profile/_example-linkedin-profile.md` for the target shape (fictional persona).
 
 ## Prerequisites
 
