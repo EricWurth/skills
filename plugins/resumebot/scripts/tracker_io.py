@@ -11,6 +11,7 @@ CLI:
   python tracker_io.py update  <xlsx> --id some-job-id --set status=applied --reason email_sync
   python tracker_io.py keys    <xlsx>            # all matchKeys (for cheap dedupe)
   python tracker_io.py counts  <xlsx>            # status counts
+  python tracker_io.py migrate <xlsx>            # add colAdjusted/colAdjustedComp to an older tracker
 
 `rows.json` is a JSON list of objects keyed by column name. Unknown columns are
 rejected. Rows whose matchKey already exists are skipped and reported.
@@ -32,8 +33,12 @@ COLUMNS = [
     "id", "company", "title", "status", "fit", "level", "effort", "variant",
     "comp", "compSource", "location", "moveType", "sector", "found", "board",
     "url", "applyUrl", "ats", "notes", "packetComplete", "queueRank",
-    "matchKey", "fitEvidence",
+    "matchKey", "fitEvidence", "colAdjusted", "colAdjustedComp",
 ]
+
+# Pre-COL-adjustment schema (23 columns). Used only to recognize a tracker that
+# needs `migrate` and to refuse guessing on anything else.
+OLD_COLUMNS = COLUMNS[:-2]
 
 STATUSES = {"new", "ready", "applied", "interviewing", "rejected", "dead", "deferred"}
 
@@ -54,6 +59,40 @@ def backup(xlsx: Path, reason: str) -> Path:
     for stale in old[:-BACKUP_KEEP]:
         stale.unlink()
     return dest
+
+
+def cmd_migrate(args):
+    """Add colAdjusted/colAdjustedComp to a pre-COL-adjustment (23-column) tracker.
+
+    Refuses to touch anything whose header row isn't exactly the recognized old
+    or new shape -- this never guesses at an unfamiliar file.
+    """
+    xlsx = Path(args.xlsx)
+    wb = openpyxl.load_workbook(xlsx, read_only=True)
+    if SHEET not in wb.sheetnames:
+        sys.exit(f"error: sheet '{SHEET}' not found in {xlsx}")
+    headers = [c.value for c in next(wb[SHEET].iter_rows(min_row=1, max_row=1))]
+    wb.close()
+
+    if headers[: len(COLUMNS)] == COLUMNS:
+        json.dump({"migrated": False, "reason": "already current"}, sys.stdout, indent=1)
+        return
+    if headers[: len(OLD_COLUMNS)] != OLD_COLUMNS:
+        sys.exit(f"error: unrecognized header shape in {xlsx}; refusing to guess a migration")
+
+    backup(xlsx, "schema_migration_col_adjust")
+    wb = openpyxl.load_workbook(xlsx)  # fresh read, AFTER backup, immediately before write
+    ws = wb[SHEET]
+    c1, c2 = len(OLD_COLUMNS) + 1, len(OLD_COLUMNS) + 2
+    ws.cell(row=1, column=c1, value="colAdjusted")
+    ws.cell(row=1, column=c2, value="colAdjustedComp")
+    for row in ws.iter_rows(min_row=2):
+        if all(cell.value is None for cell in row):
+            continue
+        ws.cell(row=row[0].row, column=c1, value=False)
+        ws.cell(row=row[0].row, column=c2, value="")
+    wb.save(xlsx)
+    json.dump({"migrated": True, "columns_added": ["colAdjusted", "colAdjustedComp"]}, sys.stdout, indent=1)
 
 
 def _open(xlsx: Path):
@@ -176,6 +215,7 @@ def main():
     f = sub.add_parser("filter"); f.add_argument("xlsx"); f.add_argument("--where", nargs="*"); f.set_defaults(fn=cmd_filter)
     k = sub.add_parser("keys"); k.add_argument("xlsx"); k.set_defaults(fn=cmd_keys)
     c = sub.add_parser("counts"); c.add_argument("xlsx"); c.set_defaults(fn=cmd_counts)
+    m = sub.add_parser("migrate"); m.add_argument("xlsx"); m.set_defaults(fn=cmd_migrate)
 
     a = sub.add_parser("append")
     a.add_argument("xlsx"); a.add_argument("--rows", required=True); a.add_argument("--reason", required=True)

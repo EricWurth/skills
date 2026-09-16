@@ -32,6 +32,39 @@ only finds and scores.
      page's own date. Workday shows a true "Posted X Days Ago"; Greenhouse/Ashby
      usually don't — record "date unverified" rather than presenting the board's
      number as truth.
+   - **Comp-floor mechanics — COL-adjusted path:** only relevant when
+     `Profile/ColCribSheet.md` exists (COL-adjustment is on). A flat-floor failure
+     isn't automatically a drop for a relocation-eligible posting — check this path
+     before rejecting.
+     1. **Local or remote-in-home-market role:** flat floor only, unchanged. No
+        lookup, no adjustment — COL-adjustment never touches these.
+     2. **Relocation-eligible role:** look up the target metro on
+        `Profile/ColCribSheet.md`. Missing, or last-checked more than 180 days ago?
+        Fetch fresh: **BEA Regional Price Parities** — metro-level (covers 387 US
+        metro areas) when the target is covered, state-level RPP otherwise.
+        **BEA's raw index is relative to the US national average, not to the user's
+        home market** — fetch the home market's own raw index too (or reuse it from
+        the crib sheet's home row) and compute
+        `relative_index = target_raw ÷ home_raw × 100` before using it for anything.
+        Treating a raw BEA figure as already home-relative silently corrupts every
+        comparison downstream from it.
+        Non-US and non-MSA rural locations aren't covered by BEA RPP — skip the COL
+        path entirely for these, apply the flat floor only, and note "COL adjustment
+        unsupported for this location" rather than guessing with a different source.
+        Append or refresh the metro's crib-sheet row: `relative_index`, the floor
+        translated into that metro's terms (`home_floor × relative_index ÷ 100`),
+        source, today's date. If the posting states or estimates comp, fold it into
+        that metro's observed salary range for the target function too (min/max,
+        posting count) — empirical, not a separate lookup.
+     3. Compute `adjusted_equivalent = posted_comp × 100 ÷ relative_index` — the
+        posting's pay restated in home-market purchasing power.
+     4. **Posted comp already clears the flat floor:** normal pass, `colAdjusted=FALSE`
+        (the adjustment wasn't load-bearing, so it isn't recorded as if it were).
+        **Posted comp fails the flat floor but `adjusted_equivalent` clears it:** not
+        dropped — proceed to scoring with `colAdjusted=TRUE` and `colAdjustedComp`
+        recording both figures and the metro's relative index, e.g. `"$135K nominal
+        -> $158K home-equivalent (Denver, index 85.4) vs $150K floor"`. **Fails
+        both:** dropped as an ordinary comp-floor gate failure, same as today.
 3. **Score survivors** per the Scoring section below, map to a resume variant,
    and write a one-line `fitEvidence`.
 4. **Capture the apply path:** direct `applyUrl` on the employer's ATS (never the
@@ -96,7 +129,9 @@ verify the write landed. On write failure after one retry, save findings to a da
 `Tracker/<date>-not-in-tracker.md` and flag for manual merge — never drop findings.
 
 New rows enter as `status=new`, `packetComplete=FALSE`, regardless of fit. The
-build-packets skill flips them toward ready.
+build-packets skill flips them toward ready. `colAdjusted`/`colAdjustedComp`
+default to `FALSE`/blank and are only set when the COL-adjusted path was
+actually what got the row past the comp-floor gate (see above).
 
 ## Report
 
@@ -114,6 +149,8 @@ rows.
 | "This is a real stretch, I'll just tell the user to skip it" | Fit is information, not a verdict. Only a hard gate justifies passing on a role — a wide net means partial fits get applied to, not talked out of. |
 | "While I'm rescoring this row, I'll also fix its status to match" | Rescore touches only `fit`, `fitEvidence`, and `queueRank`. Status is a separate decision the user already made (or hasn't) — rescoring never reaches into it. |
 | "I've already scored this one highly, I might as well submit it" | This skill never applies to anything, ever. Finding and scoring is the entire job; application is a different skill's decision. |
+| "This relocation role missed the flat comp floor, that's a clean reject" | Check the COL-adjusted path first whenever `Profile/ColCribSheet.md` exists — it exists precisely so a relocation role isn't dropped on a nominal-only comparison. Only drop it if it fails both. |
+| "The metro's BEA index number looks usable as-is, I'll plug it straight into the comp math" | BEA Regional Price Parities are relative to the US national average, not to the user's home market. Always divide by the home market's own raw index first — using the raw figure directly silently corrupts every comparison downstream. |
 
 ## Red Flags
 
@@ -123,3 +160,7 @@ rows.
 - `applyUrl` pointing at an aggregator's intake instead of the employer's own ATS
 - A board "posted" date reported as fact without following through to the ATS page
 - A rescore that touches `status`, `applied`/`interviewing` rows, or built packets
+- A raw BEA Regional Price Parities figure used in comp math without first being rebased against the home market's own index
+- COL-adjustment applied to a non-US or non-MSA location instead of being skipped with a note
+- `colAdjusted=TRUE` written on a row whose nominal comp already cleared the flat floor unassisted
+- A relocation posting dropped on the flat comp floor alone when `Profile/ColCribSheet.md` exists and the adjusted path was never checked

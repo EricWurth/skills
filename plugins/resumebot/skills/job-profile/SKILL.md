@@ -50,6 +50,18 @@ master resume:
    - **Location:** what is actually acceptable — remote? which metro? any relocation
      exceptions and why? State-restricted remote counts as a location gate.
    - **Comp floor:** the real walk-away number, not the hoped-for number.
+   - **COL-adjusted comp (optional, default OFF):** ask whether they want
+     relocation roles given a second, cost-of-living-adjusted path through this
+     gate — a role that pays less nominally but nets more after COL still gets
+     considered instead of auto-rejected. If they turn it on, capture their
+     **home market** (the metro this floor number is anchored to) and seed
+     `Profile/ColCribSheet.md` with a home-market row plus a row for every metro
+     already named elsewhere in this conversation (relocation exceptions,
+     location-expediency tiers) — see `Profile/_example-col-crib-sheet.md` for
+     shape and `job-scan`'s Comp gate section for the lookup/math it uses. This
+     never loosens the floor for local or remote-in-home-market roles; it only
+     gives relocation roles a second path through the same gate, never a lower
+     bar for everything else.
 3. **Bonuses (priority, never requirements):** preferred level band, comp-bonus and
    comp-win thresholds, preferred industries, location expediency tiers.
 4. **Exclusions:** employers they will not work for (and why — bad exits, ethics,
@@ -82,12 +94,18 @@ master resume:
   Two tiers: standing facts automation may fill silently, and judgment answers
   (comp numbers, essays, legal attestations) that are ALWAYS drafted for user
   approval, never auto-submitted.
+- `Profile/ColCribSheet.md` — only when COL-adjusted comp is turned on. Seeded
+  here with known metros; `job-scan` appends and refreshes rows from there.
 
 ## Maintenance
 
 When the user reports a scan miss ("why did this good role get dropped?") or noise
 ("stop showing me these"), trace it to the specific gate/bonus line, propose the
 edit, and update the file in the same session. The profile is living config.
+
+If a location gate, exclusion, or expediency tier changes and COL-adjustment is
+on, re-seed `Profile/ColCribSheet.md` for any newly-named metro in the same
+session rather than leaving it to `job-scan` to discover lazily.
 
 ## Common Rationalizations
 
@@ -98,6 +116,7 @@ edit, and update the file in the same session. The profile is living config.
 | "This posting wants a skill the resume doesn't show, I'll flag the role as not viable" | A gap is tailoring information, not an auto-reject — dig first, since users routinely have relevant experience missing from the page. Only a quantified years-of-specific-experience requirement that IS the role's core mandate disqualifies. |
 | "I already know their comp floor, I'll just fill in the negotiation essay for them" | Judgment-tier answers (comp numbers, essays, attestations) are always drafted for approval, never auto-filled or auto-submitted — only standing facts get silent automation. |
 | "A quick form will get through the gates faster than a full conversation" | This runs as a coaching conversation via the career-coach agent, not a form — the point is surfacing options and forcing real decisions, which a form can't do. |
+| "COL-adjustment sounds useful, I'll just turn it on by default" | It's opt-in for a reason — it adds real fuzziness to a hard gate. Ask, don't default it on, and never enable it without also capturing the home market it needs to mean anything. |
 
 ## Red Flags
 
@@ -107,3 +126,5 @@ edit, and update the file in the same session. The profile is living config.
 - A judgment-tier form answer filled or submitted without surfacing it for user approval
 - Wish-list items settled before the four hard gates
 - Skipping the 2-3 example-posting step and jumping straight to abstract preferences
+- COL-adjustment turned on without capturing a home market, or turned on by default without asking
+- `Profile/ColCribSheet.md` never seeded even though COL-adjustment is on

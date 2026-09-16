@@ -87,7 +87,7 @@ Installed through the marketplace. Each carries more than instructions: extra sk
 | [`skill-evolution`](plugins/skill-evolution) | ✅ | Evolves your other skills on a schedule: finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
 | [`memory-vault`](plugins/memory-vault) | ✅ | A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance |
 | [`rulegate`](plugins/rulegate) | — | Makes project rules bind instead of decay: compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
-| [`resumebot`](plugins/resumebot) | ✅ | A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, interview prep, and… |
+| [`resumebot`](plugins/resumebot) | ✅ | A job-search operating system: master resume, targeting coach with a COL-adjusted comp floor, Excel tracker, board scans, tailored packets, apply queue,… |
 | [`delegate`](plugins/delegate) | ✅ | A senior-resource agent that owns problems end-to-end and reports in decision-queue format |
 
 **skill-evolution**

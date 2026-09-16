@@ -21,11 +21,11 @@ about tracker columns, job statuses, or why a role is/isn't "ready".
 
 - Read/filter/update/append requests against `Tracker/JobSearchTracker.xlsx`,
   issued through `scripts/tracker_io.py`.
-- Job data to append: rows keyed by the 23-column schema (`id`, `company`,
+- Job data to append: rows keyed by the 25-column schema (`id`, `company`,
   `title`, `status`, `fit`, `level`, `effort`, `variant`, `comp`,
   `compSource`, `location`, `moveType`, `sector`, `found`, `board`, `url`,
   `applyUrl`, `ats`, `notes`, `packetComplete`, `queueRank`, `matchKey`,
-  `fitEvidence`).
+  `fitEvidence`, `colAdjusted`, `colAdjustedComp`).
 - Status-change evidence: the user editing Excel directly, the user telling
   Claude directly, or `email-sync` evidence -- no other source is valid.
 - Implicit: the live xlsx on disk, since the user edits it directly between
@@ -49,6 +49,11 @@ about tracker columns, job statuses, or why a role is/isn't "ready".
    merge, rather than being dropped.
 6. The `Dashboard` sheet is never written to by automation -- it is
    formula-only and recalculates itself in Excel.
+7. A schema change is never applied by guessing: `tracker_io.py`'s header
+   check rejects any file whose headers don't exactly match the current
+   `COLUMNS` list, and the only sanctioned repair is `migrate`, which backs
+   up first, recognizes exactly one prior schema shape, and refuses anything
+   it doesn't recognize rather than reshaping a file it can't identify.
 
 ## Behavioral invariants [INVARIANT]
 
@@ -70,6 +75,10 @@ about tracker columns, job statuses, or why a role is/isn't "ready".
   unknown columns abort the write (`error: unknown columns [...]`), and a
   `status` value outside `{new, ready, applied, interviewing, rejected,
   dead, deferred}` aborts the write (`error: bad status '...'`).
+- `colAdjusted` is only ever `TRUE` on a row where the COL-adjusted path was
+  actually load-bearing (nominal comp failed the flat floor, the
+  home-market-equivalent figure is what passed it) -- never set on a row
+  that cleared the flat floor on nominal comp alone.
 
 ## Free choices [IMPLEMENTATION MAY VARY]
 
@@ -116,9 +125,18 @@ G-5: Backup-before-write and rotation.
   before the write lands, and the oldest backup is deleted so the folder
   still holds exactly 10.
 
+G-6: Schema migration.
+  Input: `migrate` is run against a tracker with the pre-COL-adjustment
+  23-column header row.
+  Expected: a backup is created first, `colAdjusted`/`colAdjustedComp` are
+  appended as the 24th/25th columns, every existing row defaults to
+  `colAdjusted=FALSE`, and running `migrate` again on the now-current file
+  reports `"migrated": false` without writing anything. A file whose headers
+  match neither the old nor the current shape is refused, not guessed at.
+
 ## Eval notes
 
-- Mostly script-checkable: G-1, G-3, G-4, and G-5 can be run directly
+- Mostly script-checkable: G-1, G-3, G-4, G-5, and G-6 can be run directly
   against `tracker_io.py` and asserted on exit code / stdout / filesystem
   state, since the module enforces them independent of the model.
 - G-2 is the one judgment-bound case -- it requires an LLM (or human) to
@@ -128,4 +146,6 @@ G-5: Backup-before-write and rotation.
   appended without a matching backup file timestamped just before it; a
   `ready` status with `packetComplete=TRUE` but no corresponding file in
   `Applications/`; a second state file (md/json) holding job data outside
-  the xlsx.
+  the xlsx; a column added by hand in Excel instead of through `migrate`; a
+  `colAdjusted=TRUE` row whose nominal comp already cleared the flat floor
+  unassisted.

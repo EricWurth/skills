@@ -26,10 +26,10 @@ walks you through everything below in one sitting.
 |---|---|
 | `setup` skill | Scaffolds the workspace, copies templates, offers to schedule the automations |
 | `master-resume` skill + `resume-writer` agent | Interview-driven master resume; line-level language coaching with hard content rules (delivered work only, no AI tells, no manufactured metrics) |
-| `job-profile` skill + `career-coach` agent | A coaching conversation that produces your match profile: broad search terms, four hard gates (staleness, fit, location, comp floor), bonuses, exclusions |
+| `job-profile` skill + `career-coach` agent | A coaching conversation that produces your match profile: broad search terms, four hard gates (staleness, fit, location, comp floor), bonuses, exclusions, and an optional COL-adjusted comp floor for relocation roles |
 | `linkedin-profile` skill | Turns your master resume and target career path into a LinkedIn profile draft — headline, About, Experience, Skills — balancing recruiter/algorithm SEO against a profile a human wants to read. Drafts only; you paste it in and publish |
-| `tracker` skill + Excel template | One xlsx as the single source of truth: 23-column schema, status lifecycle, dedupe key, live dashboard, backup-before-write discipline |
-| `job-scan` skill | Scans boards/employer pages against your profile, scores finds, appends to the tracker. Never applies to anything |
+| `tracker` skill + Excel template | One xlsx as the single source of truth: 25-column schema, status lifecycle, dedupe key, live dashboard, backup-before-write discipline, schema migrations for older trackers |
+| `job-scan` skill | Scans boards/employer pages against your profile, scores finds, appends to the tracker. Applies your COL-adjusted comp floor to relocation roles when enabled. Never applies to anything |
 | `build-packets` skill | Batch-builds tailored resumes from your standing variants, lint-gated, and flips roles to "ready" only when the file actually exists |
 | `apply-tabs` skill | Opens your ready queue as browser tabs in priority order with a per-role checklist. You submit every application |
 | `email-sync` skill | Reads application-related email (confirmations, rejections, interview requests) and updates the tracker with a breadcrumb trail |
@@ -44,7 +44,7 @@ JobSearch/
   Applications/    one folder per application packet
   Tracker/         JobSearchTracker.xlsx  (+ backups/)
   Profile/         match-profile, content-rules, preferences, form answers,
-                   LinkedIn profile draft
+                   LinkedIn profile draft, cost-of-living crib sheet
   Reference/       recommendation letters etc., attached as-is
   Archive/         retired files, dated
 ```

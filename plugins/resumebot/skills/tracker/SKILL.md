@@ -37,6 +37,18 @@ are fine but must merge into the xlsx in the same pass.
 | queueRank | apply-order priority (1 = first) |
 | matchKey | lowercased `company|title` — THE dedupe key |
 | fitEvidence | one line: why the fit score |
+| colAdjusted | `TRUE` only when this row passed the comp-floor gate via COL adjustment (see `job-scan`'s Comp gate section) — never set on a row whose nominal comp already cleared the flat floor on its own |
+| colAdjustedComp | the COL math for this row when `colAdjusted=TRUE`: nominal comp, home-market-equivalent, the metro's relative index, source. Blank otherwise |
+
+## Schema migrations
+
+Adding a column bumps `tracker_io.py`'s `COLUMNS` list, which means `_open()`'s
+header check now rejects any tracker built before that change — on purpose,
+never silently. If a tracker errors with `header mismatch`, run
+`python tracker_io.py migrate <xlsx>` once before anything else: it backs the
+file up first, adds the missing columns, defaults every existing row to a safe
+blank (`colAdjusted=FALSE`), and is a no-op if the file is already current.
+Never hand-add columns in Excel to work around the error.
 
 ## Rules
 
@@ -77,6 +89,7 @@ writes to it.
 | "It's on a different board, so it's a different row" | `matchKey` is `company|title`, lowercased — board and url are never part of the identity. The same job on two boards is one job; dedupe against the full sheet before appending. |
 | "I read the sheet a few minutes ago, it's probably still current" | The user edits the xlsx directly between runs. A write from anything but a fresh, immediately-prior read risks clobbering their edits. |
 | "It's just one row, I'll skip the backup this once" | Every automated write is preceded by a backup, no matter how small the change — that's the rollback path if the write goes wrong. |
+| "The header mismatch error is annoying, I'll just add the two missing columns in Excel myself" | `migrate` exists specifically so a schema change is applied the same way every time, with a backup first. A hand-added column skips the backup and risks a subtly wrong header (wrong name, wrong position) that breaks every later `tracker_io.py` call. |
 
 ## Red Flags
 
@@ -86,3 +99,5 @@ writes to it.
 - Any second file (markdown, JSON, or otherwise) holding job-search state outside the xlsx
 - Appending a row without checking `matchKey` against the full existing sheet
 - Automation setting a status change the user never stated and email-sync never reported
+- Columns added or renamed by hand in Excel instead of through `migrate`
+- `colAdjusted=TRUE` on a row whose nominal comp already cleared the flat floor without adjustment

@@ -48,6 +48,11 @@ The conversation must settle, in order (gates before wish-list items):
    tailored variant, or generic variant; cover letters ad-hoc by default.
 6. **Work authorization facts**, recorded so scans never wrongly skip or
    flag roles.
+7. **COL-adjusted comp (optional, default OFF)** -- whether relocation roles
+   get a second, cost-of-living-adjusted path through the comp-floor gate. If
+   enabled, the home market (the metro the floor number is anchored to) is
+   captured and `Profile/ColCribSheet.md` is seeded with it plus every metro
+   already named elsewhere in the conversation.
 
 Example postings are read against the master resume before anything else:
 shared vocabulary becomes search terms, and requirements the resume doesn't
@@ -82,6 +87,11 @@ routinely have relevant experience that never made it onto the page.
 - Maintenance: when the user reports a scan miss or noise, trace it to the
   specific gate/bonus line, propose the edit, and update the file in the same
   session -- the profile is living config, not a one-time artifact.
+- COL-adjustment is opt-in, defaults off, and is never enabled without also
+  capturing a home market -- a COL-adjusted comparison is meaningless without
+  knowing what market the floor number is anchored to. Enabling it never
+  loosens the comp floor for local or remote-in-home-market roles; it only
+  opens a second path through the gate for relocation roles specifically.
 
 ## Free choices [IMPLEMENTATION MAY VARY]
 
@@ -131,6 +141,12 @@ G-5: Judgment-tier form answer.
   Expected: drafted and surfaced for user approval, never auto-filled or
   auto-submitted, unlike standing facts (authorization, notice period).
 
+G-6: COL-adjustment enabled without a home market.
+  Input: user asks to turn on COL-adjusted comp but the conversation hasn't
+  established what metro their comp floor is anchored to.
+  Expected: home market is captured as part of enabling it, not skipped --
+  the toggle and the anchor are asked together, never one without the other.
+
 ## Eval notes
 
 - Mostly human-judged: the deliverable is three files (match-profile.md,
@@ -141,7 +157,9 @@ G-5: Judgment-tier form answer.
   a traceable disqualifying reason; a resume gap treated as an auto-reject
   when it isn't the role's core quantified mandate; a judgment-tier form
   answer submitted without surfacing it for approval; a scan-miss report
-  answered without touching the actual gate/bonus line.
-- No known-bad fixture yet -- G-1 through G-5 above are the first attempt at
+  answered without touching the actual gate/bonus line; COL-adjustment
+  enabled by default or without a captured home market;
+  `Profile/ColCribSheet.md` left unseeded after COL-adjustment is turned on.
+- No known-bad fixture yet -- G-1 through G-6 above are the first attempt at
   migration tests; they should be run against any future phenotype change to
   confirm behavior didn't regress.

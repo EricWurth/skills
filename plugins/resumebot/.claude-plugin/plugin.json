@@ -1,7 +1,7 @@
 {
   "name": "resumebot",
-  "version": "0.3.0",
-  "description": "A job-search operating system for Claude Code: guided master-resume building, a job-targeting coach, an Excel application tracker, automated job-board scans, batch tailored-resume packets, an apply-tab queue, email-driven tracker updates, research-backed interview prep reports, and a LinkedIn profile draft balancing SEO and readability.",
+  "version": "0.4.0",
+  "description": "A job-search operating system for Claude Code: guided master-resume building, a job-targeting coach with an optional COL-adjusted comp floor, an Excel application tracker, automated job-board scans, batch tailored-resume packets, an apply-tab queue, email-driven tracker updates, research-backed interview prep reports, and a LinkedIn profile draft balancing SEO and readability.",
   "author": {
     "name": "Eric Wurth",
     "url": "https://github.com/EricWurth"

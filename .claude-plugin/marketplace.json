@@ -43,7 +43,7 @@
     {
       "name": "resumebot",
       "source": "./plugins/resumebot",
-      "description": "A job-search operating system: master resume, targeting coach, Excel tracker, board scans, tailored packets, apply queue, email sync, interview prep, and a LinkedIn profile draft.",
+      "description": "A job-search operating system: master resume, targeting coach with a COL-adjusted comp floor, Excel tracker, board scans, tailored packets, apply queue, email sync, interview prep, and a LinkedIn profile draft.",
       "category": "productivity",
       "keywords": [
         "job-search",

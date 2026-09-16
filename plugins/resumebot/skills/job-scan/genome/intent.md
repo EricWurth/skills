@@ -21,6 +21,11 @@ the tracker. This skill never applies to a job -- it only finds and scores.
   and scoring bonuses.
 - `Profile/employer-list.md` (optional): a user-maintained list of direct
   employer and recruiting-firm career pages, used for the employer scan mode.
+- `Profile/ColCribSheet.md` (optional, present only when COL-adjustment is
+  enabled in the profile): per-metro COL index, translated comp floor,
+  observed salary range, source, and last-checked date -- read before and
+  appended/refreshed during the comp-floor gate for relocation-eligible
+  postings.
 - The existing tracker (full sheet), read fresh before dedupe and write.
 - Implicit: a logged-in browser session, used for board keyword searches and
   each board's "recommended for you" feed when the user is logged in.
@@ -32,7 +37,11 @@ the tracker. This skill never applies to a job -- it only finds and scores.
    different board is treated as the same job and skipped.
 2. Every posting passes hard gates in cost order -- excluded employer,
    location, staleness, comp floor, fit minimum -- before scoring; one gate
-   failure drops the posting.
+   failure drops the posting. When `Profile/ColCribSheet.md` exists and a
+   relocation-eligible posting fails the flat comp floor, the COL-adjusted
+   path is checked before the posting is dropped -- a flat-floor failure
+   alone is not sufficient to drop a relocation-eligible posting when
+   COL-adjustment is enabled.
 3. Staleness is verified, not trusted: the "apply on company website" link is
    followed (board redirect stripped) and the ATS page's own date is read;
    when the ATS doesn't expose a reliable date, the posting is recorded
@@ -74,6 +83,21 @@ the tracker. This skill never applies to a job -- it only finds and scores.
   rescore never touches `status` or built packets by itself.
 - Findings are never silently dropped on a write failure -- they are logged
   to the dated not-in-tracker file instead.
+- COL-adjustment never loosens the comp floor for a local or
+  remote-in-home-market role -- it only opens a second path through the gate
+  for relocation-eligible roles specifically, and only rescues a role that
+  would otherwise be dropped, never disqualifies one that already passed.
+- BEA Regional Price Parities are relative to the US national average, not
+  to the user's home market -- the home market's own raw index is always
+  divided out before a target metro's index is used in any comp comparison.
+  A raw BEA figure is never used as if it were already home-relative.
+- Non-US and non-MSA rural locations are outside BEA RPP's coverage -- the
+  COL-adjusted path is skipped for these (flat floor only, noted as
+  unsupported), never estimated from an undocumented substitute source.
+- `colAdjusted` is set `TRUE` only when the adjustment was load-bearing (the
+  nominal comp failed the flat floor and the home-equivalent figure is what
+  passed it) -- never on a row that cleared the flat floor on nominal comp
+  alone.
 
 ## Free choices [IMPLEMENTATION MAY VARY]
 
@@ -118,6 +142,29 @@ G-5: Write failure.
   Expected: findings are saved to `Tracker/<date>-not-in-tracker.md` and
   flagged for manual merge -- nothing is silently discarded.
 
+G-6: Relocation role rescued by COL adjustment.
+  Input: COL-adjustment is on, a relocation-eligible posting's nominal comp
+  fails the flat floor, but the home-market-equivalent figure (posted comp
+  translated using the target metro's BEA-RPP-derived relative index) clears
+  it.
+  Expected: the posting is not dropped -- it proceeds to scoring with
+  `colAdjusted=TRUE` and `colAdjustedComp` recording the nominal figure, the
+  home-equivalent figure, and the metro's relative index.
+
+G-7: Relocation role still rejected despite COL adjustment.
+  Input: COL-adjustment is on, a relocation-eligible posting fails the flat
+  floor, and the home-market-equivalent figure also fails it.
+  Expected: dropped as an ordinary comp-floor gate failure -- the COL path
+  was checked but didn't change the outcome, and `colAdjusted` is never set
+  `TRUE` on a dropped posting.
+
+G-8: Non-US or non-MSA location.
+  Input: a relocation-eligible posting is in a location BEA RPP doesn't
+  cover (outside the US, or not part of a metropolitan statistical area).
+  Expected: the COL-adjusted path is skipped entirely -- flat floor only,
+  noted as "COL adjustment unsupported for this location" -- never estimated
+  from an undocumented substitute source.
+
 ## Eval notes
 
 - Mechanically checkable: dedupe correctness (no matchKey collision scored
@@ -131,7 +178,11 @@ G-5: Write failure.
   date presented as verified fact without following the ATS link; an
   aggregator URL captured as `applyUrl`; a `deferred` row treated as
   rejected (or vice versa) in a later run; dropped findings after a write
-  failure with no not-in-tracker file.
-- No known-bad fixture yet -- G-1 through G-5 above are the first attempt at
+  failure with no not-in-tracker file; a raw BEA RPP figure used in comp
+  math without being rebased against the home market's own index; a
+  relocation posting dropped on the flat floor alone with
+  `Profile/ColCribSheet.md` present and the adjusted path never checked;
+  `colAdjusted=TRUE` on a row that didn't need the adjustment to pass.
+- No known-bad fixture yet -- G-1 through G-8 above are the first attempt at
   migration tests; they should be run against any future phenotype change to
   confirm behavior didn't regress.

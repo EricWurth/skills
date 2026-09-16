@@ -37,6 +37,7 @@ Copy these plugin files into place:
 - `examples/ExampleMasterResume.md` → `Master/_ExampleMasterResume.md` (reference only)
 - `examples/example-match-profile.md` → `Profile/_example-match-profile.md` (reference only)
 - `examples/example-linkedin-profile.md` → `Profile/_example-linkedin-profile.md` (reference only)
+- `examples/example-col-crib-sheet.md` → `Profile/_example-col-crib-sheet.md` (reference only)
 
 Also write a small `JobSearch/CLAUDE.md` recording the workspace root and pointing at
 the Profile files, so any future session in that folder loads the right context.

@@ -39,6 +39,8 @@ COLUMNS = [
     ("queueRank", 10, "apply order, 1 = first"),
     ("matchKey", 30, "lowercased company|title - THE dedupe key"),
     ("fitEvidence", 40, "one line: why the fit score"),
+    ("colAdjusted", 14, "TRUE only when this row passed the comp gate via COL adjustment"),
+    ("colAdjustedComp", 40, "COL math for this row: nominal, home-equivalent, metro index, source"),
 ]
 
 STATUSES = ["new", "ready", "applied", "interviewing", "rejected", "dead", "deferred"]
@@ -55,6 +57,7 @@ EXAMPLE = [
     "Workday", "Example row - replace with real finds", False, 1,
     "acme distribution (example)|senior manager, distribution operations",
     "Core WMS + team-size match; comp floor clears",
+    False, "",
 ]
 
 ARIAL = "Arial"
@@ -77,7 +80,7 @@ def build_readme(wb):
         ("Job Search Tracker", "", 14, True),
         ("", "One row per job on the Tracker sheet. This sheet is the manual; delete it once you know the system.", 10, False),
         ("", "", 10, False),
-        ("Fill in", "Everything on the Tracker sheet is yours to edit. Dropdowns: status, effort, packetComplete. The example row shows expected formats - overwrite it with your first real find.", 10, False),
+        ("Fill in", "Everything on the Tracker sheet is yours to edit. Dropdowns: status, effort, packetComplete, colAdjusted. The example row shows expected formats - overwrite it with your first real find.", 10, False),
         ("Dashboard", "The Dashboard sheet computes itself (live formulas). Don't type over it.", 10, False),
         ("", "", 10, False),
         ("Rule 1", "This file is the ONLY home for job-search state. No side lists.", 10, False),
@@ -126,6 +129,7 @@ def build_tracker(wb):
     dv_status.add(f"D2:D{DV_ROWS}")
     dv_effort.add(f"G2:G{DV_ROWS}")
     dv_bool.add(f"T2:T{DV_ROWS}")
+    dv_bool.add(f"X2:X{DV_ROWS}")
 
 
 def build_dashboard(wb):
