@@ -19,7 +19,15 @@ submits forms.**
    they're dying of staleness).
 2. Verify each role's packet file actually exists in `Applications/`; a row whose
    packet is missing gets flagged, not opened.
-3. Cap the batch at the user's per-session limit (`Profile/preferences.md`, default
+3. Verify each candidate's `applyUrl` actually loads before it gets a tab:
+   `python scripts/check_apply_links.py --file <id|url list>` renders each page in
+   headless Chrome and returns `live` / `dead` / `unknown`. A plain HTTP fetch
+   isn't enough, because Workday and similar ATS pages return 200 for dead
+   postings and only show "doesn't exist" after JavaScript runs. Only `live` rows
+   get a tab. `dead` rows are skipped and marked `status=dead` with the evidence.
+   `unknown` rows (bot wall, didn't render) are skipped and listed for the user to
+   check by hand. Keep checking down the queue until the batch is full.
+4. Cap the batch at the user's per-session limit (`Profile/preferences.md`, default
    5) — a wall of 20 tabs kills momentum.
 
 ## Open the tabs
@@ -60,5 +68,6 @@ it to the top of the next session and say why.
 - Opening the board `url` instead of `applyUrl` for any tab
 - Opening more tabs than the user's per-session batch cap
 - Opening a tab for a row whose packet file doesn't actually exist in `Applications/`
+- Opening a tab for a page `check_apply_links.py` didn't return as `live`, or treating a plain HTTP 200 as proof the posting is open
 - Filling in or submitting any part of an application form
 - Leaving a role stale in `ready` for 10+ days without bumping it and stating why
