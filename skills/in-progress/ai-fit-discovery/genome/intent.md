@@ -116,9 +116,15 @@ that they do not understand.
   question, with four triggers -- an explicit stop signal from the person,
   a stated time budget two-thirds spent, saturation (a run of answers
   adding no new inventory item, gated on the inverse lens being closed),
-  and coverage-complete-with-a-dry-last-answer. What stays free is the
-  ledger the gate reads: what counts as a "new inventory item" per turn,
-  and how the four lenses get marked asked/assumed/open.
+  and coverage-complete-with-a-dry-last-answer. Nor is *running* the gate
+  self-attested: the ledger records, per turn, whether a question was asked
+  and what verdict was in hand before asking it, and
+  `scripts/trajectory_check.py` re-derives every one of those verdicts from
+  the state that preceded it -- so a question asked past a trigger that had
+  already fired is caught even when the finished ledger looks identical to
+  a run that stopped correctly. What stays free is the ledger's content:
+  what counts as a "new inventory item" per turn, and how the four lenses
+  get marked asked/assumed/open.
 - Output medium: markdown always; a page in the person's own workspace
   (Notion, Drive, a file) when a connector is present and they ask.
 - Whether to run Phase 3 in one pass or item by item with the person.
@@ -193,6 +199,15 @@ G-8: The band-aid.
 - The Phase 1 stop point is now mechanically checkable, not human-judged:
   `scripts/stop_check.py` against a turn ledger, with the fixture set in
   `scripts/stop-rule-fixtures.json` re-runnable via `scripts/run_stop_fixtures.py`.
+- So is compliance with it. `scripts/trajectory_check.py` reads the finished
+  ledger as a trajectory rather than a snapshot: every turn that asked a
+  question must carry the verdict that permitted it (T1), no question may be
+  asked on a turn whose verdict was STOP (T2), and every recorded verdict must
+  match what `stop_check.decide` returns when replayed against the state
+  before that turn (T3). Fixtures in `scripts/trajectory-fixtures.json`,
+  re-runnable via `scripts/run_trajectory_fixtures.py`. T3 is the one that
+  matters: it is the check a narrative "I ran the gate" cannot satisfy by
+  assertion.
 
 ## Failure history
 
@@ -237,3 +252,22 @@ G-8: The band-aid.
   cut of the gate broke G-3 -- saturation fired while the inverse lens was
   still open -- and the golden caught it before promotion; saturation is
   now gated on the inverse being closed.
+- 2026-08-30, skill-evolution sweep. Promoted technique #16 from the
+  technique library (trajectory / per-turn evaluation) against the same free
+  choice the 2026-08-23 pass touched -- the ledger the stop gate reads.
+  Problem: #3 made the stop *decision* countable but left the *consulting* of
+  it prose ("run it before every Phase 1 question"), which puts the original
+  failure one level up -- the context that wants to ask the next question is
+  still the context that writes the record saying it was allowed to. Because
+  `stop_check.py` is a pure function of the ledger's current state, a run that
+  asked one question too many and a run that stopped correctly can end with
+  the same ledger and the same STOP verdict. Fix:
+  `scripts/trajectory_check.py`, three per-turn checks, replayed from the
+  state before each turn. Proof: `scripts/trajectory-fixtures.json` -- 5/5
+  pass. D-T1 replays the 2026-08-18 run with a fabricated CONTINUE on the
+  turn past the budget trigger; `stop_check.py` on that ledger returns STOP,
+  the same verdict a correct run produces, and the trajectory check catches
+  the turn. D-T2 is the same shape with the gate never invoked at all. R-T2
+  and R-T3 are G-3 and G-7 walked as trajectories and read clean; the seven
+  stop-gate fixtures pass unchanged, `stop_check.py` being untouched by this
+  change.
