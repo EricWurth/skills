@@ -7,6 +7,7 @@ section headers, 10pt body, 0.5" margins. Requires python-docx.
 Input markdown conventions (see examples/ExampleMasterResume.md):
   # Name                     -> centered 16pt bold
   first non-empty line after -> centered contact line (pipes kept)
+  lines before the first ##  -> centered 11pt bold headline (e.g. target title)
   ## Section                 -> bold 11pt section header with rule line
   ### Employer — Location    -> bold subheading
   **Title** | dates          -> italic-free bold line (role line)
@@ -61,6 +62,7 @@ def build(md_path: Path, out_path: Path, name_size: int):
     lines = md_path.read_text(encoding="utf-8").splitlines()
     saw_name = False
     expect_contact = False
+    in_header = False  # between the contact line and the first ## section
 
     for raw in lines:
         line = raw.rstrip()
@@ -81,7 +83,14 @@ def build(md_path: Path, out_path: Path, name_size: int):
             add_run(p, re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", stripped).replace("**", ""), size=BODY)
             p.paragraph_format.space_after = Pt(8)
             expect_contact = False
+            in_header = True
+        elif in_header and not stripped.startswith("#"):
+            p = doc.add_paragraph()
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            add_run(p, stripped.replace("**", ""), bold=True, size=HEADER)
+            p.paragraph_format.space_after = Pt(6)
         elif stripped.startswith("## "):
+            in_header = False
             p = doc.add_paragraph()
             add_run(p, stripped[3:].upper(), bold=True, size=HEADER)
             p.paragraph_format.space_before = Pt(8)
