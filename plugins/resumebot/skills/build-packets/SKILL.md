@@ -26,11 +26,21 @@ one will ever open is wasted build and QA effort. Only genuinely ambiguous scope
 
 1. **Map to a variant** (the tracker row's `variant` field; if blank, choose per the
    variant catalog in match-profile.md and write it back).
-2. **Reuse the variant verbatim** — summary, competencies, bullets. Bespoke work per
-   role is small on purpose: optionally retune the opening 1–2 summary sentences and
-   the competency keywords toward the posting's actual language (ATS keyword
-   alignment is the point; keyword-stuffing is not). This is the copy-and-tweak
-   fast path, and it should cover the large majority of roles.
+2. **Tailor the variant to the posting's problem.** Wording comes from the variant
+   (or master); tailoring changes selection and emphasis, never what's claimed.
+   First read the posting and name, in one line, the problem the employer is hiring
+   to solve. Then:
+   - **Summary:** retune the opening 1–2 sentences to name that problem and point
+     to the evidence the candidate has already solved it. (If the user's
+     content-rules fix a sentence as written, keep it and retune the next one.)
+   - **Bullet order:** within each role, lead with the bullets that prove it.
+   - **Approved alternates:** swap in any the posting calls for.
+   - **Competencies:** mirror the posting's language and name its frameworks and
+     regulators where the record backs them. Recruiters run literal keyword
+     searches in the ATS, and semantic matchers can't credit a skill the page
+     never mentions; keyword-stuffing is still out.
+   A packet that could be sent unchanged to a different employer hasn't been
+   tailored.
    **Custom cuts from the master are only for roles no variant fits cleanly** —
    hybrids straddling two families, or one-offs. Mark these `variant=custom` in
    the tracker; if the same hybrid shape recurs, flag that a new standing variant
@@ -63,8 +73,11 @@ one will ever open is wasted build and QA effort. Only genuinely ambiguous scope
      role actually needs? Do the competencies speak the posting's vocabulary
      (where evidenced)? Is every gap handled per the gap policy — silence, or the
      single confident sentence — with nothing pre-conceded and nothing stuffed?
+   - **Solves their problem:** read only the summary and the first bullet of each
+     role. Would the hiring manager see that this candidate has fixed the problem
+     the posting describes? If not, re-tailor.
    - **Variant conformance:** the packet differs from its variant only in the
-     intended bespoke pieces (opening sentences, competency retune). Any other
+     intended tailoring (summary, bullet order, alternates, competencies). Any other
      divergence is drift — fix the packet, or if the change is genuinely better,
      promote it to the variant so the improvement propagates instead of forking.
    A QA failure loops back to the fix, then re-lints. In a batch, a failure found
