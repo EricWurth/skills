@@ -14,8 +14,29 @@ submits forms.**
 
 ## Build the queue
 
-1. Query the tracker for `status=ready AND packetComplete=TRUE` and sort by
-   fit, with freshness breaking ties:
+1. Query the tracker for `status=ready AND packetComplete=TRUE`.
+2. Verify each role's packet file actually exists in `Applications/`; a row whose
+   packet is missing gets flagged, not opened.
+3. Check every candidate's `applyUrl` before sorting, because the check also
+   supplies the real posting date:
+   `python scripts/check_apply_links.py --file <id|url list>`. It asks the ATS's
+   JSON endpoint first (Workday, Greenhouse, Lever, Ashby: no rendering, rarely
+   bot-walled, returns the ATS's own posted date), and renders the page in
+   headless Chrome for any other ATS. A plain HTTP fetch of the page isn't enough,
+   because Workday and similar pages return 200 for dead postings. Each result has
+   a `verdict` (`live` / `dead` / `unknown`), a `source`, and a `posted` date when
+   the ATS exposes one.
+   - `dead` → skip and mark `status=dead` with the evidence.
+   - `unknown` (bot wall, didn't render) → load it in the built-in browser
+     (`get_page_text`) and classify it the same way: closed-posting language is
+     dead, an apply control with no closed language is live. Read the posted date
+     off the page if it shows one. Headless Chrome is easy for bot-management
+     products to spot; a normal browser session usually isn't. Only if the
+     browser also fails (CAPTCHA, login wall, the site approval goes unanswered)
+     does the row go to "couldn't verify, check by hand." Never solve a CAPTCHA
+     or sign in to get past a wall.
+   - Only `live` rows go on to the sort.
+4. Sort the live rows by fit, with freshness breaking ties:
    - **Same fit:** newer wins (fewer days since posting beats more).
    - **Adjacent fit (gap of 1):** a fresh role (≤14 days) can outrank a stale
      (>14 days) role one fit point higher — a fresh fit-4 beats a stale fit-5,
@@ -25,20 +46,13 @@ submits forms.**
      fresh fit-2 never outranks a stale fit-4.
    - `queueRank` is the final tiebreak.
 
-   Age is days since the original posting date: use the ATS's original post date
-   when the row has one (often in `notes`), otherwise `found`. Board dates reset on
-   reposts and understate age.
-2. Verify each role's packet file actually exists in `Applications/`; a row whose
-   packet is missing gets flagged, not opened.
-3. Verify each candidate's `applyUrl` actually loads before it gets a tab:
-   `python scripts/check_apply_links.py --file <id|url list>` renders each page in
-   headless Chrome and returns `live` / `dead` / `unknown`. A plain HTTP fetch
-   isn't enough, because Workday and similar ATS pages return 200 for dead
-   postings and only show "doesn't exist" after JavaScript runs. Only `live` rows
-   get a tab. `dead` rows are skipped and marked `status=dead` with the evidence.
-   `unknown` rows (bot wall, didn't render) are skipped and listed for the user to
-   check by hand. Keep checking down the queue until the batch is full.
-4. Cap the batch at the user's per-session limit (`Profile/preferences.md`, default
+   Age is days since the ATS's posted date: use the checker's `posted` (or the
+   date read off the page in the browser tier), then an ATS date already in
+   `notes`, and only then `found`. The tracker's `found` date is often wrong in
+   both directions — a repost makes an old role look new, and a late find makes a
+   fresh role look old — so never sort on it when a real date is available. When
+   the real date differs from what the tracker implied, say so in the checklist.
+5. Cap the batch at the user's per-session limit (`Profile/preferences.md`, default
    5) — a wall of 20 tabs kills momentum.
 
 ## Open the tabs
@@ -86,7 +100,9 @@ should be flagged for the user to defer or reject, not left to quietly rot.
 - Opening the board `url` instead of `applyUrl` for any tab
 - Opening more tabs than the user's per-session batch cap
 - Opening a tab for a row whose packet file doesn't actually exist in `Applications/`
-- Opening a tab for a page `check_apply_links.py` didn't return as `live`, or treating a plain HTTP 200 as proof the posting is open
+- Opening a tab for a page that neither `check_apply_links.py` nor the built-in-browser check confirmed `live`, or treating a plain HTTP 200 as proof the posting is open
+- Sending an `unknown` row straight to "check by hand" without trying it in the built-in browser first
+- Sorting on the tracker's `found` date when the checker returned a real ATS `posted` date
 - Filling in or submitting any part of an application form
 - A stale, low-fit role getting a tab while a fresh, higher-or-equal-fit ready role with a packet goes unopened
 - A fresh role beating a stale role that outranks it by 2+ fit points ("it's fresh" is not enough to close a 2-point fit gap)

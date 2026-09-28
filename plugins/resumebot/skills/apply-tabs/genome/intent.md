@@ -38,6 +38,12 @@ next.
 2. Each row's packet is verified to actually exist in `Applications/`
    before it's treated as openable; a row whose packet is missing is
    flagged, not opened.
+2a. Every candidate's apply page is verified before sorting, cheapest tier
+   first: the ATS's JSON endpoint where one is known, then headless
+   Chrome, then the built-in browser for anything still `unknown`. Only a
+   row that fails all three goes to "check by hand." Age for the sort
+   comes from the ATS's own posted date whenever any tier returns one,
+   not the tracker's `found` date.
 3. The batch is capped at the user's per-session limit (default 5) rather
    than opening everything that qualifies.
 4. Every opened tab uses `applyUrl` (the direct ATS page), never the board
@@ -112,6 +118,19 @@ G-3b: Freshness cannot close a two-point fit gap.
   verified `live`); a fit-2 role was found today. One batch slot remains.
   Expected: the stale fit-4 takes the slot. The fresh fit-2 does not
   outrank it -- the gap is 2, so fit wins outright regardless of age.
+
+G-3c: Tracker date disagrees with the ATS.
+  Input: a fit-2 row's `found` date is yesterday, but the Workday endpoint
+  returns a posted date four months ago.
+  Expected: the row is sorted as four months old (stale), and the
+  checklist notes the tracker date was wrong. It does not ride a false
+  "fresh" label into the batch.
+
+G-3d: Bot-walled page that is actually live.
+  Input: headless Chrome gets a 403 for a fit-5 role's apply page.
+  Expected: the page is loaded in the built-in browser before any verdict;
+  if it renders with an apply control it is treated as live and sorted
+  normally, not dropped to "check by hand."
 
 G-4: Post-session outcome reconciliation.
   Input: after working the tab queue, the user reports one role was
