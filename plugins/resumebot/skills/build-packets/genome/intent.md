@@ -22,10 +22,12 @@ unlinted.
 ## Inputs [INVARIANT]
 
 - Tracker rows queried via `scripts/tracker_io.py` (the **tracker** skill's
-  domain, loaded first), filtered to `packetComplete=FALSE`, sorted
-  freshness-first (fresh bucket by fit desc/newest first, stale bucket
-  after, `queueRank` as tiebreak), capped to the apply-tabs session size in
-  `preferences.md` rather than the full pending backlog.
+  domain, loaded first), filtered to `packetComplete=FALSE`, sorted by fit
+  descending with freshness as the tiebreaker (same fit: newer wins;
+  adjacent fit: a fresh role can outrank a stale role one point higher;
+  gap of 2+: fit always wins), `queueRank` as final tiebreak, capped to the
+  apply-tabs session size in `preferences.md` rather than the full pending
+  backlog.
 - The variant catalog in `match-profile.md` for mapping a role to a
   standing resume variant when the tracker row's `variant` field is blank.
 - The master resume and its variants (source of truth for the traceability

@@ -12,14 +12,15 @@ linted before anything is called done.
 ## Select the batch
 
 Query the tracker (via `scripts/tracker_io.py`) for rows with `packetComplete=FALSE`,
-sorted freshness-first (fresh bucket — 14 days old or newer — by fit desc then
-newest first; stale bucket after, same internal sort; `queueRank` as tiebreak).
-Early applicants get read; a fresh role is worth more packet-building effort than
-an old one at the same fit, so build the freshest, highest-fit finds first. Default
-batch: capped to the apply-tabs session size (`preferences.md`), not "everything
-pending" — a backlog of packets for roles no one will ever open is wasted build and
-QA effort. Only genuinely ambiguous scope (which roles count, unclear variant
-mapping) warrants pausing to ask.
+sorted by fit descending with freshness as the tiebreaker: same fit, newer wins;
+adjacent fit (gap of 1), a fresh role (<=14 days) can outrank a stale (>14 days)
+role one point higher; a fit gap of 2 or more always wins outright regardless of
+age. `queueRank` is the final tiebreak. Early applicants get read, so freshness is
+worth a close call, but it never buys a low-fit role a build slot over a role two
+or more fit points better. Default batch: capped to the apply-tabs session size
+(`preferences.md`), not "everything pending" — a backlog of packets for roles no
+one will ever open is wasted build and QA effort. Only genuinely ambiguous scope
+(which roles count, unclear variant mapping) warrants pausing to ask.
 
 ## Per-role packet
 

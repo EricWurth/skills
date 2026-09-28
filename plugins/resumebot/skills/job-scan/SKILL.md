@@ -102,14 +102,15 @@ hard gate; a wide net means partial fits get applied to, not talked out of.
 ### Priority (queueRank): what to work first
 
 Sequencing, not quality. Order: location-priority tier from the profile first
-(no-move roles before relocation-tier roles — same quality, slower path), then
-freshness (roles 14 days old or newer before older ones — early applicants get
-read; recruiters screen in batches and most reqs shortlist within 1-2 weeks, so
-an old posting is usually still open but no longer being read), then fit
-descending within each freshness bucket. Profile bonuses (comp thresholds,
-industry, level) break ties upward. Age only ever pushes a row later, never
-earlier — a stale fit-5 does not outrank a fresh fit-4. The `deferred` status
-parks an entire tier ("good, revisit later") without rejecting anything —
+(no-move roles before relocation-tier roles — same quality, slower path); within
+a tier, fit descending with freshness as the tiebreaker — same fit, newer wins;
+adjacent fit (gap of 1), a fresh posting (14 days old or newer) can outrank a
+stale (older) posting one fit point higher (early applicants get read; recruiters
+screen in batches and most reqs shortlist within 1-2 weeks, so a fresh fit-4 is
+worth more than a stale fit-5); a fit gap of 2 or more always wins outright
+regardless of age — a fresh fit-2 never outranks a stale fit-4. Profile bonuses
+(comp thresholds, industry, level) break same-fit ties upward. The `deferred`
+status parks an entire tier ("good, revisit later") without rejecting anything —
 parking is a priority act, never a fit judgment.
 
 ### Effort tier: how much prep the role earns

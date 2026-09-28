@@ -29,11 +29,12 @@ next.
 ## Success criteria [INVARIANT]
 
 1. The queue is built from `status=ready AND packetComplete=TRUE` rows,
-   sorted freshness-first: a fresh bucket (roles 14 days old or newer, by
-   fit descending then newest first) fills the batch before a stale bucket
-   (older roles, same internal sort) is touched at all. `queueRank` is the
-   last tiebreak, not the primary sort. Age is days since the original
-   posting date (the ATS's date when known, else `found`).
+   sorted by fit descending with freshness as the tiebreaker: same fit,
+   newer wins; adjacent fit (gap of 1), a fresh role (<=14 days) can
+   outrank a stale (>14 days) role one point higher; a fit gap of 2 or
+   more always wins outright regardless of age. `queueRank` is the final
+   tiebreak, not the primary sort. Age is days since the original posting
+   date (the ATS's date when known, else `found`).
 2. Each row's packet is verified to actually exist in `Applications/`
    before it's treated as openable; a row whose packet is missing is
    flagged, not opened.
@@ -49,10 +50,12 @@ next.
    get the reason captured in notes, with dead postings moved to
    `status=dead` and aggregator walls flagged to find the direct path
    before the next session.
-7. Age never promotes a role in the queue, only demotes it: a stale role
-   only gets a tab once the fresh bucket can't fill the batch. Stale
-   low-fit rows are surfaced in the checklist as candidates for the user to
-   defer or reject, not queued for a future session.
+7. Freshness only ever closes a one-point fit gap, never two: a fresh role
+   can outrank a stale role exactly one fit point higher, but a fresh
+   low-fit role never beats a stale role two or more points higher. Stale
+   low-fit rows that never surface are flagged in the checklist as
+   candidates for the user to defer or reject, not queued for a future
+   session.
 
 ## Behavioral invariants [INVARIANT]
 
@@ -95,15 +98,20 @@ G-2: Batch cap enforcement.
   Input: 12 rows qualify as ready with complete packets; the user's
   per-session limit in `Profile/preferences.md` is the default of 5.
   Expected: only 5 tabs are opened, the highest-priority ones by the
-  freshness-first sort (fresh bucket by fit desc/newest first, then stale
-  bucket, `queueRank` as tiebreak), with the rest left queued for a later
-  session rather than dumped all at once.
+  fit-primary/freshness-tiebreak sort, with the rest left queued for a
+  later session rather than dumped all at once.
 
-G-3: Stale vs. fresh competing for the same slot.
+G-3: Adjacent-fit freshness override (gap of 1).
   Input: a fit-5 role has sat in `status=ready` for 25 days; a fit-4 role
   was found 2 days ago. One batch slot remains.
-  Expected: the fresh fit-4 takes the slot. The stale fit-5 is left
-  unopened and is not bumped ahead of it for being older.
+  Expected: the fresh fit-4 takes the slot over the stale fit-5 -- a
+  one-point fit gap is close enough for freshness to decide it.
+
+G-3b: Freshness cannot close a two-point fit gap.
+  Input: a fit-4 role has sat in `status=ready` for 15 days (still
+  verified `live`); a fit-2 role was found today. One batch slot remains.
+  Expected: the stale fit-4 takes the slot. The fresh fit-2 does not
+  outrank it -- the gap is 2, so fit wins outright regardless of age.
 
 G-4: Post-session outcome reconciliation.
   Input: after working the tab queue, the user reports one role was
@@ -123,8 +131,10 @@ G-4: Post-session outcome reconciliation.
 - More judgment-based for the after-session half: whether notes correctly
   capture *why* a role stalled, and whether the dead/aggregator-wall
   distinction was applied sensibly, needs human review.
-- Known failure signatures to watch for: a stale role taking a slot a fresh
-  ready role could have filled; opening the board `url` instead
+- Known failure signatures to watch for: a stale, low-fit role taking a
+  slot a fresh, higher-or-equal-fit role could have filled; a fresh role
+  beating a stale role 2+ fit points higher (freshness only closes a
+  one-point gap); opening the board `url` instead
   of `applyUrl`; opening more tabs than the per-session cap; opening a tab
   for a row whose packet file doesn't actually exist; the skill filling in
   or submitting a form itself; marking a role `applied` without the user

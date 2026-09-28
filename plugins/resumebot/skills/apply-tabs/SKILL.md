@@ -14,13 +14,16 @@ submits forms.**
 
 ## Build the queue
 
-1. Query the tracker for `status=ready AND packetComplete=TRUE` and sort
-   freshness-first:
-   - **Fresh bucket first:** roles 14 days old or newer, by fit desc, then newest
-     first.
-   - **Stale bucket after:** older roles, same sort. They only get a tab when the
-     fresh bucket can't fill the batch.
-   - `queueRank` is the last tiebreak.
+1. Query the tracker for `status=ready AND packetComplete=TRUE` and sort by
+   fit, with freshness breaking ties:
+   - **Same fit:** newer wins (fewer days since posting beats more).
+   - **Adjacent fit (gap of 1):** a fresh role (≤14 days) can outrank a stale
+     (>14 days) role one fit point higher — a fresh fit-4 beats a stale fit-5,
+     a fresh fit-3 beats a stale fit-4. This is the only case freshness
+     overrides fit.
+   - **Fit gap of 2 or more always wins outright**, regardless of age — a
+     fresh fit-2 never outranks a stale fit-4.
+   - `queueRank` is the final tiebreak.
 
    Age is days since the original posting date: use the ATS's original post date
    when the row has one (often in `notes`), otherwise `found`. Board dates reset on
@@ -59,10 +62,11 @@ the next session.
 
 Early applicants get read. Recruiters screen in batches as applications arrive and
 most reqs have a shortlist within one to two weeks, so a two-week-old posting is
-often still open but no longer really being read. That's why fresh roles go first
-and why a fresh fit-4 outranks a stale fit-5. Age never promotes a role; it only
-demotes one. Stale low-fit rows will sit unopened; flag them in the checklist so
-the user can defer or reject them.
+often still open but no longer really being read. That's why a fresh fit-4 outranks
+a stale fit-5 — but freshness only closes a one-point fit gap, never two: a fresh
+fit-2 still loses to a stale fit-4. Fit remains the primary sort; freshness is the
+tiebreaker, not a replacement for quality. Stale low-fit rows that never surface
+should be flagged for the user to defer or reject, not left to quietly rot.
 
 ## Common Rationalizations
 
@@ -72,7 +76,8 @@ the user can defer or reject them.
 | "`packetComplete` is TRUE in the tracker, no need to check the folder" | The sheet cell can be stale or wrong. The row only gets opened as a tab after the packet file is confirmed to actually exist in `Applications/`; otherwise it's flagged, not opened. |
 | "The board listing link is right there, I'll just use that" | The board URL and the direct apply URL are not interchangeable — one is the aggregator page, the other is the real ATS form. Always `applyUrl`, never `url`. |
 | "The user's clearly on a roll today, I'll open all 12 instead of stopping at 5" | The per-session cap exists because a wall of tabs kills momentum, not because 5 is a hard technical limit. Qualifying for more doesn't override the cap. |
-| "This one's been sitting in ready for weeks, it's owed a turn" | Time in the queue earns nothing. A packet already built is sunk cost; the user wants the best shot at a response, which means fresh, high-fit roles first. Old rows only fill slots the fresh bucket can't. |
+| "This one's been sitting in ready for weeks, it's owed a turn" | Time in the queue earns nothing on its own. A packet already built is sunk cost; the user wants the best shot at a response, which means fit leads and freshness only breaks a close call — a stale role still needs real fit (within one point of the best fresh option, or a 2+ point fit lead of its own) to earn a slot. |
+| "It's fresh, so it goes ahead of that stale fit-4" | Freshness only overrides a one-point fit gap. A fresh fit-2 does not outrank a stale fit-4 — that gap is 2, and fit wins outright regardless of age. |
 | "This form looks quick, I'll just fill it in for them" | The skill's one hard boundary is that it opens tabs and never fills or submits forms — quickness doesn't create an exception. |
 
 ## Red Flags
@@ -83,5 +88,5 @@ the user can defer or reject them.
 - Opening a tab for a row whose packet file doesn't actually exist in `Applications/`
 - Opening a tab for a page `check_apply_links.py` didn't return as `live`, or treating a plain HTTP 200 as proof the posting is open
 - Filling in or submitting any part of an application form
-- A stale role (15+ days) getting a tab while a fresh ready role with a packet goes unopened
-- Bumping a role up the queue because it's old
+- A stale, low-fit role getting a tab while a fresh, higher-or-equal-fit ready role with a packet goes unopened
+- A fresh role beating a stale role that outranks it by 2+ fit points ("it's fresh" is not enough to close a 2-point fit gap)
