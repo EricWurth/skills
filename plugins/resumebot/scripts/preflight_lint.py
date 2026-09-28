@@ -23,12 +23,18 @@ Rules:
   R7  no unexecuted-work-as-delivered ("proposed and built" style conflations
       is a judgment call; here we flag "designed a proposed", "proposal for X
       delivered")
+  R8  no banned patterns: a content-rules entry written `re:<regex>` is matched
+      as a case-insensitive pattern, so a rule like "no years-of-experience
+      counts" catches every phrasing instead of one exact string
 """
 
 import argparse
 import re
 import sys
 from pathlib import Path
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 EM_DASH = re.compile(r"—|–| - ")
 # en dash between two date-ish tokens (Jan 2022 – Jul 2026, 2012–2020) is
@@ -67,7 +73,11 @@ def lint_text_line(line, forbidden, certs_ok):
         if cert_hit:
             hits.append(("R3", f"certification claim: {cert_hit.group(0)!r}"))
     for term in forbidden:
-        if re.search(rf"\b{re.escape(term)}\b", line, re.I):
+        if term.startswith("re:"):
+            m = re.search(term[3:], line, re.I)
+            if m:
+                hits.append(("R8", f"banned pattern {term[3:]!r}: {m.group(0)!r}"))
+        elif re.search(rf"\b{re.escape(term)}\b", line, re.I):
             hits.append(("R4", f"forbidden name: {term!r}"))
     if DEGREE_WORDS.search(line) and EDU_YEAR.search(line):
         hits.append(("R5", "year adjacent to education"))
