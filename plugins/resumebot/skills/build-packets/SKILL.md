@@ -111,13 +111,19 @@ one will ever open is wasted build and QA effort. Only genuinely ambiguous scope
 
 ## Cover letter best practices
 
-**Follow `Master/CoverLetter_Guide.md`** (installed by setup) — the
-research-backed Problem-Solution structure: open on the employer's actual
-problem (60–80 words, the highest-weight paragraph), one proof story told with
-specifics (100–120 words, never restated resume bullets), an optional second
-angle (cut it if filler), and a ~40-word close with one clear ask. 300–400
-words total, separate file, PDF for submission, company research required
-before writing — ~90% of rejected letters fail on customization, not prose.
+**Follow `Master/CoverLetter_Guide.md`** when it exists (it holds the user's
+researched spec). The default shape: open on the employer's actual problem,
+then one proof story told as a story with the candidate's judgment in it (not a
+list of accomplishments, and never restated resume bullets), a line of genuine
+motivation for this employer (recruiters in a peer-reviewed experiment weighed
+motivation and clarity most, and AI drafting improved neither), and a short
+close with one clear ask. Roughly 250-400 words, or shorter if the user's voice
+file says so; separate file; company research before writing. Evidence: a
+field experiment found tailored letters raised callbacks and generic ones
+barely beat none; since AI tools arrived, echoing the posting's language no
+longer signals effort, so the specifics only the candidate could write carry
+the letter. ATS vendors score the resume, not the letter: write it for a
+person. Always read the user's voice/writing-style file before drafting.
 
 Non-negotiables that stay here even if the guide is missing:
 
