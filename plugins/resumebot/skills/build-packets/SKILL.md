@@ -92,6 +92,22 @@ one will ever open is wasted build and QA effort. Only genuinely ambiguous scope
    shared mistakes.
 7. **Reference attachments** (recommendation letters etc.) are copied from
    `Reference/` as-is when the user's rules call for them — never edited.
+8. **Two companion files in every packet folder**, so what was learned while
+   building survives the session:
+   - `job-description.md` — the posting as read: title, apply URL, capture date,
+     the ATS's own posted date, comp exactly as posted, location and work mode,
+     then the posting text. Postings get pulled; this is the only copy for
+     interview prep.
+   - `crib-sheet.md` — the one-page brief for applying and interviewing: the
+     problem the employer is hiring to solve (the same line that drove the
+     tailoring), the headline used, the header location, comp as posted with
+     the floor check, cost-of-living math for relocation roles (using
+     `Profile/ColCribSheet.md` when it exists), the posting's hard gates
+     (years, location, travel, credentials — the user's call, not wording
+     problems), the reviewer's open questions, and form notes (salary field
+     approach, cover letter required or not, attachments).
+   Write both before the QA gate, and update them if QA changes the headline or
+   surfaces new gates.
 
 ## Cover letter best practices
 
