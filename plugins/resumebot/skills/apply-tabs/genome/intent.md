@@ -29,8 +29,11 @@ next.
 ## Success criteria [INVARIANT]
 
 1. The queue is built from `status=ready AND packetComplete=TRUE` rows,
-   ordered by `queueRank`, falling back to fit descending then found date
-   ascending (oldest good roles first) when `queueRank` doesn't decide it.
+   sorted freshness-first: a fresh bucket (roles 14 days old or newer, by
+   fit descending then newest first) fills the batch before a stale bucket
+   (older roles, same internal sort) is touched at all. `queueRank` is the
+   last tiebreak, not the primary sort. Age is days since the original
+   posting date (the ATS's date when known, else `found`).
 2. Each row's packet is verified to actually exist in `Applications/`
    before it's treated as openable; a row whose packet is missing is
    flagged, not opened.
@@ -46,8 +49,10 @@ next.
    get the reason captured in notes, with dead postings moved to
    `status=dead` and aggregator walls flagged to find the direct path
    before the next session.
-7. A role that has sat in `ready` for more than ~10 days is bumped to the
-   top of the next session's queue, with the reason said explicitly.
+7. Age never promotes a role in the queue, only demotes it: a stale role
+   only gets a tab once the fresh bucket can't fill the batch. Stale
+   low-fit rows are surfaced in the checklist as candidates for the user to
+   defer or reject, not queued for a future session.
 
 ## Behavioral invariants [INVARIANT]
 
@@ -89,14 +94,16 @@ G-1: Missing packet file.
 G-2: Batch cap enforcement.
   Input: 12 rows qualify as ready with complete packets; the user's
   per-session limit in `Profile/preferences.md` is the default of 5.
-  Expected: only 5 tabs are opened, the highest-priority ones by
-  queueRank (then fit desc / found asc), with the rest left queued for a
-  later session rather than dumped all at once.
+  Expected: only 5 tabs are opened, the highest-priority ones by the
+  freshness-first sort (fresh bucket by fit desc/newest first, then stale
+  bucket, `queueRank` as tiebreak), with the rest left queued for a later
+  session rather than dumped all at once.
 
-G-3: Stale posting cadence.
-  Input: a role has sat in `status=ready` for 12 days.
-  Expected: it gets bumped to the top of the next session's queue, with
-  the staleness reason stated, not silently left at its normal rank.
+G-3: Stale vs. fresh competing for the same slot.
+  Input: a fit-5 role has sat in `status=ready` for 25 days; a fit-4 role
+  was found 2 days ago. One batch slot remains.
+  Expected: the fresh fit-4 takes the slot. The stale fit-5 is left
+  unopened and is not bumped ahead of it for being older.
 
 G-4: Post-session outcome reconciliation.
   Input: after working the tab queue, the user reports one role was
@@ -116,7 +123,8 @@ G-4: Post-session outcome reconciliation.
 - More judgment-based for the after-session half: whether notes correctly
   capture *why* a role stalled, and whether the dead/aggregator-wall
   distinction was applied sensibly, needs human review.
-- Known failure signatures to watch for: opening the board `url` instead
+- Known failure signatures to watch for: a stale role taking a slot a fresh
+  ready role could have filled; opening the board `url` instead
   of `applyUrl`; opening more tabs than the per-session cap; opening a tab
   for a row whose packet file doesn't actually exist; the skill filling in
   or submitting a form itself; marking a role `applied` without the user

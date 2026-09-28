@@ -14,9 +14,17 @@ submits forms.**
 
 ## Build the queue
 
-1. Query the tracker for `status=ready AND packetComplete=TRUE`, ordered by
-   `queueRank` (fallback: fit desc, then found date asc — oldest good roles first,
-   they're dying of staleness).
+1. Query the tracker for `status=ready AND packetComplete=TRUE` and sort
+   freshness-first:
+   - **Fresh bucket first:** roles 14 days old or newer, by fit desc, then newest
+     first.
+   - **Stale bucket after:** older roles, same sort. They only get a tab when the
+     fresh bucket can't fill the batch.
+   - `queueRank` is the last tiebreak.
+
+   Age is days since the original posting date: use the ATS's original post date
+   when the row has one (often in `notes`), otherwise `found`. Board dates reset on
+   reposts and understate age.
 2. Verify each role's packet file actually exists in `Applications/`; a row whose
    packet is missing gets flagged, not opened.
 3. Verify each candidate's `applyUrl` actually loads before it gets a tab:
@@ -47,10 +55,14 @@ submitted role: `status=applied`, date in `notes`. For any the user hit a wall o
 adjust — dead posting → `status=dead`; aggregator wall → find the direct path before
 the next session.
 
-## Cadence note
+## Freshness note
 
-Postings die on a clock. If a role has sat in `ready` for more than ~10 days, bump
-it to the top of the next session and say why.
+Early applicants get read. Recruiters screen in batches as applications arrive and
+most reqs have a shortlist within one to two weeks, so a two-week-old posting is
+often still open but no longer really being read. That's why fresh roles go first
+and why a fresh fit-4 outranks a stale fit-5. Age never promotes a role; it only
+demotes one. Stale low-fit rows will sit unopened; flag them in the checklist so
+the user can defer or reject them.
 
 ## Common Rationalizations
 
@@ -60,6 +72,7 @@ it to the top of the next session and say why.
 | "`packetComplete` is TRUE in the tracker, no need to check the folder" | The sheet cell can be stale or wrong. The row only gets opened as a tab after the packet file is confirmed to actually exist in `Applications/`; otherwise it's flagged, not opened. |
 | "The board listing link is right there, I'll just use that" | The board URL and the direct apply URL are not interchangeable — one is the aggregator page, the other is the real ATS form. Always `applyUrl`, never `url`. |
 | "The user's clearly on a roll today, I'll open all 12 instead of stopping at 5" | The per-session cap exists because a wall of tabs kills momentum, not because 5 is a hard technical limit. Qualifying for more doesn't override the cap. |
+| "This one's been sitting in ready for weeks, it's owed a turn" | Time in the queue earns nothing. A packet already built is sunk cost; the user wants the best shot at a response, which means fresh, high-fit roles first. Old rows only fill slots the fresh bucket can't. |
 | "This form looks quick, I'll just fill it in for them" | The skill's one hard boundary is that it opens tabs and never fills or submits forms — quickness doesn't create an exception. |
 
 ## Red Flags
@@ -70,4 +83,5 @@ it to the top of the next session and say why.
 - Opening a tab for a row whose packet file doesn't actually exist in `Applications/`
 - Opening a tab for a page `check_apply_links.py` didn't return as `live`, or treating a plain HTTP 200 as proof the posting is open
 - Filling in or submitting any part of an application form
-- Leaving a role stale in `ready` for 10+ days without bumping it and stating why
+- A stale role (15+ days) getting a tab while a fresh ready role with a packet goes unopened
+- Bumping a role up the queue because it's old

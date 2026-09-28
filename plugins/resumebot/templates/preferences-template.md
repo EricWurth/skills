@@ -5,7 +5,7 @@ Working preferences resumebot skills read at runtime. Edit freely.
 ## Batch sizes and cadence
 
 - Apply-tabs per session: 5
-- Packet-build batch cap: no cap (build everything pending at target tier)
+- Packet-build batch cap: matches apply-tabs session size, freshest/highest-fit finds first
 - Email-sync lookback: 3 days (14 on first run)
 - Scan report style: counts + top finds only (no full row dumps)
 

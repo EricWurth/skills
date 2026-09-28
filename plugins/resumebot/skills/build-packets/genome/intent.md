@@ -22,8 +22,10 @@ unlinted.
 ## Inputs [INVARIANT]
 
 - Tracker rows queried via `scripts/tracker_io.py` (the **tracker** skill's
-  domain, loaded first), filtered to `packetComplete=FALSE`, ordered by fit
-  then queueRank, capped by the user's target tier in `preferences.md`.
+  domain, loaded first), filtered to `packetComplete=FALSE`, sorted
+  freshness-first (fresh bucket by fit desc/newest first, stale bucket
+  after, `queueRank` as tiebreak), capped to the apply-tabs session size in
+  `preferences.md` rather than the full pending backlog.
 - The variant catalog in `match-profile.md` for mapping a role to a
   standing resume variant when the tracker row's `variant` field is blank.
 - The master resume and its variants (source of truth for the traceability
@@ -99,9 +101,9 @@ unlinted.
 
 - Exact wording of the retuned opening summary sentences and which
   competency keywords get pulled from the posting.
-- Default batch size/scope within the user's target-tier cap; pausing to
-  ask is reserved for genuinely ambiguous scope (which roles count,
-  unclear variant mapping).
+- Exact freshness cutoff used to split fresh/stale within the batch cap;
+  pausing to ask is reserved for genuinely ambiguous scope (which roles
+  count, unclear variant mapping).
 - Number and choice of packets offered for a spot-check PDF render.
 - Order and depth of QA-gate re-reading, provided every listed check runs.
 

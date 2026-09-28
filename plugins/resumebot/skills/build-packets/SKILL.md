@@ -12,10 +12,14 @@ linted before anything is called done.
 ## Select the batch
 
 Query the tracker (via `scripts/tracker_io.py`) for rows with `packetComplete=FALSE`,
-ordered by fit then queueRank. Default batch: everything at the user's target tier
-(their preferences.md sets a cap). Volume is fine — templated output scales; only
-genuinely ambiguous scope (which roles count, unclear variant mapping) warrants
-pausing to ask.
+sorted freshness-first (fresh bucket — 14 days old or newer — by fit desc then
+newest first; stale bucket after, same internal sort; `queueRank` as tiebreak).
+Early applicants get read; a fresh role is worth more packet-building effort than
+an old one at the same fit, so build the freshest, highest-fit finds first. Default
+batch: capped to the apply-tabs session size (`preferences.md`), not "everything
+pending" — a backlog of packets for roles no one will ever open is wasted build and
+QA effort. Only genuinely ambiguous scope (which roles count, unclear variant
+mapping) warrants pausing to ask.
 
 ## Per-role packet
 
