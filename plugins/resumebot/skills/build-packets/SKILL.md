@@ -58,8 +58,15 @@ one will ever open is wasted build and QA effort. Only genuinely ambiguous scope
    certification claims, no forbidden names (client list), no education years, no
    pre-conceding language, no unexecuted-work-as-delivered phrasing.
 6. **QA gate — validate against the JD and the master.** Lint catches mechanical
-   violations; this catches drift. For each packet, as a fresh read (not a re-skim
-   by the pass that wrote it):
+   violations; this catches drift. If the workspace has `Profile/packet-review.md`,
+   follow it: it holds the user's review steps and the drift patterns earlier
+   reviews caught. The reviewer is a separate agent that didn't write the packet
+   and isn't given the writer's claim map. It fixes in place and reports changes
+   plus judgment calls for the user. The drift seen most often: staged or approved
+   work written as delivered, scope inflated by one word ("firm-wide" for
+   cross-functional), a neighboring word upgraded ("agentic" for one system), and
+   client identifiers slipping in through product or agency names. For each packet,
+   as a fresh read (not a re-skim by the pass that wrote it):
    - **Traceability to the master:** every claim in the tailored resume must trace
      to the master resume (directly or via its variant). A claim with no master
      source is either an invention (delete it) or real experience that skipped the
