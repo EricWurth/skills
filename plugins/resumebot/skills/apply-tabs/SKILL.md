@@ -21,9 +21,13 @@ submits forms.**
    supplies the real posting date:
    `python scripts/check_apply_links.py --file <id|url list>`. It asks the ATS's
    JSON endpoint first (Workday, Greenhouse, Lever, Ashby: no rendering, rarely
-   bot-walled, returns the ATS's own posted date), and renders the page in
-   headless Chrome for any other ATS. A plain HTTP fetch of the page isn't enough,
-   because Workday and similar pages return 200 for dead postings. Each result has
+   bot-walled, returns the ATS's own posted date), then Eightfold career sites
+   (`/careers/job/<id>` pages, often on the employer's own domain), and renders the
+   page in headless Chrome for any other ATS. A plain HTTP fetch of the page isn't
+   enough, because Workday and similar pages return 200 for dead postings, and
+   Eightfold keeps serving a closed job's full description with only the Apply
+   button missing; its check asks Eightfold's open-jobs search, and a job absent
+   from search is dead (`source=eightfold`). Each result has
    a `verdict` (`live` / `dead` / `unknown`), a `source`, and a `posted` date when
    the ATS exposes one.
    - `dead` → skip and mark `status=dead` with the evidence.

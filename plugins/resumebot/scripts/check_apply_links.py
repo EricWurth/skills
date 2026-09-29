@@ -5,9 +5,11 @@ A plain HTTP fetch is not enough: Workday, Eightfold, Avature and other ATS
 pages return 200 for dead postings and only render "the page you are looking
 for doesn't exist" or "no longer accepting applications" after JavaScript runs.
 Two tiers, cheapest first:
-  1. ATS data endpoint. Workday, Greenhouse, Lever and Ashby publish the posting
-     as JSON behind the career page. Asking the endpoint needs no rendering,
-     rarely hits a bot wall, and usually returns the ATS's own posted date.
+  1. ATS data endpoint. Workday, Greenhouse, Lever, Ashby and Eightfold publish
+     the posting as JSON behind the career page. Asking the endpoint needs no
+     rendering, rarely hits a bot wall, and usually returns the ATS's own posted
+     date. Eightfold keeps serving a closed job's page and JSON, so its check
+     asks the open-jobs search instead: absent from search means closed.
   2. Headless Chrome (a throwaway profile, never the user's) for every other
      ATS, or when the endpoint gives no clear answer.
 
@@ -24,7 +26,8 @@ CLI:
   python check_apply_links.py --file urls.txt        # one URL per line; "id|url" also accepted
   Output: one JSON object per line:
     {"id", "url", "verdict", "reason", "source", "posted", "snippet"}
-  source is "ats-api" or "headless"; posted is the ATS's date (YYYY-MM-DD) or null.
+  source is "ats-api", "eightfold" or "headless"; posted is the ATS's date
+  (YYYY-MM-DD) or null.
 """
 
 import argparse
@@ -39,7 +42,7 @@ import tempfile
 import urllib.error
 import urllib.request
 from datetime import datetime, timezone
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, quote, urlparse
 
 CHROME_CANDIDATES = [
     r"C:\Program Files\Google\Chrome\Application\chrome.exe",
@@ -74,6 +77,7 @@ APPLY_PATTERN = r"\bapply\b"
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
 LOCALE = re.compile(r"^[a-z]{2}-[A-Z]{2}$")
+EIGHTFOLD_JOB = re.compile(r"^/careers/job/(\d+)/?$")
 
 
 def fetch_json(url, timeout=20):
@@ -92,11 +96,12 @@ def fetch_json(url, timeout=20):
         return None, None
 
 
-def iso_date(value):
+def iso_date(value, epoch_seconds=False):
     if not value:
         return None
     if isinstance(value, (int, float)):
-        return datetime.fromtimestamp(value / 1000, tz=timezone.utc).strftime("%Y-%m-%d")
+        secs = value if epoch_seconds else value / 1000
+        return datetime.fromtimestamp(secs, tz=timezone.utc).strftime("%Y-%m-%d")
     m = re.match(r"(\d{4}-\d{2}-\d{2})", str(value))
     return m.group(1) if m else None
 
@@ -125,8 +130,46 @@ def workday_endpoint(u):
     return f"https://{u.netloc}/wday/cxs/{tenant}/{site}/job/{'/'.join(job)}"
 
 
+def check_eightfold(u, pid, fetch=None):
+    """Eightfold career sites (often on the employer's own domain, "Powered by
+    eightfold.ai") keep rendering a closed job's page and serving its JSON, with
+    only the Apply button gone. The open-jobs search is the reliable signal: a
+    closed job drops out of it. Returns (verdict, reason, posted) or None."""
+    fetch = fetch or fetch_json
+    base = f"https://{u.netloc}/api/apply/v2/jobs"
+    qs = parse_qs(u.query)
+    domain = (qs.get("domain") or qs.get("microsite") or [None])[0]
+    dq = f"domain={quote(domain)}&" if domain else ""
+    status, job = fetch(f"{base}/{pid}{'?' + dq[:-1] if dq else ''}")
+    if status in (404, 410):
+        return "dead", "ATS API: Eightfold job not found", None
+    if status != 200 or not isinstance(job, dict) or str(job.get("id")) != pid:
+        return None
+    posted = iso_date(job.get("t_create"), epoch_seconds=True)
+    searched = False
+    for term in (job.get("display_job_id"), job.get("name")):
+        if not term:
+            continue
+        s_status, res = fetch(f"{base}?{dq}query={quote(str(term))}&num=100")
+        if s_status != 200 or not isinstance(res, dict) or not isinstance(res.get("positions"), list):
+            continue
+        searched = True
+        if any(str(p.get("id")) == pid for p in res["positions"]):
+            return "live", "ATS API: Eightfold job listed in open-jobs search", posted
+    if searched:
+        return "dead", "ATS API: Eightfold job page still serves, but the job is missing from open-jobs search", posted
+    return None
+
+
 def check_via_api(url):
-    """Ask the ATS's JSON endpoint. Returns (verdict, reason, posted) or None to fall through."""
+    """Ask the ATS's JSON endpoint. Returns (verdict, reason, posted, source) or None to fall through."""
+    r = _check_via_api(url)
+    if r is None:
+        return None
+    return r if len(r) == 4 else (*r, "ats-api")
+
+
+def _check_via_api(url):
     u = urlparse(url)
     host = u.netloc.lower()
     parts = [p for p in u.path.split("/") if p]
@@ -174,6 +217,11 @@ def check_via_api(url):
                 return "dead", "ATS API: not on the Ashby job board", None
             return "live", "ATS API: Ashby posting open", iso_date(match.get("publishedAt"))
         return None
+
+    m = EIGHTFOLD_JOB.match(u.path)
+    if m:
+        r = check_eightfold(u, m.group(1))
+        return (*r, "eightfold") if r else None
 
     return None
 
@@ -246,8 +294,7 @@ def main():
             else:
                 api = check_via_api(url)
                 if api:
-                    verdict, reason, posted = api
-                    source = "ats-api"
+                    verdict, reason, posted, source = api
                 else:
                     chrome = chrome or find_chrome()
                     text = render_text(chrome, url, profile) or ""
