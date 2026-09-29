@@ -133,6 +133,12 @@ Per the tracker skill: backup → read fresh → dedupe against full sheet → a
 verify the write landed. On write failure after one retry, save findings to a dated
 `Tracker/<date>-not-in-tracker.md` and flag for manual merge — never drop findings.
 
+**Screened-out log.** Never drop a reviewed posting silently. Write every posting
+that failed a gate or the fit minimum to `Tracker/ScreenedOut/screened_out_<date>.md`,
+one line each: company, title, location, posted pay, link, and the gate that
+dropped it. A rule that misfires then shows up the next morning instead of hiding
+the same posting night after night. Skip only exact duplicates of tracker rows.
+
 New rows enter as `status=new`, `packetComplete=FALSE`, regardless of fit. The
 build-packets skill flips them toward ready. `colAdjusted`/`colAdjustedComp`
 default to `FALSE`/blank and are only set when the COL-adjusted path was
@@ -161,6 +167,7 @@ rows.
 
 - A `deferred` row flipped to `rejected` (or the reverse) without a fit-based reason
 - Any apply/submit action taken directly by this skill
+- A gate-rejected posting missing from the screened-out log
 - A posting scored before a `matchKey` dedupe check against the full tracker
 - `applyUrl` pointing at an aggregator's intake instead of the employer's own ATS
 - A board "posted" date reported as fact without following through to the ATS page
