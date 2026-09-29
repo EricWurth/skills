@@ -31,6 +31,13 @@ company names from tracker rows in active statuses (`applied`, `interviewing`,
 | Offer | surface to the user immediately; no automated status change |
 | Ambiguous | list it for the user; make no change |
 
+**Ghosting window.** After classifying, check `applied` rows with no email activity
+since the application. If the user's match profile sets a ghosting window (e.g. "no
+response after 30 days = abandoned"), move rows past it to `status=rejected` with a
+"no response N+ days" breadcrumb, and report them as a separate count. Like any
+rejection, this frees the company for same-company dedupe. No window set means no
+automatic change.
+
 Match emails to rows by company name against the tracker (via
 `scripts/tracker_io.py`), tolerant of subsidiaries/brand names — when uncertain,
 ask rather than mis-file.
