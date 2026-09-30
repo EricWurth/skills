@@ -1,7 +1,8 @@
 # Skills
 
 Disciplined methods for Claude: reasoning, research, writing, agent memory,
-delegation, rule enforcement, and job search.
+delegation, and rule enforcement. The job-search plugin, resumebot, lives in
+its own repository: [EricWurth/resumebot](https://github.com/EricWurth/resumebot).
 
 Two kinds of thing live here, and they are used differently. A **skill** is
 instructions: a folder you copy or upload. A **plugin** is an installable
@@ -52,7 +53,7 @@ edits to apply live.
 
 <!-- catalog:start -->
 
-6 standalone skills and 5 plugins (20 skills). Skills are copied; plugins are installed.
+6 standalone skills and 4 plugins (10 skills). Skills are copied; plugins are installed.
 
 They split on one axis: who can invoke them. **User-invoked** skills are reachable only when you type them, and they do the orchestrating. **Model-invoked** skills can be typed *or* reached for automatically when the task fits; they hold the reusable discipline. A user-invoked skill may call a model-invoked one, never another user-invoked one.
 
@@ -87,7 +88,6 @@ Installed through the marketplace. Each carries more than instructions: extra sk
 | [`skill-evolution`](plugins/skill-evolution) | ✅ | Evolves your other skills on a schedule: finds a real technique gap, proves the gain, sandboxes it, and gates promotion on your sign-off |
 | [`memory-vault`](plugins/memory-vault) | ✅ | A file-based, human-gated memory system for AI agents: deliberate writes, gated promotion, quiet reads, cold-path maintenance |
 | [`rulegate`](plugins/rulegate) | — | Makes project rules bind instead of decay: compiles requests into rule-compliant plans, gates execution scope, and keeps an evidence ledger |
-| [`resumebot`](plugins/resumebot) | ✅ | A job-search operating system: master resume, targeting coach with a COL-adjusted comp floor, Excel tracker, board scans, tailored packets, apply queue,… |
 | [`delegate`](plugins/delegate) | ✅ | A senior-resource agent that owns problems end-to-end and reports in decision-queue format |
 
 **skill-evolution**
@@ -104,11 +104,6 @@ Installed through the marketplace. Each carries more than instructions: extra sk
 
 - *You type*: `/rulegate-setup`
 - *Automatic*: `rule-compiler`, `rules-audit`
-
-**resumebot**
-
-- *You type*: `/setup`
-- *Automatic*: `apply-tabs`, `build-packets`, `email-sync`, `interview-prep`, `job-profile`, `job-scan`, `linkedin-profile`, `master-resume`, `tracker`
 
 <!-- catalog:end -->
 
@@ -135,15 +130,6 @@ plugins/rulegate/                a plugin: carries more than instructions
 Some skills add more: `document-forge` also carries `references/`, `scripts/`,
 `agents/`, and `evals/`. None of that is required; the two files above are
 the whole contract.
-
-One thing here is neither a skill nor a plugin:
-[`resumebot-browser-plugin/`](resumebot-browser-plugin/) is a Chrome
-extension (plus a 1Password native messaging host) that fills job
-applications from a local profile and a growing answer memory. It is the
-browser half of `resumebot`: the plugin finds roles and builds packets, the
-extension takes the typing out of the apply step and never submits. It is
-installed by loading `extension/` unpacked in Chrome, not through the
-marketplace; see its README.
 
 A skill that is only instructions stays in `skills/`, where it can be
 copied or uploaded directly. Wrapping it in a plugin would add a manifest

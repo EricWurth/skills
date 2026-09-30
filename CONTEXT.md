@@ -91,8 +91,7 @@ marked `[INVARIANT]` as off-limits.
 
 ## agents/: two different mechanisms sharing one folder name
 
-A plugin-root `agents/` file (`delegate/agents/delegate.md`,
-`resumebot/agents/career-coach.md`) is a **registered subagent**: real
+A plugin-root `agents/` file (`delegate/agents/delegate.md`) is a **registered subagent**: real
 YAML frontmatter (`name`, `description`), discovered by directory
 placement, dispatched by Claude Code itself. Nothing needs to name it
 anywhere; that's the whole point, it's found automatically.

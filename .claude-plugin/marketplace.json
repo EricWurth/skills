@@ -41,18 +41,6 @@
       ]
     },
     {
-      "name": "resumebot",
-      "source": "./plugins/resumebot",
-      "description": "A job-search operating system: master resume, targeting coach with a COL-adjusted comp floor, Excel tracker, board scans, tailored packets, apply queue, email sync, interview prep, and a LinkedIn profile draft.",
-      "category": "productivity",
-      "keywords": [
-        "job-search",
-        "resume",
-        "career",
-        "tracker"
-      ]
-    },
-    {
       "name": "delegate",
       "source": "./plugins/delegate",
       "description": "A senior-resource agent that owns problems end-to-end and reports in decision-queue format.",
