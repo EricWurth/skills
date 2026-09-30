@@ -7,7 +7,9 @@ of every evolution run and is meant to grow -- new techniques get appended
 with a dated entry, not inserted by rewriting history.
 
 Research pass: 2026-07-14; refreshed 2026-08-23 (added #15 plan-and-execute,
-#16 trajectory/per-turn evaluation, plus dated notes at the bottom of this file). Sources at bottom of each entry.
+#16 trajectory/per-turn evaluation); refreshed 2026-08-30 (added #17 verifiable
+skill contract, #18 skill-agent co-evolution loop, plus dated notes at the
+bottom of this file). Sources at bottom of each entry.
 
 ---
 
@@ -489,6 +491,77 @@ Sources: [LLM Agent Evaluation Metrics in 2026: Tool Calling, Task Completion, R
 
 ---
 
+## 17. Verifiable skill contract (checkable criteria travelling with the artifact)
+
+*Added 2026-08-30 (research pass).*
+
+**What it is:** the skill artifact carries its own independently checkable
+criteria -- boundary checks, trajectory assertions, replay tests -- and a
+verifier sits *outside* the agent's output path to evaluate them. Following
+the skill becomes a first-class status the run can be conditioned on, rather
+than something inferred from the output looking reasonable. A failed clause is
+a targeted repair signal, not a general "try again."
+
+**Signal to use it:** a downstream step needs evidence that the skill was
+actually followed, not just that the output is plausible -- and the skill
+already states criteria in a form something other than the generating context
+could check. A skill whose spec separates intent from phenotype and ships
+fixtures next to the guidance is most of the way here already.
+
+**Benefit:** the artifact and its proof travel together and are versioned
+together, so a criterion cannot silently drift away from the check that
+enforces it. Failed clauses localise the defect instead of condemning the
+whole run.
+
+**Cost / risk:** the contract and the verifier are themselves artifacts
+needing maintenance, versioning, and trust -- a stale verifier is worse than
+none, because it reads as assurance. Governance burden scales with the number
+of clauses.
+
+**Free-choice mapping:** "verification mechanism," as the *packaging* of #3
+(mechanical checks on output) and #16 (trajectory checks on process), not a
+third kind of check. See also #3, #16. Adopting it is largely a question of
+whether the checks live with the artifact or somewhere else.
+
+Sources: [Harnessing Agent Skills: Architectural Patterns and a Reference Architecture for Skill-Mediated LLM Agents](https://arxiv.org/abs/2606.20631)
+
+---
+
+## 18. Skill-agent co-evolution loop (validated feedback, not direct mutation)
+
+*Added 2026-08-30 (research pass).*
+
+**What it is:** evidence from real runs is routed into *proposed* skill
+changes that are validated, versioned, and then returned through managed
+supply -- rather than a run patching its own guidance in place. Candidate
+changes are reviewable and rollback-capable by construction.
+
+**Signal to use it:** the same procedure runs repeatedly and its guidance
+should get better from that, but local fixes would otherwise regress shared
+guidance or propagate drift. Also: any setup where a run can edit the skill it
+is running under.
+
+**Benefit:** cumulative improvement from repetition, with every change
+reviewable and revertible. The external corroboration is the useful part here
+-- the 2026 sources arrive independently at the shape this repo's evolution
+process already has (propose, validate, version, tag).
+
+**Cost / risk:** validation becomes the bottleneck -- tight validation slows
+useful updates, loose validation promotes drift, and there is no setting that
+avoids both. The adjacent "meta context engineering" line of work, where an
+agent evolves its own prompts from its own failures, reports the failure modes
+that follow from dropping the validation step: prompt drift, convergence to
+local optima, and unstable run-to-run behaviour.
+
+**Free-choice mapping:** not a candidate for any target skill -- it describes
+the evolution process itself. Logged as corroboration for why promotion is
+gated, versioned, and tagged rather than applied in place, and as a named
+warning against a self-mutating variant.
+
+Sources: [Harnessing Agent Skills: Architectural Patterns and a Reference Architecture](https://arxiv.org/abs/2606.20631), [Meta Context Engineering via Agentic Skill Evolution](https://arxiv.org/pdf/2601.21557)
+
+---
+
 ## Dated notes on existing entries
 
 *2026-08-23:* Entry #14 (ReAct) -- see also #15 (plan-and-execute), which
@@ -506,6 +579,25 @@ fit), now with external corroboration -- it is a reason to keep rejecting
 well-regarded-but-ungrounded candidates, not a new technique.
 
 Sources: [What Are Agentic Design Patterns? 2026 Pattern Catalog](https://www.augmentcode.com/guides/agentic-design-patterns), [Agentic Design Patterns: The 2026 Guide](https://www.sitepoint.com/the-definitive-guide-to-agentic-design-patterns-in-2026/)
+
+*2026-08-30:* Entry #16 (trajectory / per-turn evaluation) -- first promotion,
+to `ai-fit-discovery`. Worth recording because it sharpens the entry's signal
+line. The precondition is narrower than "the skill's criteria are about process
+compliance": it is that an *output-shaped check already exists and is blind in a
+specific, nameable way*. Here `stop_check.py` reads only the ledger's final
+state, so a run that asked one question too many and a run that stopped
+correctly end with the same ledger and the same verdict. That indistinguishability
+is what made a discrimination fixture constructible. Where no such check exists
+yet, #3 is still the cheaper first move and #16 layers on afterwards -- the
+order the 2026-08-23 and 2026-08-30 sweeps took for this target.
+
+*2026-08-30:* Entries #17 and #18 both come from the same reference
+architecture paper and are both, for this collection, descriptions of what is
+already being done rather than new moves to make: the genome/phenotype split
+with fixtures beside it is a verifiable skill contract, and this sweep is a
+skill-agent co-evolution loop. Logged so a future sweep recognises them as
+corroboration and does not spend a pass "adopting" either one. The live warning
+in #18 is the self-mutating variant, which this process specifically does not do.
 
 ---
 
@@ -573,3 +665,75 @@ structurally un-evolvable by this process until they are actually run and
 their results recorded. That is the process working as designed -- but it
 means sweep yield is bounded by how much of the collection gets used, not
 by how good the technique library is.
+
+### Sweep 2026-08-30 (24 targets: everything with a `genome/intent.md`
+except skill-evolution's own two skills)
+
+**Promoted:** #16 trajectory / per-turn evaluation -> `ai-fit-discovery`,
+free choice "the ledger the gate reads" (the same slot the 2026-08-23 pass
+touched, now extended from what the ledger *contains* to whether its record
+of the gate survives replay). The 2026-08-23 sweep explicitly handed this
+candidate forward for this target; it was deferred then only by the
+one-candidate-per-pass cap, not on fitness. See that skill's failure history
+for the fixture that proves it.
+
+**The layering worked as the pattern predicted.** #3 and #16 stacked rather
+than competed, across two passes: #3 made the stop decision countable, and
+#16 made the record of that decision falsifiable. Worth noting for the next
+sweep that finds a verification-layer and a generation-layer candidate on the
+same target -- the deferral cost one week, not the candidate.
+
+**Rejected as speculative -- no documented, skill-specific failure instance
+(Step 3's "full stop, regardless of how well-regarded"):**
+
+- #2 maker-checker -> `build-packets`, free choice "order and depth of
+  QA-gate re-reading". Re-examined this pass because the target's mechanical
+  check moved twice in the intervening week (`preflight_lint.py`, commits
+  2131835 and 6ade727: a crash on styleless paragraphs, and R5 reading "BA"
+  and "MS" as degree abbreviations). Those are real, documented, current
+  failures -- but they are false *positives* in a check the genome makes an
+  invariant ("every generated document passes `preflight_lint.py`"), so
+  fixing them is content work inside the invariant, not a free-choice
+  substitution. The named watch-for that would make maker-checker fit
+  ("whether variant-conformance drift was actually caught on a fresh read
+  rather than rubber-stamped by the pass that wrote it") still has no
+  recorded occurrence. Unchanged verdict, now for a sharper reason: the
+  skill has failure history, it just isn't in the slot the technique would
+  occupy.
+- #17 verifiable skill contract and #18 skill-agent co-evolution loop, both
+  new this pass -> no target. Both describe what this collection already
+  does (genome/phenotype split with fixtures alongside; propose-validate-
+  version-tag). Adopting either would be ceremony over an existing practice.
+  See the dated note under those entries.
+- #7 parallelization (sectioning) -> `storm-research`; #5/#7 decomposition
+  -> `document-forge`; #6 routing -> `critical-thinking`, `rules-audit`,
+  `job-scan`. All re-checked against this week's history; none has gained a
+  recorded failure since 2026-08-23. Verdicts stand as written in the
+  2026-08-23 entry above.
+
+**Not candidates at all -- no declared free choice for any library
+technique to occupy:** unchanged from 2026-08-23 -- `delegate-status`,
+`vault-capture`, `vault-conventions`, `vault-init`, `vault-review`,
+`rule-compiler`, `rulegate-setup`, `tracker`, `apply-tabs`, `email-sync`,
+`job-profile`, `master-resume`, `setup`, `problem-hunt`, `framework-forge`,
+`interview-prep`, `survey-feedback-report`. No genome in that set changed
+this week.
+
+**Structural note for the owner, carried forward and now measurable.** The
+2026-08-23 entry observed that sweep yield is bounded by how much of the
+collection actually gets used, since Step 3 requires a documented failure.
+Two sweeps in, that bound is visible: both promotions went to the one skill
+with a real failure history, and the second was already queued by the first.
+`ai-fit-discovery` is close to exhausted as a source of grounded candidates
+-- its two recorded runs have now produced everything they can. Absent new
+run records anywhere in the collection, the next sweep should be expected to
+promote nothing, and that will be the correct result rather than a shortfall.
+
+**Genome/phenotype drift found in `skill-evolution-sweep`, not fixed here.**
+Its `SKILL.md` is at 2.0.0 and permits unattended promotion; its
+`genome/intent.md` is still spec version 1.0 and states the opposite
+("Nothing is promoted to any target's live/production files during a sweep
+run"). The phenotype was hand-advanced without regenerating from the spec.
+Left alone deliberately: skill-evolution's own two skills are out of scope
+for the sweep they run, and correcting an invariant is a spec-change proposal
+to the owner, not something a sweep applies. Flagged for the owner.

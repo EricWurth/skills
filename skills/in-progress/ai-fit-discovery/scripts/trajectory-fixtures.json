@@ -1,0 +1,104 @@
+{
+  "cases": [
+    {
+      "name": "D-T1-fabricated-continue",
+      "note": "DISCRIMINATION -- replay of the 2026-08-18 run. Turn 3 was asked after the budget trigger had already fired, and the record says the gate returned CONTINUE. stop_check.py on the finished ledger returns STOP, exactly as it would for a correctly-stopped run, so the pre-change surface cannot tell the two apart.",
+      "expect": "VIOLATIONS",
+      "expect_findings": ["T3"],
+      "baseline_verdict": "STOP",
+      "ledger": {
+        "budget_minutes": 25,
+        "elapsed_minutes": 18,
+        "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "asked", "friction": "asked"},
+        "turns": [
+          {"new_items": 3, "stop_signal": false, "asked": true, "gate": "CONTINUE", "elapsed_minutes": 4,
+           "lenses": {"recurring": "asked", "workflows": "open", "inverse": "open", "friction": "open"}},
+          {"new_items": 2, "stop_signal": false, "asked": true, "gate": "CONTINUE", "elapsed_minutes": 9,
+           "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "open", "friction": "open"}},
+          {"new_items": 2, "stop_signal": false, "asked": true, "gate": "CONTINUE", "elapsed_minutes": 14,
+           "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "asked", "friction": "open"}},
+          {"new_items": 1, "stop_signal": false, "asked": true, "gate": "CONTINUE", "elapsed_minutes": 18,
+           "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "asked", "friction": "asked"}}
+        ]
+      }
+    },
+    {
+      "name": "D-T2-gate-never-consulted",
+      "note": "DISCRIMINATION -- the interview ran to saturation with no gate invoked at all. stop_check.py on the finished ledger returns STOP, so the pre-change surface again reports a healthy run; nothing records that turn 3 was asked past a trigger that had already fired.",
+      "expect": "VIOLATIONS",
+      "expect_findings": ["T1"],
+      "baseline_verdict": "STOP",
+      "ledger": {
+        "budget_minutes": null,
+        "elapsed_minutes": 12,
+        "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "asked", "friction": "asked"},
+        "turns": [
+          {"new_items": 3, "stop_signal": false, "asked": true},
+          {"new_items": 2, "stop_signal": false, "asked": true},
+          {"new_items": 0, "stop_signal": false, "asked": true},
+          {"new_items": 0, "stop_signal": false, "asked": true}
+        ]
+      }
+    },
+    {
+      "name": "R-T1-compliant-budget-stop",
+      "note": "REGRESSION -- the same interview as D-T1, run honestly: the gate fires on the budget trigger and no question is asked on that turn.",
+      "expect": "CLEAN",
+      "ledger": {
+        "budget_minutes": 25,
+        "elapsed_minutes": 18,
+        "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "asked", "friction": "asked"},
+        "turns": [
+          {"new_items": 3, "stop_signal": false, "asked": true, "gate": "CONTINUE", "elapsed_minutes": 4,
+           "lenses": {"recurring": "asked", "workflows": "open", "inverse": "open", "friction": "open"}},
+          {"new_items": 2, "stop_signal": false, "asked": true, "gate": "CONTINUE", "elapsed_minutes": 9,
+           "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "open", "friction": "open"}},
+          {"new_items": 2, "stop_signal": false, "asked": true, "gate": "CONTINUE", "elapsed_minutes": 14,
+           "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "asked", "friction": "open"}},
+          {"new_items": 0, "stop_signal": false, "asked": false, "gate": "STOP", "elapsed_minutes": 18,
+           "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "asked", "friction": "asked"}}
+        ]
+      }
+    },
+    {
+      "name": "R-T2-golden-G3-inverse-still-open",
+      "note": "REGRESSION -- G-3. Two dry answers in a row on the other lenses while the inverse is still open. The gate must keep saying CONTINUE, and the trajectory of that run must read clean.",
+      "expect": "CLEAN",
+      "ledger": {
+        "budget_minutes": null,
+        "elapsed_minutes": 11,
+        "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "asked", "friction": "asked"},
+        "turns": [
+          {"new_items": 3, "stop_signal": false, "asked": true, "gate": "CONTINUE", "elapsed_minutes": 2,
+           "lenses": {"recurring": "asked", "workflows": "open", "inverse": "open", "friction": "open"}},
+          {"new_items": 0, "stop_signal": false, "asked": true, "gate": "CONTINUE", "elapsed_minutes": 5,
+           "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "open", "friction": "open"}},
+          {"new_items": 0, "stop_signal": false, "asked": true, "gate": "CONTINUE", "elapsed_minutes": 8,
+           "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "open", "friction": "asked"}},
+          {"new_items": 2, "stop_signal": false, "asked": true, "gate": "CONTINUE", "elapsed_minutes": 11,
+           "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "open", "friction": "asked"}}
+        ]
+      }
+    },
+    {
+      "name": "R-T3-golden-G7-explicit-signal",
+      "note": "REGRESSION -- G-7. The person asks why you are still asking on turn 2; the gate consulted before turn 3 returns STOP and no further question is asked.",
+      "expect": "CLEAN",
+      "ledger": {
+        "budget_minutes": null,
+        "elapsed_minutes": 9,
+        "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "asked", "friction": "asked"},
+        "turns": [
+          {"new_items": 3, "stop_signal": false, "asked": true, "gate": "CONTINUE", "elapsed_minutes": 2,
+           "lenses": {"recurring": "asked", "workflows": "open", "inverse": "open", "friction": "open"}},
+          {"new_items": 2, "stop_signal": false, "asked": true, "gate": "CONTINUE", "elapsed_minutes": 5,
+           "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "open", "friction": "open"}},
+          {"new_items": 1, "stop_signal": true, "asked": true, "gate": "CONTINUE", "elapsed_minutes": 7,
+           "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "asked", "friction": "open"}},
+          {"new_items": 0, "stop_signal": false, "asked": false, "gate": "STOP", "elapsed_minutes": 9,
+           "lenses": {"recurring": "asked", "workflows": "asked", "inverse": "asked", "friction": "asked"}}
+        ]
+      }
+    }
+  ]
+}
